@@ -32,11 +32,3 @@ implementations:
 [rubinius]: http://rubini.us
 
 # Credits
-
-Inspiration:
-
-- [Example](http://example/)
-
-Cribbed:
-
-- [Example](http://example/)
