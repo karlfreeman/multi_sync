@@ -7,28 +7,22 @@ begin; require "awesome_print"; rescue LoadError; end
 require "rspec"
 
 require "support/pry"
+require "support/fakefs"
 require "support/simplecov"
 
 require "multi_sync"
 
-# used as a stupid mixin class
-class DummyClass
-end
-
 #
 RSpec.configure do |config|
 
-  #
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
 
-  #
   def jruby?
     defined?(RUBY_ENGINE) && RUBY_ENGINE == 'jruby'
   end
 
-  #
   def capture(stream)
     begin
       stream = stream.to_s
@@ -38,7 +32,6 @@ RSpec.configure do |config|
     ensure
       eval("$#{stream} = #{stream.upcase}")
     end
-
     result
   end
 

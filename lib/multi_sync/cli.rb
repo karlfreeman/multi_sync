@@ -2,16 +2,18 @@ require "thor"
 
 module MultiSync
 
+  # Defines constants and methods related to the CLI
   class Cli < Thor
     namespace :multi_sync
 
     class_option :verbose, :type => :boolean
-    class_option :remote_files_policy, :type => :boolean
 
-    desc "sync", "a description"
-    method_option :clean, :aliases => "-c", :desc => "Clean up build files after sync"
+    desc "sync", "Sync"
+    method_option :credential, :aliases => "-c", :desc => "The fog credential to be used in this sync"
+    method_option :clean, :aliases => "-C", :desc => "Clean up build files after sync"
     def sync
     end
 
   end
+
 end
