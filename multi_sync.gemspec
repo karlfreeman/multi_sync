@@ -3,8 +3,9 @@ $:.push File.expand_path("../lib", __FILE__)
 require "multi_sync/version"
 
 Gem::Specification.new do |gem|
-  gem.add_dependency "celluloid", "~> 0.13"
+  # gem.add_dependency "celluloid", "~> 0.13"
   gem.add_dependency "connection_pool", "~> 1.0"
+  gem.add_dependency "parallel", "~> 0.6"
   gem.add_dependency "fog", "~> 1.10"
   gem.add_dependency "thor", "~> 0.18"
   gem.add_dependency "log_switch", "~> 0.4"

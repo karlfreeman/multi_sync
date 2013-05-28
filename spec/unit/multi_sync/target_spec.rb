@@ -3,17 +3,11 @@ require "spec_helper"
 describe MultiSync::Target, fakefs: true do
 
   before do
-    FileUtils.mkdir_p("/tmp/simple")
-    File.open("/tmp/simple/foo.txt", "w") do |f| f.write("foo") end
-    File.open("/tmp/simple/bar.txt", "w") do |f| f.write("bar") end
-    FileUtils.mkdir_p("/tmp/simple/in-a-dir")
-    File.open("/tmp/simple/in-a-dir/baz.html", "w") do |f| f.write("baz") end
-
-    FileUtils.cp_r("/tmp/simple", "/tmp/simple-with-missing-file")
-    FileUtils.rm_r("/tmp/simple-with-missing-file/foo.txt")
-
-    FileUtils.cp_r("/tmp/simple", "/tmp/simple-with-outdated-file")
-    File.open("/tmp/simple-with-outdated-file/baz.txt", "w") do |f| f.write("baz") end
+    FileUtils.mkdir_p("/tmp/target")
+    File.open("/tmp/target/foo.txt", "w") do |f| f.write("foo") end
+    File.open("/tmp/target/bar.txt", "w") do |f| f.write("bar") end
+    FileUtils.mkdir_p("/tmp/target/in-a-dir")
+    File.open("/tmp/target/in-a-dir/baz.html", "w") do |f| f.write("baz") end
   end
 
   # context :validations do
@@ -57,7 +51,7 @@ describe MultiSync::Target, fakefs: true do
           :public => true
         )
 
-        Dir.glob("/tmp/simple/**/*").reject {|path| File.directory?(path) }.each do |path|
+        Dir.glob("/tmp/target/**/*").reject {|path| File.directory?(path) }.each do |path|
           directory.files.create(
             :key => path.gsub("/tmp/", ""),
             :body => File.open(path, "r"),
@@ -74,7 +68,7 @@ describe MultiSync::Target, fakefs: true do
       let(:target) {
         MultiSync::AWSTarget.new(
           :target_dir => "multi_sync",
-          :destination_dir => "simple",
+          :destination_dir => "target",
           :credentials => {
             :region => "us-east-1",
             :aws_access_key_id => "xxx",
@@ -90,7 +84,7 @@ describe MultiSync::Target, fakefs: true do
       context :with_root do
 
         it "should return files with the root" do
-          expect(target.files[0].path_with_root.to_s).to eq "multi_sync/simple/bar.txt"
+          expect(target.files[0].path_with_root.to_s).to eq "multi_sync/target/bar.txt"
         end
 
       end
@@ -110,7 +104,7 @@ describe MultiSync::Target, fakefs: true do
       let(:target) {
         MultiSync::LocalTarget.new(
           :target_dir => "/tmp",
-          :destination_dir => "simple",
+          :destination_dir => "target",
           :credentials => {
             :local_root => "/tmp"
           }
@@ -124,7 +118,7 @@ describe MultiSync::Target, fakefs: true do
       context :with_root do
 
         it "should return files with the root" do
-          expect(target.files[0].path_with_root.to_s).to eq "/tmp/simple/bar.txt"
+          expect(target.files[0].path_with_root.to_s).to eq "/tmp/target/bar.txt"
         end
 
       end

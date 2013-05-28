@@ -9,8 +9,8 @@ describe MultiSync::Client, fakefs: true do
     FileUtils.mkdir_p("/tmp/simple/in-a-dir")
     File.open("/tmp/simple/in-a-dir/baz.html", "w") do |f| f.write("baz") end
 
-    FileUtils.cp_r("/tmp/simple", "/tmp/simple-with-missing-file")
-    FileUtils.rm_r("/tmp/simple-with-missing-file/foo.txt")
+    FileUtils.cp_r("/tmp/simple", "/tmp/simple-with-abandoned-file")
+    FileUtils.rm_r("/tmp/simple-with-abandoned-file/foo.txt")
 
     FileUtils.cp_r("/tmp/simple", "/tmp/simple-with-outdated-file")
     File.open("/tmp/simple-with-outdated-file/baz.txt", "w") do |f| f.write("baz") end
@@ -50,9 +50,9 @@ describe MultiSync::Client, fakefs: true do
 
         client = MultiSync::Client.new
 
-        missing_files_target = MultiSync::LocalTarget.new(
+        abandoned_files_target = MultiSync::LocalTarget.new(
           :target_dir => "/tmp",
-          :destination_dir => "simple-with-missing-file",
+          :destination_dir => "simple-with-abandoned-file",
           :credentials => {
             :local_root => "/tmp"
           }
@@ -66,35 +66,31 @@ describe MultiSync::Client, fakefs: true do
           }
         )
 
-        expect(missing_files_target).to have(2).files
         expect(outdated_files_target).to have(4).files
+        expect(abandoned_files_target).to have(2).files
 
         source = MultiSync::Source.new(
           :source_dir => "/tmp/simple",
-          :targets => [missing_files_target, outdated_files_target]
+          :targets => [outdated_files_target, abandoned_files_target]
         )
-
-        missing_missing = (source.files - missing_files_target.files)
-        expect(missing_missing.length).to be(1)
-
-        missing_outdated = (missing_files_target.files - source.files)
-        expect(missing_outdated.length).to be(0)
-
-        outdated_missing = (source.files - outdated_files_target.files)
-        expect(outdated_missing.length).to be(0)
-
-        outdated_outdated = (outdated_files_target.files - source.files)
-        expect(outdated_outdated.length).to be(1)
 
         expect(source).to have(3).files
         expect(source).to have(2).targets
 
-        client.targets << missing_files_target
         client.targets << outdated_files_target
+        client.targets << abandoned_files_target
         expect(client).to have(2).targets
 
         client.sources << source
         expect(client).to have(1).sources
+
+        client.determine_files
+
+        expect(client).to have(1).outdated_files
+        expect(client).to have(1).abandoned_files
+
+        # client.sync_outdated_files
+        # client.remove_abandoned_files
 
       end
 
@@ -117,7 +113,7 @@ describe MultiSync::Client, fakefs: true do
           :public => true
         )
 
-        ["simple", "simple-with-outdated-file", "simple-with-missing-file"].each do |fixture_name|
+        ["simple", "simple-with-outdated-file", "simple-with-abandoned-file"].each do |fixture_name|
           Dir.glob("/tmp/#{fixture_name}/**/*").reject {|path| File.directory?(path) }.each do |path|
             directory.files.create(
               :key => path.gsub("/tmp/", ""),
@@ -151,9 +147,9 @@ describe MultiSync::Client, fakefs: true do
           }
         )
 
-        missing_files_target = MultiSync::AWSTarget.new(
+        abandoned_files_target = MultiSync::AWSTarget.new(
           :target_dir => "multi_sync",
-          :destination_dir => "simple-with-missing-file",
+          :destination_dir => "simple-with-abandoned-file",
           :credentials => {
             :region => "us-east-1",
             :aws_access_key_id => "xxx",
@@ -161,35 +157,31 @@ describe MultiSync::Client, fakefs: true do
           }
         )
 
-        expect(missing_files_target).to have(2).files
         expect(outdated_files_target).to have(4).files
+        expect(abandoned_files_target).to have(2).files
 
         source = MultiSync::Source.new(
           :source_dir => "/tmp/simple",
-          :targets => [missing_files_target, outdated_files_target]
+          :targets => [outdated_files_target, abandoned_files_target]
         )
-
-        missing_missing = (source.files - missing_files_target.files)
-        expect(missing_missing.length).to be(1)
-
-        missing_outdated = (missing_files_target.files - source.files)
-        expect(missing_outdated.length).to be(0)
-
-        outdated_missing = (source.files - outdated_files_target.files)
-        expect(outdated_missing.length).to be(0)
-
-        outdated_outdated = (outdated_files_target.files - source.files)
-        expect(outdated_outdated.length).to be(1)
 
         expect(source).to have(3).files
         expect(source).to have(2).targets
 
-        client.targets << missing_files_target
         client.targets << outdated_files_target
+        client.targets << abandoned_files_target
         expect(client).to have(2).targets
 
         client.sources << source
         expect(client).to have(1).sources
+
+        client.determine_files
+
+        expect(client).to have(1).outdated_files
+        expect(client).to have(1).abandoned_files
+
+        # client.sync_outdated_files
+        # client.remove_abandoned_files
 
       end
 
