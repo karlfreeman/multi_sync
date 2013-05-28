@@ -25,7 +25,7 @@ group :test do
   gem "fakefs", :git => "https://github.com/defunkt/fakefs.git", :require => "fakefs/safe"
   gem "simplecov", :require => false
   gem "coveralls", :require => false
-  gem "cane", :require => false, :platforms => :ruby_19
+  gem "cane", :require => false
 end
 
 gemspec
