@@ -3,7 +3,7 @@ source "https://rubygems.org"
 gem "rake", ">= 1.2"
 gem "yard"
 
-gem "fog", :git => "git://github.com/karlfreeman/fog.git"
+gem "fog", :git => "git://github.com/karlfreeman/fog.git", :branch => "block_local_chdir"
 
 # platforms :ruby_18 do
 # end
