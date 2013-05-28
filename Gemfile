@@ -22,7 +22,7 @@ end
 group :test do
   gem "rspec"
   gem "rspec-smart-formatter"
-  gem "fakefs", :require => "fakefs/safe"
+  gem "fakefs", :require => "fakefs/safe", :git => "git://github.com/defunkt/fakefs.git"
   gem "simplecov", :require => false
   gem "coveralls", :require => false
   gem "cane"
