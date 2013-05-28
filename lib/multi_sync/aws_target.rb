@@ -30,18 +30,10 @@ module MultiSync
       }
 
       files.map!{ |pathname|
-
-        resource_options = {
-          :with_root => self.target_dir + pathname
-        }
-
-        if self.destination_dir != ""
-          resource_options[:without_root] = pathname.relative_path_from(self.destination_dir).cleanpath
-        else
-          resource_options[:without_root] = pathname
-        end
-
-        MultiSync::RemoteResource.new(resource_options)
+        MultiSync::RemoteResource.new(
+          :with_root => self.target_dir + pathname,
+          :without_root => (self.destination_dir != "") ? pathname.relative_path_from(self.destination_dir).cleanpath : pathname
+        )
       }
 
       return files
