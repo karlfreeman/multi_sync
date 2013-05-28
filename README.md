@@ -20,21 +20,20 @@ require "multi_sync"
 This library aims to support and is [tested against][travis] the following Ruby
 implementations:
 
-* Ruby 1.8.7
 * Ruby 1.9.2
 * Ruby 1.9.3
 * Ruby 2.0.0
-* [JRuby]
-* [Rubinius]
+* [JRuby][]
+* [Rubinius][]
 
 # Credits
 
 [celluloid]: http://celluloid.io
 [fog::storage]: http://fog.io/storage
-[jruby]: http://www.jruby.org
-[rubinius]: http://rubini.us
 [gem]: https://rubygems.org/gems/multi_sync
 [travis]: http://travis-ci.org/karlfreeman/multi_sync
 [gemnasium]: https://gemnasium.com/karlfreeman/multi_sync
 [coveralls]: https://coveralls.io/r/karlfreeman/multi_sync
 [codeclimate]: https://codeclimate.com/github/karlfreeman/multi_sync
+[jruby]: http://www.jruby.org
+[rubinius]: http://rubini.us
