@@ -22,8 +22,6 @@ end
 group :test do
   gem "rspec"
   gem "rspec-smart-formatter"
-  gem "vcr"
-  gem "webmock"
   gem "fakefs", :require => "fakefs/safe"
   gem "simplecov", :require => false
   gem "coveralls", :require => false
