@@ -72,15 +72,14 @@ describe MultiSync::Target, fakefs: true do
       end
 
       let(:target) {
-        MultiSync::Target.new(
-          :provider => :aws,
-          :provider_credentials => {
+        MultiSync::AWSTarget.new(
+          :target_dir => "multi_sync",
+          :destination_dir => "simple",
+          :credentials => {
             :region => "us-east-1",
             :aws_access_key_id => "xxx",
             :aws_secret_access_key => "xxx"
-          },
-          :target_dir => "multi_sync",
-          :destination_dir => "simple"
+          }
         )
       }
 
@@ -109,13 +108,12 @@ describe MultiSync::Target, fakefs: true do
     context :local do
 
       let(:target) {
-        MultiSync::Target.new(
-          :provider => :local,
-          :provider_credentials => {
-            :local_root => "/tmp"
-          },
+        MultiSync::LocalTarget.new(
           :target_dir => "/tmp",
-          :destination_dir => "simple"
+          :destination_dir => "simple",
+          :credentials => {
+            :local_root => "/tmp"
+          }
         )
       }
 

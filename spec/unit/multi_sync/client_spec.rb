@@ -44,48 +44,57 @@ describe MultiSync::Client, fakefs: true do
 
   context :sync do
 
-    let(:source) { MultiSync::Source.new(:source_dir => "/tmp/simple") }
-
     context :local do
 
       it "should work" do
 
-        missing_files_target = MultiSync::Target.new(
-          :provider => :local,
-          :provider_credentials => {
-            :local_root => "/tmp"
-          },
+        client = MultiSync::Client.new
+
+        missing_files_target = MultiSync::LocalTarget.new(
           :target_dir => "/tmp",
-          :destination_dir => "simple-with-missing-file"
+          :destination_dir => "simple-with-missing-file",
+          :credentials => {
+            :local_root => "/tmp"
+          }
         )
 
-        outdated_files_target = MultiSync::Target.new(
-          :provider => :local,
-          :provider_credentials => {
-            :local_root => "/tmp"
-          },
+        outdated_files_target = MultiSync::LocalTarget.new(
           :target_dir => "/tmp",
-          :destination_dir => "simple-with-outdated-file"
+          :destination_dir => "simple-with-outdated-file",
+          :credentials => {
+            :local_root => "/tmp"
+          }
         )
 
         expect(missing_files_target).to have(2).files
         expect(outdated_files_target).to have(4).files
 
-        # ap "missing_files_target: missing remote file"
+        source = MultiSync::Source.new(
+          :source_dir => "/tmp/simple",
+          :targets => [missing_files_target, outdated_files_target]
+        )
+
         missing_missing = (source.files - missing_files_target.files)
-        # ap missing_missing
+        expect(missing_missing.length).to be(1)
 
-        # ap "missing_files_target: outdated remote file"
         missing_outdated = (missing_files_target.files - source.files)
-        # ap missing_outdated
+        expect(missing_outdated.length).to be(0)
 
-        # ap "outdated_files_target: missing remote files"
         outdated_missing = (source.files - outdated_files_target.files)
-        # ap outdated_missing
+        expect(outdated_missing.length).to be(0)
 
-        # ap "outdated_files_target: outdated remote files"
         outdated_outdated = (outdated_files_target.files - source.files)
-        # ap outdated_outdated
+        expect(outdated_outdated.length).to be(1)
+
+        expect(source).to have(3).files
+        expect(source).to have(2).targets
+
+        client.targets << missing_files_target
+        client.targets << outdated_files_target
+        expect(client).to have(2).targets
+
+        client.sources << source
+        expect(client).to have(1).sources
 
       end
 
@@ -126,46 +135,61 @@ describe MultiSync::Client, fakefs: true do
 
       it "should work" do
 
-        outdated_files_target = MultiSync::Target.new(
-          :provider => :aws,
-          :provider_credentials => {
-            :region => "us-east-1",
-            :aws_access_key_id => "xxx",
-            :aws_secret_access_key => "xxx"
-          },
-          :target_dir => "multi_sync",
-          :destination_dir => "simple-with-outdated-file"
+        client = MultiSync::Client.new
+
+        source = MultiSync::Source.new(
+          :source_dir => "/tmp/simple"
         )
 
-        missing_files_target = MultiSync::Target.new(
-          :provider => :aws,
-          :provider_credentials => {
+        outdated_files_target = MultiSync::AWSTarget.new(
+          :target_dir => "multi_sync",
+          :destination_dir => "simple-with-outdated-file",
+          :credentials => {
             :region => "us-east-1",
             :aws_access_key_id => "xxx",
             :aws_secret_access_key => "xxx"
-          },
+          }
+        )
+
+        missing_files_target = MultiSync::AWSTarget.new(
           :target_dir => "multi_sync",
-          :destination_dir => "simple-with-missing-file"
+          :destination_dir => "simple-with-missing-file",
+          :credentials => {
+            :region => "us-east-1",
+            :aws_access_key_id => "xxx",
+            :aws_secret_access_key => "xxx"
+          }
         )
 
         expect(missing_files_target).to have(2).files
         expect(outdated_files_target).to have(4).files
 
-        # ap "missing_files_target: missing remote file"
+        source = MultiSync::Source.new(
+          :source_dir => "/tmp/simple",
+          :targets => [missing_files_target, outdated_files_target]
+        )
+
         missing_missing = (source.files - missing_files_target.files)
-        # ap missing_missing
+        expect(missing_missing.length).to be(1)
 
-        # ap "missing_files_target: outdated remote file"
         missing_outdated = (missing_files_target.files - source.files)
-        # ap missing_outdated
+        expect(missing_outdated.length).to be(0)
 
-        # ap "outdated_files_target: missing remote files"
         outdated_missing = (source.files - outdated_files_target.files)
-        # ap outdated_missing
+        expect(outdated_missing.length).to be(0)
 
-        # ap "outdated_files_target: outdated remote files"
         outdated_outdated = (outdated_files_target.files - source.files)
-        # ap outdated_outdated
+        expect(outdated_outdated.length).to be(1)
+
+        expect(source).to have(3).files
+        expect(source).to have(2).targets
+
+        client.targets << missing_files_target
+        client.targets << outdated_files_target
+        expect(client).to have(2).targets
+
+        client.sources << source
+        expect(client).to have(1).sources
 
       end
 

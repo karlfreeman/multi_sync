@@ -10,7 +10,7 @@ gem "yard"
 # platforms :jruby do
 # end
 
-gem "fog", :git => "git://github.com/karlfreeman/fog.git", :branch => "block_local_chdir"
+gem "fog", :git => "git://github.com/fog/fog.git"
 
 group :development do
   gem "kramdown", ">= 0.14"
