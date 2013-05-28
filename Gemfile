@@ -3,14 +3,14 @@ source "https://rubygems.org"
 gem "rake", ">= 1.2"
 gem "yard"
 
-gem "fog", :git => "git://github.com/karlfreeman/fog.git", :branch => "block_local_chdir"
-
 # platforms :ruby_18 do
 # end
 # platforms :ruby, :mswin, :mingw do
 # end
 # platforms :jruby do
 # end
+
+gem "fog", :git => "git://github.com/karlfreeman/fog.git", :branch => "block_local_chdir"
 
 group :development do
   gem "kramdown", ">= 0.14"
@@ -22,10 +22,10 @@ end
 group :test do
   gem "rspec"
   gem "rspec-smart-formatter"
-  gem "fakefs", :require => "fakefs/safe", :git => "git://github.com/defunkt/fakefs.git"
+  gem "fakefs", :git => "https://github.com/defunkt/fakefs.git", :require => "fakefs/safe"
   gem "simplecov", :require => false
   gem "coveralls", :require => false
-  gem "cane"
+  gem "cane", :require => false, :platforms => :ruby_19
 end
 
 gemspec
