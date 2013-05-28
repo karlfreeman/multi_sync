@@ -14,7 +14,6 @@ require "multi_sync"
 [![Build Status](https://travis-ci.org/karlfreeman/multi_sync.png)][travis]
 [![Dependency Status](https://gemnasium.com/karlfreeman/multi_sync.png?travis)][gemnasium]
 [![Code Quality](https://codeclimate.com/github/karlfreeman/multi_sync.png)][codeclimate]
-[![Code Quality](https://codeclimate.com/github/karlfreeman/multi_sync.png)][codeclimate]
 [![Coverage Status](https://coveralls.io/repos/karlfreeman/multi_sync/badge.png?branch=master)][coveralls]
 
 ## Supported Ruby Versions
