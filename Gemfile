@@ -3,7 +3,7 @@ source "https://rubygems.org"
 gem "rake", ">= 1.2"
 gem "yard"
 
-gem "fog", :path => "../fog"
+gem "fog", :git => "git://github.com/karlfreeman/fog.git"
 
 # platforms :ruby_18 do
 # end
