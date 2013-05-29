@@ -1,5 +1,4 @@
 require "fog"
-Fog::Logger[:warning] = nil
 
 module MultiSync
 

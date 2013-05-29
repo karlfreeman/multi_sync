@@ -1,8 +1,8 @@
-require "connection_pool"
 require "fog"
 require "pathname"
+require "connection_pool"
 require "multi_sync/target"
-require "multi_sync/remote_resource"
+require "multi_sync/resources/remote_resource"
 
 module MultiSync
 
@@ -25,17 +25,17 @@ module MultiSync
 
       self.connection.with do |connection|
 
-        connection.directories.get(self.destination_dir.to_s).files.each { |f|
+        connection.directories.get(self.destination_dir.to_s).files.each { |file|
 
-          pathname = Pathname.new(f.key)
+          pathname = Pathname.new(file.key)
 
-          #
+          # directory
           next if pathname.directory?
 
           files << MultiSync::RemoteResource.new(
             :with_root => self.target_dir + self.destination_dir + pathname,
             :without_root => pathname,
-            :fog_file => f
+            :fog_file => file
           )
 
         }
@@ -43,6 +43,17 @@ module MultiSync
       end
 
       return files
+    end
+
+    def sync(resource)
+
+      self.connection.with do |connection|
+        connection.directories.get(self.destination_dir.to_s).files.create(
+          :key => resource.path_without_root.to_s,
+          :body => 'Hello World!'
+        )
+      end
+
     end
 
   end

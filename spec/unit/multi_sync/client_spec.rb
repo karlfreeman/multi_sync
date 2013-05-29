@@ -9,11 +9,11 @@ describe MultiSync::Client, fakefs: true do
     FileUtils.mkdir_p("/tmp/simple/in-a-dir")
     File.open("/tmp/simple/in-a-dir/baz.html", "w") do |f| f.write("baz") end
 
-    FileUtils.cp_r("/tmp/simple", "/tmp/simple-with-abandoned-file")
-    FileUtils.rm_r("/tmp/simple-with-abandoned-file/foo.txt")
-
     FileUtils.cp_r("/tmp/simple", "/tmp/simple-with-outdated-file")
-    File.open("/tmp/simple-with-outdated-file/baz.txt", "w") do |f| f.write("baz") end
+    FileUtils.rm_r("/tmp/simple-with-outdated-file/foo.txt")
+
+    FileUtils.cp_r("/tmp/simple", "/tmp/simple-with-abandoned-file")
+    File.open("/tmp/simple-with-abandoned-file/baz.txt", "w") do |f| f.write("baz") end
   end
 
   # context :targets do
@@ -50,14 +50,6 @@ describe MultiSync::Client, fakefs: true do
 
         client = MultiSync::Client.new
 
-        abandoned_files_target = MultiSync::LocalTarget.new(
-          :target_dir => "/tmp",
-          :destination_dir => "simple-with-abandoned-file",
-          :credentials => {
-            :local_root => "/tmp"
-          }
-        )
-
         outdated_files_target = MultiSync::LocalTarget.new(
           :target_dir => "/tmp",
           :destination_dir => "simple-with-outdated-file",
@@ -66,8 +58,16 @@ describe MultiSync::Client, fakefs: true do
           }
         )
 
-        expect(outdated_files_target).to have(4).files
-        expect(abandoned_files_target).to have(2).files
+        abandoned_files_target = MultiSync::LocalTarget.new(
+          :target_dir => "/tmp",
+          :destination_dir => "simple-with-abandoned-file",
+          :credentials => {
+            :local_root => "/tmp"
+          }
+        )
+
+        expect(outdated_files_target).to have(2).files
+        expect(abandoned_files_target).to have(4).files
 
         source = MultiSync::Source.new(
           :source_dir => "/tmp/simple",
@@ -84,13 +84,10 @@ describe MultiSync::Client, fakefs: true do
         client.sources << source
         expect(client).to have(1).sources
 
-        client.determine_files
+        client.sync
 
-        expect(client).to have(1).outdated_files
-        expect(client).to have(1).abandoned_files
-
-        # client.sync_outdated_files
-        # client.remove_abandoned_files
+        expect(outdated_files_target).to have(3).files
+        expect(abandoned_files_target).to have(3).files
 
       end
 
@@ -157,8 +154,8 @@ describe MultiSync::Client, fakefs: true do
           }
         )
 
-        expect(outdated_files_target).to have(4).files
-        expect(abandoned_files_target).to have(2).files
+        expect(outdated_files_target).to have(2).files
+        expect(abandoned_files_target).to have(4).files
 
         source = MultiSync::Source.new(
           :source_dir => "/tmp/simple",
@@ -175,13 +172,10 @@ describe MultiSync::Client, fakefs: true do
         client.sources << source
         expect(client).to have(1).sources
 
-        client.determine_files
+        client.sync
 
-        expect(client).to have(1).outdated_files
-        expect(client).to have(1).abandoned_files
-
-        # client.sync_outdated_files
-        # client.remove_abandoned_files
+        expect(outdated_files_target).to have(3).files
+        expect(abandoned_files_target).to have(3).files
 
       end
 

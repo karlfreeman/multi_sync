@@ -1,10 +1,10 @@
 require "forwardable"
 require "log_switch"
+require "multi_sync/cli"
+require "multi_sync/client"
 require "multi_sync/version"
 require "multi_sync/environment"
-require "multi_sync/client"
 require "multi_sync/configuration"
-require "multi_sync/cli"
 
 # REQUIREMENT_MAP = [
 #   ["rails", "multi_sync/extensions/rails"]

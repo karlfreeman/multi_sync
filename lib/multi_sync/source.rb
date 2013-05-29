@@ -1,5 +1,5 @@
 require "pathname"
-require "multi_sync/local_resource"
+require "multi_sync/resources/local_resource"
 
 module MultiSync
 
@@ -37,7 +37,7 @@ module MultiSync
       files = []
       included_files = Dir.glob(self.source_dir + self.include)
       excluded_files = self.exclude.nil? ? [] : Dir.glob(self.source_dir + self.exclude)
-      (included_files - excluded_files).each { |path|
+      (included_files - excluded_files).each { | path |
         pathname = Pathname.new(path)
         next if pathname.directory?
         files << MultiSync::LocalResource.new(
