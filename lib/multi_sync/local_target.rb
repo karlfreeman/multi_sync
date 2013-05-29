@@ -14,7 +14,7 @@ module MultiSync
     # @param options [Hash]
     def initialize(options = {})
       super(options)
-      self.connection = ConnectionPool.new(:size => 5, :timeout => 5) { 
+      self.connection = ConnectionPool.new(:size => 1, :timeout => 5) { 
         Fog::Storage.new(self.credentials.merge(:provider => :local))
       }
     end
@@ -24,28 +24,26 @@ module MultiSync
       files = []
 
       self.connection.with do |connection|
+
         connection.directories.get(self.destination_dir.to_s).files.each { |f|
-          files << Pathname.new(f.key)
+
+          pathname = Pathname.new(f.key)
+
+          #
+          next if pathname.directory?
+
+          files << MultiSync::RemoteResource.new(
+            :with_root => self.target_dir + self.destination_dir + pathname,
+            :without_root => pathname,
+            :fog_file => f
+          )
+
         }
+
       end
-
-      files.reject!{ |pathname| pathname.directory? }
-
-      files.map!{ |pathname|
-        MultiSync::RemoteResource.new(
-          :with_root => self.target_dir + self.destination_dir + pathname,
-          :without_root => pathname
-        )
-      }
 
       return files
     end
-
-    # def sync(resource)
-    #   ap "#{self.class}: #{resource} #{self.connection}"
-    #   ap resource.path_with_root
-    #   ap resource.path_without_root
-    # end
 
   end
 

@@ -9,6 +9,8 @@ module MultiSync
 
     state_machine :state, :initial => :unknown do
 
+      # before_transition :unknown => any - :unknown, :do => :determine_status
+
       state :unknown do
       end
 

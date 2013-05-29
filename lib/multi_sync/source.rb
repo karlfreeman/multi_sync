@@ -37,10 +37,10 @@ module MultiSync
       files = []
       included_files = Dir.glob(self.source_dir + self.include)
       excluded_files = self.exclude.nil? ? [] : Dir.glob(self.source_dir + self.exclude)
-      (included_files - excluded_files).each { |f| files << Pathname.new(f) }
-      files.reject!{ |pathname| pathname.directory? }
-      files.map!{ |pathname|
-        MultiSync::LocalResource.new(
+      (included_files - excluded_files).each { |path|
+        pathname = Pathname.new(path)
+        next if pathname.directory?
+        files << MultiSync::LocalResource.new(
           :with_root => pathname,
           :without_root => pathname.relative_path_from(self.source_dir).cleanpath
         )

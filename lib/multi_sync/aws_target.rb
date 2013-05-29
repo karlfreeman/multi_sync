@@ -1,4 +1,3 @@
-
 require "fog"
 require "pathname"
 require "multi_sync/target"
@@ -14,7 +13,7 @@ module MultiSync
     # @param options [Hash]
     def initialize(options = {})
       super(options)
-      self.connection = ConnectionPool.new(:size => 5, :timeout => 5) { 
+      self.connection = ConnectionPool.new(:size => Parallel.processor_count, :timeout => 5) { 
         Fog::Storage.new(self.credentials.merge(:provider => :aws))
       }
     end
@@ -24,22 +23,23 @@ module MultiSync
       files = []
 
       self.connection.with do |connection|
-        connection.directories.get(self.target_dir.to_s, :prefix => self.destination_dir.to_s).files.each do |f|
-          files << Pathname.new(f.key)
-        end
+
+        connection.directories.get(self.target_dir.to_s, :prefix => self.destination_dir.to_s).files.each { |f|
+
+          pathname = Pathname.new(f.key)
+
+          # directory || overreaching AWS globbing
+          next if (pathname.to_s =~ /\/$/) || !(pathname.to_s =~ /^#{self.destination_dir.to_s}\//)
+
+          files << MultiSync::RemoteResource.new(
+            :with_root => self.target_dir + pathname,
+            :without_root => (self.destination_dir != "") ? pathname.relative_path_from(self.destination_dir).cleanpath : pathname,
+            :fog_file => f
+          )
+
+        }
+
       end
-
-      files.reject!{ |pathname|
-        (pathname.to_s =~ /\/$/) || # directory
-        !(pathname.to_s =~ /^#{self.destination_dir.to_s}\//) # overreaching AWS globbing
-      }
-
-      files.map!{ |pathname|
-        MultiSync::RemoteResource.new(
-          :with_root => self.target_dir + pathname,
-          :without_root => (self.destination_dir != "") ? pathname.relative_path_from(self.destination_dir).cleanpath : pathname
-        )
-      }
 
       return files
     end
