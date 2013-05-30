@@ -46,12 +46,13 @@ module MultiSync
     end
 
     #
-    def put(resource)
+    def upload(resource)
 
       self.connection.with do |connection|
+        MultiSync.log "Upload #{resource.class.to_s.split('::').last}:'#{resource.path_without_root.to_s}' to #{self.class.to_s.split('::').last}:'/#{(self.target_dir + self.destination_dir).to_s}'"
         connection.directories.get(self.target_dir.to_s).files.create(
           :key => (self.destination_dir + resource.path_without_root).to_s,
-          :body => "Hello World!"
+          :body => resource.body
         )
       end
 
@@ -61,6 +62,7 @@ module MultiSync
     def delete(resource)
 
       self.connection.with do |connection|
+        MultiSync.log "Delete #{resource.class.to_s.split('::').last}:'#{resource.path_without_root.to_s}' from #{self.class.to_s.split('::').last}:'/#{(self.target_dir + self.destination_dir).to_s}'"
         connection.delete_object(self.target_dir.to_s, (self.destination_dir + resource.path_without_root).to_s)
       end
 

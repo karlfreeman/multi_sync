@@ -30,6 +30,10 @@ module MultiSync
       determine_status
     end
 
+    def body
+      File.read(self.path_with_root)
+    end
+
     private
 
     def determine_status

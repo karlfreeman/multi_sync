@@ -101,8 +101,8 @@ describe MultiSync::Client, fakefs: true do
         connection = Fog::Storage.new(
           :provider => :aws,
           :region => "us-east-1",
-          :aws_access_key_id => "xxx",
-          :aws_secret_access_key => "xxx"
+          :aws_access_key_id => "AKIAI263OMKGV6YDWWAQ",
+          :aws_secret_access_key => "6oL/CygBvmuonZFL1+41SssFWf6QE1EI+xFg/ECB",
         )
 
         directory = connection.directories.create(
@@ -139,8 +139,8 @@ describe MultiSync::Client, fakefs: true do
           :destination_dir => "simple-with-outdated-file",
           :credentials => {
             :region => "us-east-1",
-            :aws_access_key_id => "xxx",
-            :aws_secret_access_key => "xxx"
+            :aws_access_key_id => "AKIAI263OMKGV6YDWWAQ",
+            :aws_secret_access_key => "6oL/CygBvmuonZFL1+41SssFWf6QE1EI+xFg/ECB",
           }
         )
 
@@ -149,8 +149,8 @@ describe MultiSync::Client, fakefs: true do
           :destination_dir => "simple-with-abandoned-file",
           :credentials => {
             :region => "us-east-1",
-            :aws_access_key_id => "xxx",
-            :aws_secret_access_key => "xxx"
+            :aws_access_key_id => "AKIAI263OMKGV6YDWWAQ",
+            :aws_secret_access_key => "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",
           }
         )
 
