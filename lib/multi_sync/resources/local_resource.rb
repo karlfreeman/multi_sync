@@ -9,8 +9,6 @@ module MultiSync
 
     state_machine :state, :initial => :unknown do
 
-      after_transition :on => :remove, :do => :remove_file
-
       state :unknown do
       end
 
@@ -18,13 +16,6 @@ module MultiSync
       end
 
       state :unavailable do
-      end
-
-      state :removed do
-      end
-
-      event :remove do
-        transition :available => :removed
       end
 
     end
@@ -40,10 +31,6 @@ module MultiSync
     end
 
     private
-
-    def remove_file
-      self.path_with_root.delete
-    end
 
     def determine_status
       self.state = self.path_with_root.exist? ? "available" : "unavailable"

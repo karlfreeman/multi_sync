@@ -45,13 +45,23 @@ module MultiSync
       return files
     end
 
-    def sync(resource)
+    #
+    def put(resource)
 
       self.connection.with do |connection|
         connection.directories.get(self.destination_dir.to_s).files.create(
           :key => resource.path_without_root.to_s,
-          :body => 'Hello World!'
+          :body => "Hello World!"
         )
+      end
+
+    end
+
+    #
+    def delete(resource)
+
+      self.connection.with do |connection|
+        connection.directories.get(self.destination_dir.to_s).files.get(resource.path_without_root.to_s).destroy
       end
 
     end

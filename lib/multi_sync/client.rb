@@ -26,12 +26,12 @@ module MultiSync
 
           # abandoned files
           (target.files - source.files).each do | file |
-            file.remove!
+            target.delete(file)
           end
 
           # outdated files
           (source.files - target.files).each do | file |
-            target.sync(file)
+            target.put(file)
           end
 
         end
