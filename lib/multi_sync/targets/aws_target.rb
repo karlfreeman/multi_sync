@@ -1,4 +1,5 @@
 require "fog"
+require "lazily"
 require "pathname"
 require "connection_pool"
 require "multi_sync/target"
@@ -14,7 +15,7 @@ module MultiSync
     # @param options [Hash]
     def initialize(options = {})
       super(options)
-      self.connection = ConnectionPool.new(:size => 1, :timeout => 5) { 
+      self.connection = ConnectionPool.new(:size => MultiSync.concurrency, :timeout => 5) { 
         Fog::Storage.new(self.credentials.merge(:provider => :aws))
       }
     end
@@ -25,7 +26,10 @@ module MultiSync
 
       self.connection.with do |connection|
 
-        connection.directories.get(self.target_dir.to_s, :prefix => self.destination_dir.to_s).files.each { |file|
+        directory = connection.directories.get(self.target_dir.to_s, :prefix => self.destination_dir.to_s)
+        next if directory.nil?
+
+        directory.files.lazily.each { |file|
 
           pathname = Pathname.new(file.key)
 
@@ -50,7 +54,9 @@ module MultiSync
 
       self.connection.with do |connection|
         MultiSync.log "Upload #{resource.class.to_s.split('::').last}:'#{resource.path_without_root.to_s}' to #{self.class.to_s.split('::').last}:'/#{(self.target_dir + self.destination_dir).to_s}'"
-        connection.directories.get(self.target_dir.to_s).files.create(
+        directory = connection.directories.get(self.target_dir.to_s)
+        next if directory.nil?
+        directory.files.create(
           :key => (self.destination_dir + resource.path_without_root).to_s,
           :body => resource.body
         )

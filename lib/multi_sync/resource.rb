@@ -1,11 +1,16 @@
-require "pathname"
-
 module MultiSync
 
   # Defines constants and methods related to the Resource
   class Resource
 
-    attr_accessor :path_with_root, :path_without_root
+    # An array of valid keys in the options hash when configuring a Resource
+    VALID_OPTIONS_KEYS = [
+      :path_with_root,
+      :path_without_root
+    ].freeze
+
+    # Bang open the valid options
+    attr_accessor(*VALID_OPTIONS_KEYS)
 
     def hash
       self.path_without_root.hash

@@ -1,16 +1,13 @@
-# module MultiSync
+module MultiSync
 
-#   module Extensions
+  module Extensions
 
-#     class Engine < Rails::Engine
-#       engine_name "multi_sync"
+    class Rails
 
-#       rake_tasks do
-#         load File.join(File.dirname(__FILE__), "..", "..", "..", "tasks/multi_sync.rake")
-#       end
+      MultiSync.log "Rails auto-detected"
 
-#     end
+    end
 
-#   end
+  end
 
-# end
+end

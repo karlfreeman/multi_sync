@@ -1,23 +1,9 @@
 require "forwardable"
 require "log_switch"
-require "multi_sync/cli"
 require "multi_sync/client"
 require "multi_sync/version"
 require "multi_sync/environment"
 require "multi_sync/configuration"
-
-# REQUIREMENT_MAP = [
-#   ["rails", "multi_sync/extensions/rails"]
-# ]
-
-# REQUIREMENT_MAP.each do |(library, extension)|
-#   begin
-#     require library
-#     require extension
-#   rescue ::LoadError
-#     next
-#   end
-# end
 
 module MultiSync
   extend SingleForwardable
@@ -29,6 +15,22 @@ module MultiSync
 
   # delegate all VALID_OPTIONS_KEYS setters to the configuration ( hacky I know... )
   def_delegators :configuration, *(MultiSync::Configuration::VALID_OPTIONS_KEYS.dup.collect! do |key| "#{key}=".to_sym; end)
+
+  # try to determine automagically compatible frameworks
+  REQUIREMENT_MAP = [
+    ["rails", "multi_sync/extensions/rails"],
+    ["middleman-core", "multi_sync/extensions/middleman"]
+  ].freeze
+
+  # by rescuing from a LoadError we can sniff out gems in use
+  REQUIREMENT_MAP.each do |(library, extension)|
+    begin
+      require library
+      require extension
+    rescue ::LoadError
+      next
+    end
+  end
 
   # Configures a new Client object
   #

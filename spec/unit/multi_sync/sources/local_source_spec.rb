@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe MultiSync::Source, fakefs: true do
+describe MultiSync::LocalSource, fakefs: true do
 
   before do
     FileUtils.mkdir_p("/tmp/source")
@@ -14,13 +14,13 @@ describe MultiSync::Source, fakefs: true do
 
   #   describe "without a source_dir" do
   #     it "raises an ArgumentError" do
-  #       expect{ MultiSync::Source.new }.to raise_error(ArgumentError, /source_dir must be a directory/)
+  #       expect{ MultiSync::LocalSource.new }.to raise_error(ArgumentError, /source_dir must be a directory/)
   #     end
   #   end
 
   #   describe "with a file as source_dir" do
   #     it "raises an ArgumentError" do
-  #       expect{ MultiSync::Source.new(:source_dir => "/tmp/source" + "foo.txt") }.to raise_error(ArgumentError, /source_dir must be a directory/)
+  #       expect{ MultiSync::LocalSource.new(:source_dir => "/tmp/source" + "foo.txt") }.to raise_error(ArgumentError, /source_dir must be a directory/)
   #     end
   #   end
 
@@ -29,34 +29,34 @@ describe MultiSync::Source, fakefs: true do
   describe :files do
 
     it "should find files" do
-      source = MultiSync::Source.new(:source_dir => "/tmp/source")
+      source = MultiSync::LocalSource.new(:source_dir => "/tmp/source")
       expect(source.files).to have(3).files
     end
 
     it "should ignore found files" do
-      source = MultiSync::Source.new(:source_dir => "/tmp/source", :include => "**/*", :exclude => "*/*.html")
+      source = MultiSync::LocalSource.new(:source_dir => "/tmp/source", :include => "**/*", :exclude => "*/*.html")
       expect(source.files).to have(2).files
     end
 
     it "should find files (recursively)" do
-      source = MultiSync::Source.new(:source_dir => "/tmp/source", :include => "**/*")
+      source = MultiSync::LocalSource.new(:source_dir => "/tmp/source", :include => "**/*")
       expect(source.files).to have(3).files
     end
 
     it "should find files (by type)" do
-      source = MultiSync::Source.new(:source_dir => "/tmp/source", :include => "*.txt")
+      source = MultiSync::LocalSource.new(:source_dir => "/tmp/source", :include => "*.txt")
       expect(source.files).to have(2).files
     end
 
     it "should find files (by directory)" do
-      source = MultiSync::Source.new(:source_dir => "/tmp/source", :include => "in-a-dir/*")
+      source = MultiSync::LocalSource.new(:source_dir => "/tmp/source", :include => "in-a-dir/*")
       expect(source.files).to have(1).files
     end
 
     context :with_root do
 
       it "should return files with the root" do
-        source = MultiSync::Source.new(:source_dir => "/tmp/source")
+        source = MultiSync::LocalSource.new(:source_dir => "/tmp/source")
         expect(source.files[0].path_with_root.to_s).to eq "/tmp/source/bar.txt"
       end
 
@@ -65,7 +65,7 @@ describe MultiSync::Source, fakefs: true do
     context :without_root do
 
       it "should return files without the root" do
-        source = MultiSync::Source.new(:source_dir => "/tmp/source")
+        source = MultiSync::LocalSource.new(:source_dir => "/tmp/source")
         expect(source.files[0].path_without_root.to_s).to eq "bar.txt"
       end
 

@@ -14,27 +14,22 @@ describe MultiSync::Client, fakefs: true do
 
     FileUtils.cp_r("/tmp/simple", "/tmp/simple-with-abandoned-file")
     File.open("/tmp/simple-with-abandoned-file/baz.txt", "w") do |f| f.write("baz") end
+
+    FileUtils.mkdir_p("/tmp/complex")
+    50.times do
+      File.open("/tmp/complex/#{SecureRandom.urlsafe_base64}.txt", "w") do |f| f.write(SecureRandom.random_bytes) end
+    end
+
+    FileUtils.mkdir_p("/tmp/complex-empty")
+
   end
-
-  # context :targets do
-
-  #   it "should allow for targets to be added ( uniquely )" do
-  #     client = MultiSync::Client.new
-  #     expect{client.targets << MultiSync::Target.new}.to change{client.targets.length}.from(0).to(1)
-  #     uniq_target = MultiSync::Target.new
-  #     expect{client.targets << uniq_target}.to change{client.targets.length}.from(1).to(2)
-  #     expect{client.targets << uniq_target}.to change{client.targets.length}.by(0)
-  #     expect(client.targets).to include(uniq_target)
-  #   end
-
-  # end
 
   # context :sources do
 
   #   it "should allow for sources to be added ( uniquely )" do
   #     client = MultiSync::Client.new
-  #     expect{client.sources << MultiSync::Source.new}.to change{client.sources.length}.from(0).to(1)
-  #     uniq_source = MultiSync::Source.new
+  #     expect{client.sources << MultiSync::LocalSource.new}.to change{client.sources.length}.from(0).to(1)
+  #     uniq_source = MultiSync::LocalSource.new
   #     expect{client.sources << uniq_source}.to change{client.sources.length}.from(1).to(2)
   #     expect{client.sources << uniq_source}.to change{client.sources.length}.by(0)
   #     expect(client.sources).to include(uniq_source)
@@ -46,7 +41,7 @@ describe MultiSync::Client, fakefs: true do
 
     context :local do
 
-      it "should work" do
+      it "should work with simple" do
 
         client = MultiSync::Client.new
 
@@ -69,17 +64,13 @@ describe MultiSync::Client, fakefs: true do
         expect(outdated_files_target).to have(2).files
         expect(abandoned_files_target).to have(4).files
 
-        source = MultiSync::Source.new(
+        source = MultiSync::LocalSource.new(
           :source_dir => "/tmp/simple",
           :targets => [outdated_files_target, abandoned_files_target]
         )
 
         expect(source).to have(3).files
         expect(source).to have(2).targets
-
-        client.targets << outdated_files_target
-        client.targets << abandoned_files_target
-        expect(client).to have(2).targets
 
         client.sources << source
         expect(client).to have(1).sources
@@ -88,6 +79,37 @@ describe MultiSync::Client, fakefs: true do
 
         expect(outdated_files_target).to have(3).files
         expect(abandoned_files_target).to have(3).files
+
+      end
+
+      it "should work with complex" do
+
+        client = MultiSync::Client.new
+
+        complex_empty_files_target = MultiSync::LocalTarget.new(
+          :target_dir => "/tmp",
+          :destination_dir => "complex-empty",
+          :credentials => {
+            :local_root => "/tmp"
+          }
+        )
+
+        expect(complex_empty_files_target).to have(0).files
+
+        source = MultiSync::LocalSource.new(
+          :source_dir => "/tmp/complex",
+          :targets => [complex_empty_files_target]
+        )
+
+        expect(source).to have(50).files
+        expect(source).to have(1).targets
+
+        client.sources << source
+        expect(client).to have(1).sources
+
+        client.sync
+
+        expect(complex_empty_files_target).to have(50).files
 
       end
 
@@ -130,10 +152,6 @@ describe MultiSync::Client, fakefs: true do
 
         client = MultiSync::Client.new
 
-        source = MultiSync::Source.new(
-          :source_dir => "/tmp/simple"
-        )
-
         outdated_files_target = MultiSync::AWSTarget.new(
           :target_dir => "multi_sync",
           :destination_dir => "simple-with-outdated-file",
@@ -157,17 +175,13 @@ describe MultiSync::Client, fakefs: true do
         expect(outdated_files_target).to have(2).files
         expect(abandoned_files_target).to have(4).files
 
-        source = MultiSync::Source.new(
+        source = MultiSync::LocalSource.new(
           :source_dir => "/tmp/simple",
           :targets => [outdated_files_target, abandoned_files_target]
         )
 
         expect(source).to have(3).files
         expect(source).to have(2).targets
-
-        client.targets << outdated_files_target
-        client.targets << abandoned_files_target
-        expect(client).to have(2).targets
 
         client.sources << source
         expect(client).to have(1).sources

@@ -5,7 +5,7 @@ module MultiSync
   # Defines constants and methods related to the Target
   class Target
 
-    # An array of valid keys in the options hash when configuring a `MultiSync::Target`
+    # An array of valid keys in the options hash when configuring a Target
     VALID_OPTIONS_KEYS = [
       :target_dir,
       :destination_dir,

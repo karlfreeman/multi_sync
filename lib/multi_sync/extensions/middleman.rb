@@ -1,11 +1,13 @@
-# module MultiSync
+module MultiSync
 
-#   module Extensions
+  module Extensions
 
-#     class Middleman
+    class Middleman
 
-#     end
+      MultiSync.log "Middleman auto-detected"
 
-#   end
+    end
 
-# end
+  end
+
+end

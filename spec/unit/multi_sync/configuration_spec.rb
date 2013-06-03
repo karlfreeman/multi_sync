@@ -16,7 +16,59 @@ describe MultiSync::Configuration, fakefs: true do
 
   let(:configuration) { MultiSync::Configuration.new }
 
-  context :fog do
+  context :parallelism do
+
+    context :defaults do
+
+      describe :size do
+        subject { configuration.parallelism }
+        it { should > 1 }
+      end
+
+    end
+
+    context :custom do
+
+      before do
+        configuration.parallelism = 1
+      end
+
+      describe :size do
+        subject { configuration.parallelism }
+        it { should eq 1 }
+      end
+
+    end
+
+  end
+
+  context :concurrency do
+
+    context :defaults do
+
+      describe :size do
+        subject { configuration.concurrency }
+        it { should eq 1 }
+      end
+
+    end
+
+    context :custom do
+
+      before do
+        configuration.concurrency = 1
+      end
+
+      describe :size do
+        subject { configuration.concurrency }
+        it { should eq 1 }
+      end
+
+    end
+
+  end
+
+  context :credentials do
 
     before do
       Fog.instance_variable_set('@credential_path', nil) # kill fog memoization
@@ -36,7 +88,7 @@ describe MultiSync::Configuration, fakefs: true do
         ENV["FOG_CREDENTIAL"] = "default"
       end
 
-      describe "credentials" do
+      describe :credentials do
         subject { configuration.credentials }
         it { should be_empty }
       end
@@ -50,7 +102,7 @@ describe MultiSync::Configuration, fakefs: true do
         ENV["FOG_CREDENTIAL"] = "default"
       end
 
-      describe "credentials" do
+      describe :credentials do
         subject { configuration.credentials }
         its([:aws_access_key_id]) { should eq "AWS_ACCESS_KEY_ID_DEFAULT" }
         its([:aws_secret_access_key]) { should eq "AWS_SECRET_ACCESS_KEY_DEFAULT" }
@@ -65,7 +117,7 @@ describe MultiSync::Configuration, fakefs: true do
         ENV["FOG_CREDENTIAL"] = "alt"
       end
 
-      describe "credentials" do
+      describe :credentials do
         subject { configuration.credentials }
         its([:aws_access_key_id]) { should eq "AWS_ACCESS_KEY_ID_ALT" }
         its([:aws_secret_access_key]) { should eq "AWS_SECRET_ACCESS_KEY_ALT" }

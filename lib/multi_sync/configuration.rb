@@ -1,5 +1,5 @@
 require "fog"
-
+require "celluloid"
 module MultiSync
 
   # Defines constants and methods related to the Configuration
@@ -7,12 +7,16 @@ module MultiSync
 
     # An array of valid keys in the options hash when configuring a `MultiSync::Configuration`
     VALID_OPTIONS_KEYS = [
-      :verbose
+      :verbose,
+      :parallelism,
+      :concurrency
     ].freeze
 
     # A hash of valid options and their default values
     DEFAULT_OPTIONS = {
-      :verbose => false
+      :verbose => false,
+      :parallelism => Celluloid.cores,
+      :concurrency => 1
     }.freeze
 
     # Bang open the valid options

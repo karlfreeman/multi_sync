@@ -1,4 +1,5 @@
 require "fog"
+require "lazily"
 require "pathname"
 require "connection_pool"
 require "multi_sync/target"
@@ -14,7 +15,7 @@ module MultiSync
     # @param options [Hash]
     def initialize(options = {})
       super(options)
-      self.connection = ConnectionPool.new(:size => 1, :timeout => 5) { 
+      self.connection = ConnectionPool.new(:size => MultiSync.concurrency, :timeout => 5) { 
         Fog::Storage.new(self.credentials.merge(:provider => :local))
       }
     end
@@ -25,12 +26,17 @@ module MultiSync
 
       self.connection.with do |connection|
 
-        connection.directories.get(self.destination_dir.to_s).files.each { |file|
+        directory = connection.directories.get(self.destination_dir.to_s)
+        next if directory.nil?
+
+        directory.files.lazily.each { |file|
 
           pathname = Pathname.new(file.key)
 
           # directory
           next if pathname.directory?
+
+          MultiSync.log "Found RemoteResource:'#{pathname.to_s}' from #{self.class.to_s.split('::').last}:'#{(Pathname.new(connection.local_root) + self.destination_dir).to_s}'"
 
           files << MultiSync::RemoteResource.new(
             :with_root => self.target_dir + self.destination_dir + pathname,
@@ -51,7 +57,9 @@ module MultiSync
       self.connection.with do |connection|
         key = resource.path_without_root.to_s
         MultiSync.log "Upload #{resource.class.to_s.split('::').last}:'#{key}' to #{self.class.to_s.split('::').last}:'#{(Pathname.new(connection.local_root) + self.destination_dir).to_s}'"
-        connection.directories.get(self.destination_dir.to_s).files.create(
+        directory = connection.directories.get(self.destination_dir.to_s)
+        next if directory.nil?
+        directory.files.create(
           :key => key,
           :body => resource.body
         )
