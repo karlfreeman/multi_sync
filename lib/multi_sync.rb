@@ -17,23 +17,23 @@ module MultiSync
   def_delegators :configuration, *(MultiSync::Configuration::VALID_OPTIONS_KEYS.dup.collect!{ |key| "#{key}=".to_sym })
 
   # more delegation
-  def_delegators :client, :target, :source, :synchronize
+  def_delegators :client, :target, :source, :synchronize, :sources
 
   # a list of libraries and thier extension file
-  REQUIREMENT_MAP = [
-    ["rails", "multi_sync/extensions/rails"],
-    ["middleman-core", "multi_sync/extensions/middleman"]
-  ].freeze
+  # REQUIREMENT_MAP = [
+  #   ["rails", "multi_sync/extensions/rails"],
+  #   ["middleman-core", "multi_sync/extensions/middleman"]
+  # ].freeze
 
   # by rescuing from a LoadError we can sniff out gems in use and try to automagically hook into them
-  REQUIREMENT_MAP.each do |(library, extension)|
-    begin
-      require library
-      require extension
-    rescue ::LoadError
-      next
-    end
-  end
+  # REQUIREMENT_MAP.each do |(library, extension)|
+  #   begin
+  #     require library
+  #     require extension
+  #   rescue ::LoadError
+  #     next
+  #   end
+  # end
 
   # Configuration
   #
@@ -43,10 +43,10 @@ module MultiSync
     self
   end
 
-  # Synchronize
+  # Run
   #
   # @return [MultiSync]
-  def self.sync(&block)
+  def self.run(&block)
     self.configure(&block).synchronize
   end
 

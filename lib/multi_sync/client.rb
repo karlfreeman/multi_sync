@@ -1,4 +1,6 @@
+require "set"
 require "lazily"
+require "celluloid"
 require "multi_sync/sources/local_source"
 require "multi_sync/targets/aws_target"
 require "multi_sync/targets/local_target"
@@ -8,37 +10,110 @@ module MultiSync
   # Defines constants and methods related to the Client
   class Client
 
-    # An array of valid keys in the options hash when configuring a Client
-    VALID_OPTIONS_KEYS = [
-      :sources
-    ].freeze
-
-    # Bang open the valid options
-    attr_accessor(*VALID_OPTIONS_KEYS)
+    attr_accessor :incomplete_jobs, :running_jobs, :complete_jobs, :sources
+    attr_accessor :sync_attempts, :file_sync_attempts
+    attr_accessor :started_at, :finished_at
+    attr_accessor :supervisor
 
     # Initialize a new Client object
     #
     # @param options [Hash]
     def initialize(options = {})
-      self.sources ||= []
+      self.incomplete_jobs = Set.new
+      self.running_jobs = Set.new
+      self.complete_jobs = Set.new
+      self.sources = []
+      self.sync_attempts = 0
+      self.file_sync_attempts = 0
+      self.supervisor = Celluloid::SupervisionGroup.run!
     end
 
     #
-    def sync
+    def add_target(type, name, options={})
+      begin
+        clazz = MultiSync.const_get("#{type.capitalize.to_s}Target")
+      rescue NameError
+        MultiSync.error "Unknown target type: #{type}"
+      end
+      self.supervisor.pool(clazz, :as => name, :args => [options], :size => MultiSync.parallelism)
+      puts self.supervisor.actors
+    end
+    alias_method :target, :add_target
 
-      work = []
+    #
+    def add_source(type, name, opts={})
+      begin
+        clazz = MultiSync.const_get("#{type.capitalize.to_s}Source")
+      rescue NameError
+        MultiSync.error "Unknown source type: #{type}"
+      end
+      self.sources << clazz.new(opts)
+    end
+    alias_method :source, :add_source
 
-      self.sources.each do | source |
+    #
+    def synchronize
 
+      determine_sync if first_run?
+      sync_attempted
+
+      MultiSync.log "*"
+      self.incomplete_jobs.delete_if do | job |
+        self.running_jobs << { :id => job[:id], :future => Celluloid::Actor[job[:target_id]].future.send(job[:method], job[:args]) }
+      end
+      
+      MultiSync.log "**"
+      self.running_jobs.delete_if do | job |
+        begin
+          completed_job = { :id => job[:id], :response => job[:future].value }
+        rescue
+          self.file_sync_attempts = self.file_sync_attempts + 1
+          false
+        else
+          self.complete_jobs << completed_job
+          true
+        end
+      end
+
+      finish_sync
+      finalize
+
+    end
+    alias_method :sync, :synchronize
+
+    #
+    def finalize
+
+      if self.finished_at
+        MultiSync.log "Sync completed in #{(self.finished_at - self.started_at).to_i} seconds"
+        MultiSync.log "#{self.complete_jobs.length} file(s) have been synchronised from #{self.sources.length} source(s) to #{self.supervisor.actors.length} target(s)"
+        MultiSync.log "#{self.file_sync_attempts} failed request(s) were detected and re-tried"
+      else
+        MultiSync.log "Sync failed to complete with #{self.incomplete_jobs.length} outstanding file(s) to be synchronised"
+        MultiSync.log "#{self.complete_jobs.length} file(s) were synchronised from #{self.sources.length} source(s) to #{self.supervisor.actors.length} target(s)"
+      end
+
+      self.supervisor.finalize
+      
+    end
+
+    private
+
+    #
+    def determine_sync
+
+      self.sources.lazily.each do |source|
+        
         MultiSync.log "Synchronizing: '#{source.source_dir}'"
-
+        
         source_files = source.files
 
-        source.targets.each do | target |
+        source.targets.lazily.each do | target_id |
 
           MultiSync.log "#{source_files.length} file(s) found from the source"
 
-          target_files = target.files
+          MultiSync.log "Determining target files..."
+          target_files = Celluloid::Actor[target_id].files
           MultiSync.log "#{target_files.length} file(s) found from the target"
 
           outdated_files = (source_files - target_files)
@@ -48,23 +123,36 @@ module MultiSync
           MultiSync.log "#{abandoned_files.length} of the file(s) are abandoned"
 
           # abandoned files
-          abandoned_files.each do | file |
-            work << { :object => target, :method => :delete, :args => file }  
+          abandoned_files.lazily.each do | file |
+            self.incomplete_jobs << { :id => SecureRandom.uuid, :target_id => target_id, :method => :delete, :args => file }
           end
 
           # outdated files
-          outdated_files.each do | file |
-            work << { :object => target, :method => :upload, :args => file }  
+          outdated_files.lazily.each do | file |
+            self.incomplete_jobs << { :id => SecureRandom.uuid, :target_id => target_id, :method => :upload, :args => file }
           end
 
         end
 
       end
 
-      work.each do | job |
-        job[:object].send(job[:method], job[:args])
-      end
+    end
 
+    #
+    def sync_attempted
+      self.started_at = Time.now if first_run?
+      self.sync_attempts = self.sync_attempts + 1
+      raise ArgumentError if self.sync_attempts > 10
+    end
+
+    #
+    def finish_sync
+      (self.incomplete_jobs.length != 0) ? self.synchronize : self.finished_at = Time.now
+    end
+
+    #
+    def first_run?
+      self.sync_attempts == 0
     end
 
   end

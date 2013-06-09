@@ -3,6 +3,7 @@ require "spec_helper"
 describe MultiSync::Client, fakefs: true do
 
   before do
+
     FileUtils.mkdir_p("/tmp/simple")
     File.open("/tmp/simple/foo.txt", "w") do |f| f.write("foo") end
     File.open("/tmp/simple/bar.txt", "w") do |f| f.write("bar") end
@@ -152,7 +153,7 @@ describe MultiSync::Client, fakefs: true do
 
         client = MultiSync::Client.new
 
-        outdated_files_target = MultiSync::AWSTarget.new(
+        outdated_files_target = MultiSync::AwsTarget.new(
           :target_dir => "multi_sync",
           :destination_dir => "simple-with-outdated-file",
           :credentials => {
@@ -162,7 +163,7 @@ describe MultiSync::Client, fakefs: true do
           }
         )
 
-        abandoned_files_target = MultiSync::AWSTarget.new(
+        abandoned_files_target = MultiSync::AwsTarget.new(
           :target_dir => "multi_sync",
           :destination_dir => "simple-with-abandoned-file",
           :credentials => {

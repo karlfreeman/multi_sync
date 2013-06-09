@@ -1,9 +1,11 @@
+require "celluloid"
 require "pathname"
 
 module MultiSync
 
   # Defines constants and methods related to the Target
   class Target
+    include Celluloid
 
     # An array of valid keys in the options hash when configuring a Target
     VALID_OPTIONS_KEYS = [

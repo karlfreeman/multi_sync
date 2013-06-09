@@ -7,14 +7,14 @@ require "multi_sync/resources/remote_resource"
 
 module MultiSync
 
-  # Defines constants and methods related to the AWSTarget
-  class AWSTarget < Target
+  # Defines constants and methods related to the AwsTarget
+  class AwsTarget < Target
     
-    # Initialize a new AWSTarget object
+    # Initialize a new AwsTarget object
     #
     # @param options [Hash]
     def initialize(options = {})
-      super(options)
+      super(Marshal.load(Marshal.dump(options))) # deep clone options
       self.connection = ConnectionPool.new(:size => MultiSync.concurrency, :timeout => 5) { 
         Fog::Storage.new(self.credentials.merge(:provider => :aws))
       }

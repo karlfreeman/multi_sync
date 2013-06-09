@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe MultiSync::AWSTarget, fakefs: true do
+describe MultiSync::AwsTarget, fakefs: true do
 
   before do
     FileUtils.mkdir_p("/tmp/aws-target")
@@ -42,7 +42,7 @@ describe MultiSync::AWSTarget, fakefs: true do
     context :aws do
 
       let(:target) {
-        MultiSync::AWSTarget.new(
+        MultiSync::AwsTarget.new(
           :target_dir => "multi_sync",
           :destination_dir => "aws-target",
           :credentials => {

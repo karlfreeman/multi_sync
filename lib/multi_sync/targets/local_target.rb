@@ -14,7 +14,7 @@ module MultiSync
     #
     # @param options [Hash]
     def initialize(options = {})
-      super(options)
+      super(Marshal.load(Marshal.dump(options))) # deep clone options
       self.connection = ConnectionPool.new(:size => MultiSync.concurrency, :timeout => 5) { 
         Fog::Storage.new(self.credentials.merge(:provider => :local))
       }

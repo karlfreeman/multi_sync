@@ -13,7 +13,7 @@ require "support/simplecov"
 
 require "multi_sync"
 MultiSync.env = :test
-MultiSync.log = false
+# MultiSync.log = false
 
 #
 RSpec.configure do |config|
