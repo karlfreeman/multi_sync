@@ -6,6 +6,31 @@
 
 ```ruby
 require "multi_sync"
+
+MultiSync.configuration do |config|
+  config.target_pool_size = 8 # for each target how many threads would you like to use? (defaults to the current systems CPU count)
+  config.delete_abandoned_files = false # when an abondoned file is detected should we delete it? (defaults to false)
+end
+
+MultiSync.run do
+
+  target :aws, :www, {
+    :target_dir => "multi_sync",
+    :destination_dir => "aws-target",
+    :credentials => {
+      :region => "us-east-1",
+      :aws_access_key_id => "xxx",
+      :aws_secret_access_key => "xxx"
+    }
+  }
+
+  source :local, :build, {
+    :source_dir => "/build",
+    :targets => [ :www ] # must match each of the targets name's ( second paramater of target method )
+  }
+
+end
+
 ```
 
 ## Build & Dependency Status
