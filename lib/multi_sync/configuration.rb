@@ -8,15 +8,13 @@ module MultiSync
     # An array of valid keys in the options hash when configuring a `MultiSync::Configuration`
     VALID_OPTIONS_KEYS = [
       :verbose,
-      :parallelism,
-      :concurrency
+      :target_pool_size,
     ].freeze
 
     # A hash of valid options and their default values
     DEFAULT_OPTIONS = {
       :verbose => false,
-      :parallelism => Celluloid.cores,
-      :concurrency => 1
+      :target_pool_size => Celluloid.cores
     }.freeze
 
     # Bang open the valid options

@@ -44,39 +44,41 @@ describe MultiSync::Client, fakefs: true do
 
       it "should work with simple" do
 
-        client = MultiSync::Client.new
-
-        outdated_files_target = MultiSync::LocalTarget.new(
+        outdated_files_target_options = {
           :target_dir => "/tmp",
           :destination_dir => "simple-with-outdated-file",
           :credentials => {
             :local_root => "/tmp"
           }
-        )
+        }
 
-        abandoned_files_target = MultiSync::LocalTarget.new(
+        abandoned_files_target_options = {
           :target_dir => "/tmp",
           :destination_dir => "simple-with-abandoned-file",
           :credentials => {
             :local_root => "/tmp"
           }
-        )
+        }
+
+        local_source_options = {
+          :source_dir => "/tmp/simple"
+        }
+
+        outdated_files_target = MultiSync::LocalTarget.new(outdated_files_target_options)
+        abandoned_files_target = MultiSync::LocalTarget.new(abandoned_files_target_options)
 
         expect(outdated_files_target).to have(2).files
         expect(abandoned_files_target).to have(4).files
 
-        source = MultiSync::LocalSource.new(
-          :source_dir => "/tmp/simple",
-          :targets => [outdated_files_target, abandoned_files_target]
-        )
+        local_source = MultiSync::LocalSource.new(local_source_options)
 
-        expect(source).to have(3).files
-        expect(source).to have(2).targets
+        expect(local_source).to have(3).files
 
-        client.sources << source
-        expect(client).to have(1).sources
-
-        client.sync
+        MultiSync.run do
+           target :local, :outdated_files_target, outdated_files_target_options
+           target :local, :abandoned_files_target, abandoned_files_target_options
+           source :local, :simple, local_source_options.merge(:targets => [ :outdated_files_target, :abandoned_files_target ])
+         end
 
         expect(outdated_files_target).to have(3).files
         expect(abandoned_files_target).to have(3).files
@@ -85,32 +87,30 @@ describe MultiSync::Client, fakefs: true do
 
       it "should work with complex" do
 
-        client = MultiSync::Client.new
-
-        complex_empty_files_target = MultiSync::LocalTarget.new(
+        complex_empty_target_options = {
           :target_dir => "/tmp",
           :destination_dir => "complex-empty",
           :credentials => {
             :local_root => "/tmp"
           }
-        )
+        }
 
-        expect(complex_empty_files_target).to have(0).files
-
-        source = MultiSync::LocalSource.new(
+        local_source_options = {
           :source_dir => "/tmp/complex",
-          :targets => [complex_empty_files_target]
-        )
+        }
 
-        expect(source).to have(50).files
-        expect(source).to have(1).targets
+        complex_empty_target = MultiSync::LocalTarget.new(complex_empty_target_options)
+        expect(complex_empty_target).to have(0).files
 
-        client.sources << source
-        expect(client).to have(1).sources
+        local_source = MultiSync::LocalSource.new(local_source_options)
+        expect(local_source).to have(50).files
 
-        client.sync
+        MultiSync.run do
+           target :local, :complex_empty_target, complex_empty_target_options
+           source :local, :complex, local_source_options.merge(:targets => [ :complex_empty_target ])
+         end
 
-        expect(complex_empty_files_target).to have(50).files
+        expect(complex_empty_target).to have(50).files
 
       end
 
@@ -151,9 +151,7 @@ describe MultiSync::Client, fakefs: true do
 
       it "should work" do
 
-        client = MultiSync::Client.new
-
-        outdated_files_target = MultiSync::AwsTarget.new(
+        outdated_files_target_options = {
           :target_dir => "multi_sync",
           :destination_dir => "simple-with-outdated-file",
           :credentials => {
@@ -161,9 +159,9 @@ describe MultiSync::Client, fakefs: true do
             :aws_access_key_id => "AKIAI263OMKGV6YDWWAQ",
             :aws_secret_access_key => "6oL/CygBvmuonZFL1+41SssFWf6QE1EI+xFg/ECB",
           }
-        )
+        }
 
-        abandoned_files_target = MultiSync::AwsTarget.new(
+        abandoned_files_target_options = {
           :target_dir => "multi_sync",
           :destination_dir => "simple-with-abandoned-file",
           :credentials => {
@@ -171,23 +169,27 @@ describe MultiSync::Client, fakefs: true do
             :aws_access_key_id => "AKIAI263OMKGV6YDWWAQ",
             :aws_secret_access_key => "6oL/CygBvmuonZFL1+41SssFWf6QE1EI+xFg/ECB",
           }
-        )
+        }
+
+        local_source_options = {
+          :source_dir => "/tmp/simple"
+        }
+
+        outdated_files_target = MultiSync::AwsTarget.new(outdated_files_target_options)
+        abandoned_files_target = MultiSync::AwsTarget.new(abandoned_files_target_options)
 
         expect(outdated_files_target).to have(2).files
         expect(abandoned_files_target).to have(4).files
 
-        source = MultiSync::LocalSource.new(
-          :source_dir => "/tmp/simple",
-          :targets => [outdated_files_target, abandoned_files_target]
-        )
+        local_source = MultiSync::LocalSource.new(local_source_options)
 
-        expect(source).to have(3).files
-        expect(source).to have(2).targets
+        expect(local_source).to have(3).files
 
-        client.sources << source
-        expect(client).to have(1).sources
-
-        client.sync
+        MultiSync.run do
+           target :aws, :outdated_files_target, outdated_files_target_options
+           target :aws, :abandoned_files_target, abandoned_files_target_options
+           source :local, :simple, local_source_options.merge(:targets => [ :outdated_files_target, :abandoned_files_target ])
+         end
 
         expect(outdated_files_target).to have(3).files
         expect(abandoned_files_target).to have(3).files

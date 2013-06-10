@@ -35,8 +35,7 @@ module MultiSync
       rescue NameError
         MultiSync.error "Unknown target type: #{type}"
       end
-      self.supervisor.pool(clazz, :as => name, :args => [options], :size => MultiSync.parallelism)
-      puts self.supervisor.actors
+      self.supervisor.pool(clazz, :as => name, :args => [options], :size => MultiSync.target_pool_size)
     end
     alias_method :target, :add_target
 
@@ -57,12 +56,12 @@ module MultiSync
       determine_sync if first_run?
       sync_attempted
 
-      MultiSync.log "*"
+      MultiSync.log "Scheduling jobs..."
       self.incomplete_jobs.delete_if do | job |
         self.running_jobs << { :id => job[:id], :future => Celluloid::Actor[job[:target_id]].future.send(job[:method], job[:args]) }
       end
       
-      MultiSync.log "**"
+      MultiSync.log "Fetching complete jobs..."
       self.running_jobs.delete_if do | job |
         begin
           completed_job = { :id => job[:id], :response => job[:future].value }
@@ -112,7 +111,7 @@ module MultiSync
 
           MultiSync.log "#{source_files.length} file(s) found from the source"
 
-          MultiSync.log "Determining target files..."
+          MultiSync.log "Determining file(s) from the target..."
           target_files = Celluloid::Actor[target_id].files
           MultiSync.log "#{target_files.length} file(s) found from the target"
 

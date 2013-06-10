@@ -1,5 +1,5 @@
-require "celluloid"
 require "pathname"
+require "celluloid"
 
 module MultiSync
 

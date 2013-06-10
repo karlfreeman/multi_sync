@@ -16,12 +16,12 @@ describe MultiSync::Configuration, fakefs: true do
 
   let(:configuration) { MultiSync::Configuration.new }
 
-  context :parallelism do
+  context :target_pool_size do
 
     context :defaults do
 
       describe :size do
-        subject { configuration.parallelism }
+        subject { configuration.target_pool_size }
         it { should > 1 }
       end
 
@@ -30,38 +30,12 @@ describe MultiSync::Configuration, fakefs: true do
     context :custom do
 
       before do
-        configuration.parallelism = 1
+        configuration.target_pool_size = 3
       end
 
       describe :size do
-        subject { configuration.parallelism }
-        it { should eq 1 }
-      end
-
-    end
-
-  end
-
-  context :concurrency do
-
-    context :defaults do
-
-      describe :size do
-        subject { configuration.concurrency }
-        it { should eq 1 }
-      end
-
-    end
-
-    context :custom do
-
-      before do
-        configuration.concurrency = 1
-      end
-
-      describe :size do
-        subject { configuration.concurrency }
-        it { should eq 1 }
+        subject { configuration.target_pool_size }
+        it { should eq 3 }
       end
 
     end

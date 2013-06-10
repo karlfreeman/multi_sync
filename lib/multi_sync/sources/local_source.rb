@@ -20,11 +20,12 @@ module MultiSync
     #
     # @param options [Hash]
     def initialize(options = {})
+      cloned_options = Marshal.load(Marshal.dump(options)) # deep clone options
       # raise(ArgumentError, "source_dir must be a directory") unless options[:source_dir] && File.directory?(options[:source_dir])
-      self.source_dir = options.delete(:source_dir) { "" }
+      self.source_dir = cloned_options.delete(:source_dir) { "" }
       self.source_dir << "/" unless (self.source_dir[-1, 1] == "/") # append '/' to source_dir's without one
       self.source_dir = Pathname.new(self.source_dir)
-      super(options)
+      super(cloned_options)
     end
 
     #
