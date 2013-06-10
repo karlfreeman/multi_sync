@@ -1,3 +1,4 @@
+require "virtus"
 require "pathname"
 require "celluloid"
 
@@ -5,18 +6,13 @@ module MultiSync
 
   # Defines constants and methods related to the Target
   class Target
+    include Virtus
     include Celluloid
 
-    # An array of valid keys in the options hash when configuring a Target
-    VALID_OPTIONS_KEYS = [
-      :target_dir,
-      :destination_dir,
-      :credentials,
-      :connection
-    ].freeze
-
-    # Bang open the valid options
-    attr_accessor(*VALID_OPTIONS_KEYS)
+    attr_accessor :connection
+    attribute :target_dir, Pathname
+    attribute :destination_dir, Pathname
+    attribute :credentials, Hash, :default => :default_credentials
     
     # Initialize a new Target object
     #
@@ -26,7 +22,11 @@ module MultiSync
       # raise(ArgumentError, "provider must be present and a symbol") unless options[:provider] && options[:provider].is_a?(Symbol)
       self.target_dir = Pathname.new(options.delete(:target_dir))
       self.destination_dir = Pathname.new(options.delete(:destination_dir))
-      self.credentials = options.delete(:credentials) { {} }
+      self.credentials.merge!(options.delete(:credentials){ Hash.new })
+    end
+
+    def default_credentials
+      Marshal.load(Marshal.dump(MultiSync.credentials))
     end
 
   end

@@ -1,4 +1,5 @@
 require "set"
+require "virtus"
 require "lazily"
 require "celluloid"
 require "multi_sync/sources/local_source"
@@ -9,22 +10,22 @@ module MultiSync
 
   # Defines constants and methods related to the Client
   class Client
+    include Virtus
 
-    attr_accessor :incomplete_jobs, :running_jobs, :complete_jobs, :sources
-    attr_accessor :sync_attempts, :file_sync_attempts
-    attr_accessor :started_at, :finished_at
     attr_accessor :supervisor
+    attribute :incomplete_jobs, Set, :default => Set.new
+    attribute :running_jobs, Set, :default => Set.new
+    attribute :complete_jobs, Set, :default => Set.new
+    attribute :sources, Array, :default => []
+    attribute :sync_attempts, Integer, :default => 0
+    attribute :file_sync_attempts, Integer, :default => 0
+    attribute :started_at, Time
+    attribute :finished_at, Time
 
     # Initialize a new Client object
     #
     # @param options [Hash]
     def initialize(options = {})
-      self.incomplete_jobs = Set.new
-      self.running_jobs = Set.new
-      self.complete_jobs = Set.new
-      self.sources = []
-      self.sync_attempts = 0
-      self.file_sync_attempts = 0
       self.supervisor = Celluloid::SupervisionGroup.run!
     end
 

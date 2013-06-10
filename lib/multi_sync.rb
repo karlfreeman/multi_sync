@@ -10,30 +10,23 @@ module MultiSync
   extend LogSwitch
   extend MultiSync::Environment
 
-  # delegate all VALID_OPTIONS_KEYS accessors to the configuration
-  def_delegators :configuration, *MultiSync::Configuration::VALID_OPTIONS_KEYS
-
-  # delegate all VALID_OPTIONS_KEYS setters to the configuration ( hacky I know... )
-  def_delegators :configuration, *(MultiSync::Configuration::VALID_OPTIONS_KEYS.dup.collect!{ |key| "#{key}=".to_sym })
-
-  # more delegation
-  def_delegators :client, :target, :source, :synchronize, :sources
-
   # a list of libraries and thier extension file
-  # REQUIREMENT_MAP = [
-  #   ["rails", "multi_sync/extensions/rails"],
-  #   ["middleman-core", "multi_sync/extensions/middleman"]
-  # ].freeze
+  REQUIREMENT_MAP = [
+    ["rails", "multi_sync/extensions/rails"],
+    ["middleman-core", "multi_sync/extensions/middleman"]
+  ].freeze
 
-  # by rescuing from a LoadError we can sniff out gems in use and try to automagically hook into them
-  # REQUIREMENT_MAP.each do |(library, extension)|
-  #   begin
-  #     require library
-  #     require extension
-  #   rescue ::LoadError
-  #     next
-  #   end
-  # end
+  # delegate all MultiSync::Configuration's attribute accessors to the configuration
+  def_delegators :configuration, *MultiSync::Configuration.attribute_set.map(&:name)
+
+  # delegate all MultiSync::Configuration's attribute setters to the configuration ( hacky I know... )
+  def_delegators :configuration, *(MultiSync::Configuration.attribute_set.map(&:name).map{ |key| "#{key}=".to_sym })
+
+  # delegate all MultiSync::Client's attribute accessors to the configuration
+  def_delegators :client, *MultiSync::Client.attribute_set.map(&:name)
+
+  # include some public methods
+  def_delegators :client, :target, :source, :synchronize
 
   # Configuration
   #
@@ -63,5 +56,15 @@ module MultiSync
   def self.configuration(options={})
     @configuration ||= MultiSync::Configuration.new(options)
   end
+
+  # by rescuing from a LoadError we can sniff out gems in use and try to automagically hook into them
+  # REQUIREMENT_MAP.each do |(library, extension)|
+  #   begin
+  #     require library
+  #     require extension
+  #   rescue ::LoadError
+  #     next
+  #   end
+  # end
 
 end

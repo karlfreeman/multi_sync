@@ -24,6 +24,16 @@ describe MultiSync do
       it { should be_true }
     end
 
+    describe :credentials do
+      subject { MultiSync.respond_to?(:credentials) }
+      it { should be_true }
+    end
+
+    describe :run do
+      subject { MultiSync.respond_to?(:run) }
+      it { should be_true }
+    end
+
     describe :configure do
       subject { MultiSync.respond_to?(:configure) }
       it { should be_true }

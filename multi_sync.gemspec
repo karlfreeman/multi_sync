@@ -5,6 +5,7 @@ require "multi_sync/version"
 Gem::Specification.new do |gem|
   gem.add_dependency "fog", "~> 1.10"
   gem.add_dependency "lazily", "~> 0.1"
+  gem.add_dependency "virtus", "~> 0.5"
   gem.add_dependency "celluloid", "~> 0.14"
   gem.add_dependency "log_switch", "~> 0.4"
   gem.add_dependency "multi_mime", "~> 0.0.1"

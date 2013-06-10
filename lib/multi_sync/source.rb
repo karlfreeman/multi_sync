@@ -1,26 +1,22 @@
+require "virtus"
+
 module MultiSync
 
   # Defines constants and methods related to the Source
   class Source
+    include Virtus
 
-    # An array of valid keys in the options hash when configuring a Source
-    VALID_OPTIONS_KEYS = [
-      :targets,
-      :include,
-      :exclude
-    ].freeze
-
-    # Bang open the valid options
-    attr_accessor(*VALID_OPTIONS_KEYS)
+    attribute :targets, Array, :default => []
+    attribute :include, String, :default => "**/*"
+    attribute :exclude, String
 
     # Initialize a new Source object
     #
     # @param options [Hash]
     def initialize(options = {})
-      self.targets = []
       self.targets << options.delete(:targets) { [] }
       self.targets.flatten!
-      self.include = options.delete(:include) { "**/*" }
+      self.include ||= options.delete(:include)
       self.exclude = options.delete(:exclude)
     end
 

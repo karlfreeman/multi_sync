@@ -24,8 +24,8 @@ module MultiSync
     #
     # @param path [String]
     def initialize(options = {})
-      self.path_with_root = options.delete(:with_root) { Pathname.new("") }
-      self.path_without_root = options.delete(:without_root) { Pathname.new("") }
+      self.path_with_root ||= options.delete(:with_root)
+      self.path_without_root ||= options.delete(:without_root)
       super() # initialize the state_machine
       determine_status
     end

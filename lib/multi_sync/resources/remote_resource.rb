@@ -27,8 +27,8 @@ module MultiSync
     # @param path [String]
     def initialize(options = {})
       self.fog_file = options.delete(:fog_file)
-      self.path_with_root = options.delete(:with_root) { Pathname.new("") }
-      self.path_without_root = options.delete(:without_root) { Pathname.new("") }
+      self.path_with_root ||= options.delete(:with_root)
+      self.path_without_root ||= options.delete(:without_root)
       super() # initialize the state_machine
       determine_status
     end

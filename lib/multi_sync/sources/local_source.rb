@@ -1,3 +1,4 @@
+require "virtus"
 require "lazily"
 require "pathname"
 require "multi_sync/source"
@@ -7,14 +8,9 @@ module MultiSync
 
   # Defines constants and methods related to the LocalSource
   class LocalSource < Source
+    extend Virtus
 
-    # An array of valid keys in the options hash when configuring a LocalSource
-    VALID_OPTIONS_KEYS = [
-      :source_dir
-    ].freeze
-
-    # Bang open the valid options
-    attr_accessor(*VALID_OPTIONS_KEYS)
+    attribute :source_dir, String
 
     # Initialize a new Source object
     #
