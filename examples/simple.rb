@@ -1,6 +1,10 @@
 require "multi_sync"
 require "awesome_print"
 
+MultiSync.configuration do |config|
+  config.target_pool_size = 8
+end
+
 MultiSync.run do
 
   target :aws, :www, {
@@ -13,7 +17,7 @@ MultiSync.run do
     }
   }
 
-  source :local, "build", {
+  source :local, :build, {
     :source_dir => "/tmp/build",
     :targets => [ :www ]
   }
