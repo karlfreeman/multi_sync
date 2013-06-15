@@ -29,8 +29,8 @@ module MultiSync
 
         pathname = Pathname.new(file.key)
 
-        # directory || overreaching AWS globbing
-        next if (pathname.to_s =~ /\/$/) || !(pathname.to_s =~ /^#{self.destination_dir.to_s}\//)
+        # eg directory or overreaching AWS globbing
+        next unless valid_path?(pathname)
 
         files << MultiSync::RemoteResource.new(
           :with_root => self.target_dir + pathname, # pathname seems to already have the prefix ( destination_dir )
@@ -61,6 +61,21 @@ module MultiSync
 
       MultiSync.log "Delete #{resource.class.to_s.split('::').last}:'#{resource.path_without_root.to_s}' from #{self.class.to_s.split('::').last}:'/#{(self.target_dir + self.destination_dir).to_s}'"
       self.connection.delete_object(self.target_dir.to_s, (self.destination_dir + resource.path_without_root).to_s)
+
+    end
+
+    private
+
+
+    # directory or overreaching AWS globbing
+    def valid_path?(pathname)
+
+      # directory
+      return false if pathname.to_s =~ /\/$/
+      # overreaching AWS globbing
+      return false if !self.destination_dir.to_s.empty? && !(pathname.to_s =~ /^#{self.destination_dir.to_s}\//)
+
+      return true
 
     end
 

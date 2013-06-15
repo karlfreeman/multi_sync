@@ -118,81 +118,142 @@ describe MultiSync::Client, fakefs: true do
 
     context :aws do
 
-      before do
-        Fog.mock!
+      context "simple" do
 
-        connection = Fog::Storage.new(
-          :provider => :aws,
-          :region => "us-east-1",
-          :aws_access_key_id => "AKIAI263OMKGV6YDWWAQ",
-          :aws_secret_access_key => "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",
-        )
+        before do
+          Fog.mock!
 
-        directory = connection.directories.create(
-          :key => "multi_sync",
-          :public => true
-        )
+          connection = Fog::Storage.new(
+            :provider => :aws,
+            :region => "us-east-1",
+            :aws_access_key_id => "AKIAI263OMKGV6YDWWAQ",
+            :aws_secret_access_key => "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",
+          )
 
-        ["simple", "simple-with-outdated-file", "simple-with-abandoned-file"].each do |fixture_name|
-          Dir.glob("/tmp/#{fixture_name}/**/*").reject {|path| File.directory?(path) }.each do |path|
-            directory.files.create(
-              :key => path.gsub("/tmp/", ""),
-              :body => File.open(path, "r"),
-              :public => true
-            )
+          directory = connection.directories.create(
+            :key => "multi_sync",
+            :public => true
+          )
+
+          ["simple", "simple-with-outdated-file", "simple-with-abandoned-file"].each do |fixture_name|
+            Dir.glob("/tmp/#{fixture_name}/**/*").reject {|path| File.directory?(path) }.each do |path|
+              directory.files.create(
+                :key => path.gsub("/tmp/", ""),
+                :body => File.open(path, "r"),
+                :public => true
+              )
+            end
           end
+
         end
 
+        after do
+          Fog.unmock!
+        end
+
+        it "should work" do
+
+          outdated_files_target_options = {
+            :target_dir => "multi_sync",
+            :destination_dir => "simple-with-outdated-file",
+            :credentials => {
+              :region => "us-east-1",
+              :aws_access_key_id => "AKIAI263OMKGV6YDWWAQ",
+              :aws_secret_access_key => "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",
+            }
+          }
+
+          abandoned_files_target_options = {
+            :target_dir => "multi_sync",
+            :destination_dir => "simple-with-abandoned-file",
+            :credentials => {
+              :region => "us-east-1",
+              :aws_access_key_id => "AKIAI263OMKGV6YDWWAQ",
+              :aws_secret_access_key => "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",
+            }
+          }
+
+          local_source_options = {
+            :source_dir => "/tmp/simple"
+          }
+
+          outdated_files_target = MultiSync::AwsTarget.new(outdated_files_target_options)
+          abandoned_files_target = MultiSync::AwsTarget.new(abandoned_files_target_options)
+
+          expect(outdated_files_target).to have(2).files
+          expect(abandoned_files_target).to have(4).files
+
+          local_source = MultiSync::LocalSource.new(local_source_options)
+
+          expect(local_source).to have(3).files
+
+          MultiSync.run do
+             target :aws, :outdated_files_target, outdated_files_target_options
+             target :aws, :abandoned_files_target, abandoned_files_target_options
+             source :local, :simple, local_source_options.merge(:targets => [ :outdated_files_target, :abandoned_files_target ])
+           end
+
+          expect(outdated_files_target).to have(3).files
+          expect(abandoned_files_target).to have(3).files
+
+        end
+
+
       end
 
-      after do
-        Fog.unmock!
-      end
+      context "without a destination_dir" do
 
-      it "should work" do
 
-        outdated_files_target_options = {
-          :target_dir => "multi_sync",
-          :destination_dir => "simple-with-outdated-file",
-          :credentials => {
+        before do
+          Fog.mock!
+
+          connection = Fog::Storage.new(
+            :provider => :aws,
             :region => "us-east-1",
             :aws_access_key_id => "AKIAI263OMKGV6YDWWAQ",
             :aws_secret_access_key => "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",
+          )
+
+          directory = connection.directories.create(
+            :key => "without_destination_dir",
+            :public => true
+          )
+
+        end
+
+        after do
+          Fog.unmock!
+        end
+
+        it "should work" do
+
+          without_destination_dir_target_options = {
+            :target_dir => "without_destination_dir",
+            :credentials => {
+              :region => "us-east-1",
+              :aws_access_key_id => "AKIAI263OMKGV6YDWWAQ",
+              :aws_secret_access_key => "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",
+            }
           }
-        }
 
-        abandoned_files_target_options = {
-          :target_dir => "multi_sync",
-          :destination_dir => "simple-with-abandoned-file",
-          :credentials => {
-            :region => "us-east-1",
-            :aws_access_key_id => "AKIAI263OMKGV6YDWWAQ",
-            :aws_secret_access_key => "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",
+          local_source_options = {
+            :source_dir => "/tmp/simple"
           }
-        }
 
-        local_source_options = {
-          :source_dir => "/tmp/simple"
-        }
+          without_destination_dir_target = MultiSync::AwsTarget.new(without_destination_dir_target_options)
+          expect(without_destination_dir_target).to have(0).files
 
-        outdated_files_target = MultiSync::AwsTarget.new(outdated_files_target_options)
-        abandoned_files_target = MultiSync::AwsTarget.new(abandoned_files_target_options)
+          local_source = MultiSync::LocalSource.new(local_source_options)
+          expect(local_source).to have(3).files
 
-        expect(outdated_files_target).to have(2).files
-        expect(abandoned_files_target).to have(4).files
+          MultiSync.run do
+             target :aws, :without_destination_dir_target, without_destination_dir_target_options
+             source :local, :simple, local_source_options.merge(:targets => :without_destination_dir_target )
+           end
 
-        local_source = MultiSync::LocalSource.new(local_source_options)
+          expect(without_destination_dir_target).to have(3).files
 
-        expect(local_source).to have(3).files
-
-        MultiSync.run do
-           target :aws, :outdated_files_target, outdated_files_target_options
-           target :aws, :abandoned_files_target, abandoned_files_target_options
-           source :local, :simple, local_source_options.merge(:targets => [ :outdated_files_target, :abandoned_files_target ])
-         end
-
-        expect(outdated_files_target).to have(3).files
-        expect(abandoned_files_target).to have(3).files
+        end
 
       end
 

@@ -11,17 +11,17 @@ module MultiSync
 
     attr_accessor :connection
     attribute :target_dir, Pathname
-    attribute :destination_dir, Pathname
+    attribute :destination_dir, Pathname, :default => Pathname.new("")
     attribute :credentials, Hash, :default => :default_credentials
     
     # Initialize a new Target object
     #
     # @param options [Hash]
     def initialize(options = {})
-      # raise(ArgumentError, "destination_dir must be present") unless options[:destination_dir]
+      # raise(ArgumentError, "target_dir must be present") unless options[:target_dir]
       # raise(ArgumentError, "provider must be present and a symbol") unless options[:provider] && options[:provider].is_a?(Symbol)
       self.target_dir = Pathname.new(options.delete(:target_dir))
-      self.destination_dir = Pathname.new(options.delete(:destination_dir))
+      self.destination_dir = Pathname.new(options.delete(:destination_dir)) if options[:destination_dir]
       self.credentials.merge!(options.delete(:credentials){ Hash.new })
     end
 
