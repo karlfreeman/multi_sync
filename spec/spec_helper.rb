@@ -23,19 +23,7 @@ RSpec.configure do |config|
   end
 
   def jruby?
-    defined?(RUBY_ENGINE) && RUBY_ENGINE == 'jruby'
-  end
-
-  def capture(stream)
-    begin
-      stream = stream.to_s
-      eval "$#{stream} = StringIO.new"
-      yield
-      result = eval("$#{stream}").string
-    ensure
-      eval("$#{stream} = #{stream.upcase}")
-    end
-    result
+    defined?(RUBY_ENGINE) && RUBY_ENGINE == "jruby"
   end
 
 end
