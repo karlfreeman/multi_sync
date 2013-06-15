@@ -22,6 +22,13 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 
+  config.before(:each) do
+    Celluloid.shutdown
+    MultiSync.instance_variable_set('@client', nil) # kill memoization
+    MultiSync.instance_variable_set('@configuration', nil) # kill memoization
+    Celluloid.boot
+  end
+
   def jruby?
     defined?(RUBY_ENGINE) && RUBY_ENGINE == "jruby"
   end
