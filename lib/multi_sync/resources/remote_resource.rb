@@ -36,7 +36,8 @@ module MultiSync
     private
 
     def determine_status
-      self.state = self.fog_file.directory.files.head(self.fog_file.key).nil? ? "unavailable" : "available"
+      self.state = self.fog_file.nil? ? "unavailable" : "available"
+      # self.state = self.fog_file.directory.files.head(self.fog_file.key).nil? ? "unavailable" : "available"
     end
 
   end
