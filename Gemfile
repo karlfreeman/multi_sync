@@ -10,9 +10,6 @@ gem "yard"
 # platforms :jruby do
 # end
 
-gem "celluloid", :git => "git://github.com/celluloid/celluloid.git"
-gem "fog", :git => "git://github.com/fog/fog.git"
-
 group :development do
   gem "kramdown", ">= 0.14"
   gem "pry"
