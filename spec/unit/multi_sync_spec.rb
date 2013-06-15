@@ -2,11 +2,6 @@ require "spec_helper"
 
 describe MultiSync do
 
-  before do
-    MultiSync.instance_variable_set('@client', nil) # kill memoization
-    MultiSync.instance_variable_set('@configuration', nil) # kill memoization
-  end
-
   context :methods do
 
     describe :version do
