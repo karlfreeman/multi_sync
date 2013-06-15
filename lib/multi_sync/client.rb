@@ -57,12 +57,12 @@ module MultiSync
       determine_sync if first_run?
       sync_attempted
 
-      MultiSync.log "Scheduling jobs..."
+      MultiSync.log "Scheduling job(s) in the future..."
       self.incomplete_jobs.delete_if do | job |
         self.running_jobs << { :id => job[:id], :future => Celluloid::Actor[job[:target_id]].future.send(job[:method], job[:args]) }
       end
       
-      MultiSync.log "Fetching complete jobs..."
+      MultiSync.log "Fetching job(s) from the future(s)..."
       self.running_jobs.delete_if do | job |
         begin
           completed_job = { :id => job[:id], :response => job[:future].value }
@@ -112,7 +112,7 @@ module MultiSync
 
           MultiSync.log "#{source_files.length} file(s) found from the source"
 
-          MultiSync.log "Determining file(s) from the target..."
+          MultiSync.log "Fetching file(s) from the target..."
           target_files = Celluloid::Actor[target_id].files
           MultiSync.log "#{target_files.length} file(s) found from the target"
 
