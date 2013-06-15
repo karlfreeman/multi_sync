@@ -45,14 +45,17 @@ describe MultiSync::Configuration, fakefs: true do
   context :credentials do
 
     before do
-      Fog.instance_variable_set('@credential_path', nil) # kill fog memoization
-      Fog.instance_variable_set('@credentials', nil) # kill fog memoization
-      Fog.instance_variable_set('@credential', nil) # kill fog memoization
+      Fog.instance_variable_set('@credential_path', nil)
+      Fog.instance_variable_set('@credentials', nil)
+      Fog.instance_variable_set('@credential', nil)
     end
 
-    after(:each) do
+    after do
       ENV["FOG_RC"] = nil
       ENV["FOG_CREDENTIAL"] = "default"
+      Fog.instance_variable_set('@credential_path', nil)
+      Fog.instance_variable_set('@credentials', nil)
+      Fog.instance_variable_set('@credential', nil)
     end
 
     context "with default fog credentials" do
