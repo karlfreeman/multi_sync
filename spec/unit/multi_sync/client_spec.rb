@@ -10,11 +10,14 @@ describe MultiSync::Client, fakefs: true do
     FileUtils.mkdir_p("/tmp/simple/in-a-dir")
     File.open("/tmp/simple/in-a-dir/baz.html", "w") do |f| f.write("baz") end
 
-    FileUtils.cp_r("/tmp/simple", "/tmp/simple-with-outdated-file")
-    FileUtils.rm_r("/tmp/simple-with-outdated-file/foo.txt")
+    FileUtils.cp_r("/tmp/simple", "/tmp/simple-with-missing-file")
+    FileUtils.rm_r("/tmp/simple-with-missing-file/foo.txt")
 
     FileUtils.cp_r("/tmp/simple", "/tmp/simple-with-abandoned-file")
     File.open("/tmp/simple-with-abandoned-file/baz.txt", "w") do |f| f.write("baz") end
+
+    FileUtils.cp_r("/tmp/simple", "/tmp/simple-with-outdated-file")
+    File.open("/tmp/simple-with-outdated-file/foo.txt", "w") do |f| f.write("outdated") end
 
     FileUtils.mkdir_p("/tmp/complex")
     50.times do
@@ -44,9 +47,9 @@ describe MultiSync::Client, fakefs: true do
 
       it "should work with simple" do
 
-        outdated_files_target_options = {
+        missing_files_target_options = {
           :target_dir => "/tmp",
-          :destination_dir => "simple-with-outdated-file",
+          :destination_dir => "simple-with-missing-file",
           :credentials => {
             :local_root => "/tmp"
           }
@@ -60,28 +63,42 @@ describe MultiSync::Client, fakefs: true do
           }
         }
 
+        outdated_files_target_options = {
+          :target_dir => "/tmp",
+          :destination_dir => "simple-with-outdated-file",
+          :credentials => {
+            :local_root => "/tmp"
+          }
+        }
+
         local_source_options = {
           :source_dir => "/tmp/simple"
         }
 
-        outdated_files_target = MultiSync::LocalTarget.new(outdated_files_target_options)
+        missing_files_target = MultiSync::LocalTarget.new(missing_files_target_options)
         abandoned_files_target = MultiSync::LocalTarget.new(abandoned_files_target_options)
+        outdated_files_target = MultiSync::LocalTarget.new(outdated_files_target_options)
 
-        expect(outdated_files_target).to have(2).files
+        expect(missing_files_target).to have(2).files
         expect(abandoned_files_target).to have(4).files
+        expect(outdated_files_target).to have(3).files
 
         local_source = MultiSync::LocalSource.new(local_source_options)
-
         expect(local_source).to have(3).files
 
+        expect(outdated_files_target.files[1].body).to eq "outdated"
+
         MultiSync.run do
-           target :local, :outdated_files_target, outdated_files_target_options
+           target :local, :missing_files_target, missing_files_target_options
            target :local, :abandoned_files_target, abandoned_files_target_options
-           source :local, :simple, local_source_options.merge(:targets => [ :outdated_files_target, :abandoned_files_target ])
+           target :local, :outdated_files_target, outdated_files_target_options
+           source :local, :simple, local_source_options.merge(:targets => [ :missing_files_target, :abandoned_files_target, :outdated_files_target ])
          end
 
-        expect(outdated_files_target).to have(3).files
+        expect(missing_files_target).to have(3).files
         expect(abandoned_files_target).to have(3).files
+        expect(outdated_files_target).to have(3).files        
+        expect(outdated_files_target.files[1].body).to eq "foo"
 
       end
 
@@ -135,7 +152,7 @@ describe MultiSync::Client, fakefs: true do
             :public => true
           )
 
-          ["simple", "simple-with-outdated-file", "simple-with-abandoned-file"].each do |fixture_name|
+          ["simple", "simple-with-missing-file", "simple-with-abandoned-file", "simple-with-outdated-file"].each do |fixture_name|
             Dir.glob("/tmp/#{fixture_name}/**/*").reject {|path| File.directory?(path) }.each do |path|
               directory.files.create(
                 :key => path.gsub("/tmp/", ""),
@@ -153,9 +170,9 @@ describe MultiSync::Client, fakefs: true do
 
         it "should work" do
 
-          outdated_files_target_options = {
+          missing_files_target_options = {
             :target_dir => "multi_sync",
-            :destination_dir => "simple-with-outdated-file",
+            :destination_dir => "simple-with-missing-file",
             :credentials => {
               :region => "us-east-1",
               :aws_access_key_id => "AKIAI263OMKGV6YDWWAQ",
@@ -173,28 +190,44 @@ describe MultiSync::Client, fakefs: true do
             }
           }
 
+          outdated_files_target_options = {
+            :target_dir => "multi_sync",
+            :destination_dir => "simple-with-outdated-file",
+            :credentials => {
+              :region => "us-east-1",
+              :aws_access_key_id => "AKIAI263OMKGV6YDWWAQ",
+              :aws_secret_access_key => "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",
+            }
+          }
+
           local_source_options = {
             :source_dir => "/tmp/simple"
           }
 
-          outdated_files_target = MultiSync::AwsTarget.new(outdated_files_target_options)
+          missing_files_target = MultiSync::AwsTarget.new(missing_files_target_options)
           abandoned_files_target = MultiSync::AwsTarget.new(abandoned_files_target_options)
+          outdated_files_target = MultiSync::AwsTarget.new(outdated_files_target_options)
 
-          expect(outdated_files_target).to have(2).files
+          expect(missing_files_target).to have(2).files
           expect(abandoned_files_target).to have(4).files
+          expect(outdated_files_target).to have(3).files
 
           local_source = MultiSync::LocalSource.new(local_source_options)
-
           expect(local_source).to have(3).files
 
+          expect(outdated_files_target.files[1].body).to eq "outdated"
+
           MultiSync.run do
-             target :aws, :outdated_files_target, outdated_files_target_options
+             target :aws, :missing_files_target, missing_files_target_options
              target :aws, :abandoned_files_target, abandoned_files_target_options
-             source :local, :simple, local_source_options.merge(:targets => [ :outdated_files_target, :abandoned_files_target ])
+             target :aws, :outdated_files_target, outdated_files_target_options
+             source :local, :simple, local_source_options.merge(:targets => [ :missing_files_target, :abandoned_files_target, :outdated_files_target ])
            end
 
-          expect(outdated_files_target).to have(3).files
+          expect(missing_files_target).to have(3).files
           expect(abandoned_files_target).to have(3).files
+          expect(outdated_files_target).to have(3).files
+          expect(outdated_files_target.files[1].body).to eq "foo"
 
         end
 

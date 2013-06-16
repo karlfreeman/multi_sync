@@ -1,4 +1,5 @@
 require "pathname"
+require "digest/md5"
 require "state_machine"
 require "multi_sync/resource"
 
@@ -32,6 +33,14 @@ module MultiSync
 
     def body
       File.read(self.path_with_root)
+    end
+
+    def content_length
+      File.size(self.path_with_root)
+    end
+
+    def etag
+      Digest::MD5.hexdigest(self.body)
     end
 
     private

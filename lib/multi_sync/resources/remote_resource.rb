@@ -1,4 +1,5 @@
 require "pathname"
+require "digest/md5"
 require "state_machine"
 require "multi_sync/resource"
 
@@ -33,11 +34,26 @@ module MultiSync
       determine_status
     end
 
+    def body
+      self.fog_file.body
+    end
+
+    def content_length
+      self.fog_file.content_length
+    end
+
+    def etag
+      begin
+        self.fog_file.etag
+      rescue NoMethodError # fog local files don't have an MD5 etag
+        Digest::MD5.hexdigest(File.read(self.path_with_root))
+      end
+    end
+
     private
 
     def determine_status
       self.state = self.fog_file.nil? ? "unavailable" : "available"
-      # self.state = self.fog_file.directory.files.head(self.fog_file.key).nil? ? "unavailable" : "available"
     end
 
   end

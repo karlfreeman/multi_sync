@@ -107,6 +107,7 @@ module MultiSync
         MultiSync.log "Synchronizing: '#{source.source_dir}'"
         
         source_files = source.files
+        source_files.sort
 
         source.targets.lazily.each do | target_id |
 
@@ -114,17 +115,28 @@ module MultiSync
 
           MultiSync.log "Fetching file(s) from the target..."
           target_files = Celluloid::Actor[target_id].files
+          target_files.sort
           MultiSync.log "#{target_files.length} file(s) found from the target"
 
-          outdated_files = (source_files - target_files)
-          MultiSync.log "#{outdated_files.length} of the file(s) are outdated"
+          missing_files = determine_missing_files(source_files, target_files)
+          MultiSync.log "#{missing_files.length} of the file(s) are missing"
 
-          abandoned_files = (target_files - source_files)
+          abandoned_files = determine_abandoned_files(source_files, target_files)
           MultiSync.log "#{abandoned_files.length} of the file(s) are abandoned"
+
+          # remove missing_files from source_files ( as we know they are missing so don't need to check them )
+          # remove abandoned_files from target_files ( as we know they are abandoned so don't need to check them )
+          outdated_files = determine_outdated_files(source_files - missing_files, target_files - abandoned_files)
+          MultiSync.log "#{outdated_files.length} of the file(s) are outdated"
 
           # abandoned files
           abandoned_files.lazily.each do | file |
             self.incomplete_jobs << { :id => SecureRandom.uuid, :target_id => target_id, :method => :delete, :args => file }
+          end
+
+          # missing files
+          missing_files.lazily.each do | file |
+            self.incomplete_jobs << { :id => SecureRandom.uuid, :target_id => target_id, :method => :upload, :args => file }
           end
 
           # outdated files
@@ -136,6 +148,34 @@ module MultiSync
 
       end
 
+    end
+
+    #
+    def determine_missing_files(source_files, target_files)
+      missing_files = (source_files - target_files)
+      return missing_files
+    end
+
+    #
+    def determine_abandoned_files(source_files, target_files)
+      abandoned_files = (target_files - source_files)
+      return abandoned_files
+    end
+
+    #
+    def determine_outdated_files(source_files, target_files)
+      outdated_files = []
+
+      # sort to make sure each array's indexs match
+      source_files.sort
+      target_files.sort
+
+      # check each source file against the matching target_file's etag
+      source_files.each_with_index do |file, i|
+        outdated_files << file unless file.same?(target_files[i])
+      end
+
+      return outdated_files
     end
 
     #
