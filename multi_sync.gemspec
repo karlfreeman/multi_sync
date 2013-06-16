@@ -9,7 +9,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency "celluloid", "~> 0.14"
   gem.add_dependency "log_switch", "~> 0.4"
   gem.add_dependency "multi_mime", "~> 0.0.1"
-  gem.add_dependency "state_machine", "~> 1.2"
   gem.add_development_dependency "bundler", "~> 1.0"
   gem.name          = "multi_sync"
   gem.version       = MultiSync::VERSION

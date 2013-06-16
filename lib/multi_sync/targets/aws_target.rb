@@ -33,9 +33,9 @@ module MultiSync
         next unless valid_path?(pathname)
 
         files << MultiSync::RemoteResource.new(
+          :file => file,
           :with_root => self.target_dir + pathname, # pathname seems to already have the prefix ( destination_dir )
           :without_root => (self.destination_dir != "") ? pathname.relative_path_from(self.destination_dir).cleanpath : pathname,
-          :fog_file => file
         )
 
       }

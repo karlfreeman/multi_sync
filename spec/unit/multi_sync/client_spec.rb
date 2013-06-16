@@ -17,7 +17,7 @@ describe MultiSync::Client, fakefs: true do
     File.open("/tmp/simple-with-abandoned-file/baz.txt", "w") do |f| f.write("baz") end
 
     FileUtils.cp_r("/tmp/simple", "/tmp/simple-with-outdated-file")
-    File.open("/tmp/simple-with-outdated-file/foo.txt", "w") do |f| f.write("outdated") end
+    File.open("/tmp/simple-with-outdated-file/foo.txt", "w") do |f| f.write("not-foo") end
 
     FileUtils.mkdir_p("/tmp/complex")
     50.times do
@@ -86,7 +86,7 @@ describe MultiSync::Client, fakefs: true do
         local_source = MultiSync::LocalSource.new(local_source_options)
         expect(local_source).to have(3).files
 
-        expect(outdated_files_target.files[1].body).to eq "outdated"
+        expect(outdated_files_target.files[1].body).to eq "not-foo"
 
         MultiSync.run do
            target :local, :missing_files_target, missing_files_target_options
@@ -97,7 +97,7 @@ describe MultiSync::Client, fakefs: true do
 
         expect(missing_files_target).to have(3).files
         expect(abandoned_files_target).to have(3).files
-        expect(outdated_files_target).to have(3).files        
+        expect(outdated_files_target).to have(3).files   
         expect(outdated_files_target.files[1].body).to eq "foo"
 
       end
@@ -215,7 +215,7 @@ describe MultiSync::Client, fakefs: true do
           local_source = MultiSync::LocalSource.new(local_source_options)
           expect(local_source).to have(3).files
 
-          expect(outdated_files_target.files[1].body).to eq "outdated"
+          expect(outdated_files_target.files[1].body).to eq "not-foo"
 
           MultiSync.run do
              target :aws, :missing_files_target, missing_files_target_options

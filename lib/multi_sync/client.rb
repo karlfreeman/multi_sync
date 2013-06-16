@@ -107,7 +107,7 @@ module MultiSync
         MultiSync.log "Synchronizing: '#{source.source_dir}'"
         
         source_files = source.files
-        source_files.sort
+        source_files.sort! # sort to make sure the source's indexs match the targets
 
         source.targets.lazily.each do | target_id |
 
@@ -115,7 +115,7 @@ module MultiSync
 
           MultiSync.log "Fetching file(s) from the target..."
           target_files = Celluloid::Actor[target_id].files
-          target_files.sort
+          target_files.sort! # sort to make sure the target's indexs match the sources
           MultiSync.log "#{target_files.length} file(s) found from the target"
 
           missing_files = determine_missing_files(source_files, target_files)
@@ -164,18 +164,16 @@ module MultiSync
 
     #
     def determine_outdated_files(source_files, target_files)
-      outdated_files = []
+      outdated_files = []  
 
-      # sort to make sure each array's indexs match
-      source_files.sort
-      target_files.sort
-
+      # TODO replace with celluloid pool of futures
       # check each source file against the matching target_file's etag
-      source_files.each_with_index do |file, i|
-        outdated_files << file unless file.same?(target_files[i])
+      source_files.lazily.each_with_index do |file, i|
+        outdated_files << file unless file.has_matching_etag?(target_files[i])
       end
 
       return outdated_files
+
     end
 
     #

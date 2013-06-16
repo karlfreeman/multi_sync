@@ -8,6 +8,7 @@ module MultiSync
     include Virtus
     include Comparable
 
+    attribute :file, File
     attribute :path_with_root, Pathname
     attribute :path_without_root, Pathname
 
@@ -16,7 +17,7 @@ module MultiSync
     end
 
     def <=>(other)
-      self.path_without_root.to_s.reverse <=> other.path_without_root.to_s.reverse
+      self.path_without_root <=> other.path_without_root
     end
 
     def ==(other)
@@ -24,11 +25,7 @@ module MultiSync
     end
     alias :eql? :==
 
-    def same?(other)
-      # if (self.etag != other.etag)
-        # MultiSync.log "#{self.etag} vs #{other.etag}"
-        # MultiSync.log "#{self.path_with_root} / #{other.path_with_root}"
-      # end
+    def has_matching_etag?(other)
       self.etag == other.etag
     end
 

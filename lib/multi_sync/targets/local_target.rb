@@ -35,9 +35,9 @@ module MultiSync
         MultiSync.log "Found RemoteResource:'#{pathname.to_s}' from #{self.class.to_s.split('::').last}:'#{(Pathname.new(self.connection.local_root) + self.destination_dir).to_s}'"
 
         files << MultiSync::RemoteResource.new(
+          :file => file,
           :with_root => self.target_dir + self.destination_dir + pathname,
-          :without_root => pathname,
-          :fog_file => file
+          :without_root => pathname
         )
 
       }
