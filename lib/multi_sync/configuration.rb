@@ -8,7 +8,8 @@ module MultiSync
     include Virtus
 
     attribute :verbose, Boolean, :default => false
-    attribute :delete_abandoned_files, Boolean, :default => false
+    attribute :delete_abandoned_files, Boolean, :default => true
+    attribute :upload_missing_files, Boolean, :default => true
     attribute :target_pool_size, Integer, :default => :celluloid_cores
     attribute :credentials, Hash, :default => :fog_credentials
 
