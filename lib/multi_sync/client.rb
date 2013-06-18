@@ -30,24 +30,24 @@ module MultiSync
     end
 
     #
-    def add_target(type, name, options={})
+    def add_target(name, options={})
       begin
-        clazz = MultiSync.const_get("#{type.capitalize.to_s}Target")
+        clazz = MultiSync.const_get("#{options[:type].capitalize.to_s}Target")
       rescue NameError
-        MultiSync.error "Unknown target type: #{type}"
+        MultiSync.error "Unknown target type: #{options[:type]}"
       end
       self.supervisor.pool(clazz, :as => name, :args => [options], :size => MultiSync.target_pool_size)
     end
     alias_method :target, :add_target
 
     #
-    def add_source(type, name, opts={})
+    def add_source(name, options={})
       begin
-        clazz = MultiSync.const_get("#{type.capitalize.to_s}Source")
+        clazz = MultiSync.const_get("#{options[:type].capitalize.to_s}Source")
       rescue NameError
-        MultiSync.error "Unknown source type: #{type}"
+        MultiSync.error "Unknown source type: #{options[:type]}"
       end
-      self.sources << clazz.new(opts)
+      self.sources << clazz.new(options)
     end
     alias_method :source, :add_source
 
@@ -96,6 +96,7 @@ module MultiSync
       self.supervisor.finalize
       
     end
+    alias_method :fin, :finalize
 
     private
 
@@ -103,7 +104,9 @@ module MultiSync
     def determine_sync
 
       self.sources.lazily.each do |source|
-        
+
+        source_files = []
+
         MultiSync.log "Synchronizing: '#{source.source_dir}'"
         
         source_files = source.files
@@ -111,18 +114,28 @@ module MultiSync
 
         source.targets.lazily.each do | target_id |
 
+          missing_files = []
+          abandoned_files = []
+          outdated_files = []
+
           MultiSync.log "#{source_files.length} file(s) found from the source"
 
           MultiSync.log "Fetching file(s) from the target..."
+
           target_files = Celluloid::Actor[target_id].files
           target_files.sort! # sort to make sure the target's indexs match the sources
+
           MultiSync.log "#{target_files.length} file(s) found from the target"
 
           missing_files = determine_missing_files(source_files, target_files)
-          MultiSync.log "#{missing_files.length} of the file(s) are missing"
+          missing_files_msg = "#{missing_files.length} of the file(s) are missing"
+          missing_files_msg += ", however we're skipping them as :upload_missing_files is false" unless MultiSync.upload_missing_files
+          MultiSync.log missing_files_msg
 
           abandoned_files = determine_abandoned_files(source_files, target_files)
-          MultiSync.log "#{abandoned_files.length} of the file(s) are abandoned"
+          abandoned_files_msg = "#{abandoned_files.length} of the file(s) are abandoned"
+          abandoned_files_msg += ", however we're skipping them as :delete_abandoned_files is false" unless MultiSync.delete_abandoned_files
+          MultiSync.log abandoned_files_msg
 
           # remove missing_files from source_files ( as we know they are missing so don't need to check them )
           # remove abandoned_files from target_files ( as we know they are abandoned so don't need to check them )
@@ -132,12 +145,12 @@ module MultiSync
           # abandoned files
           abandoned_files.lazily.each do | file |
             self.incomplete_jobs << { :id => SecureRandom.uuid, :target_id => target_id, :method => :delete, :args => file }
-          end
+          end if MultiSync.delete_abandoned_files
 
           # missing files
           missing_files.lazily.each do | file |
             self.incomplete_jobs << { :id => SecureRandom.uuid, :target_id => target_id, :method => :upload, :args => file }
-          end
+          end if MultiSync.upload_missing_files
 
           # outdated files
           outdated_files.lazily.each do | file |
@@ -180,6 +193,7 @@ module MultiSync
     def sync_attempted
       self.started_at = Time.now if first_run?
       self.sync_attempts = self.sync_attempts + 1
+      # TODO custom exceptions
       raise ArgumentError if self.sync_attempts > 10
     end
 

@@ -48,6 +48,7 @@ describe MultiSync::Client, fakefs: true do
       it "should work with simple" do
 
         missing_files_target_options = {
+          :type => :local,
           :target_dir => "/tmp",
           :destination_dir => "simple-with-missing-file",
           :credentials => {
@@ -56,6 +57,7 @@ describe MultiSync::Client, fakefs: true do
         }
 
         abandoned_files_target_options = {
+          :type => :local,
           :target_dir => "/tmp",
           :destination_dir => "simple-with-abandoned-file",
           :credentials => {
@@ -64,6 +66,7 @@ describe MultiSync::Client, fakefs: true do
         }
 
         outdated_files_target_options = {
+          :type => :local,
           :target_dir => "/tmp",
           :destination_dir => "simple-with-outdated-file",
           :credentials => {
@@ -72,6 +75,7 @@ describe MultiSync::Client, fakefs: true do
         }
 
         local_source_options = {
+          :type => :local,
           :source_dir => "/tmp/simple"
         }
 
@@ -89,10 +93,10 @@ describe MultiSync::Client, fakefs: true do
         expect(outdated_files_target.files[1].body).to eq "not-foo"
 
         MultiSync.run do
-           target :local, :missing_files_target, missing_files_target_options
-           target :local, :abandoned_files_target, abandoned_files_target_options
-           target :local, :outdated_files_target, outdated_files_target_options
-           source :local, :simple, local_source_options.merge(:targets => [ :missing_files_target, :abandoned_files_target, :outdated_files_target ])
+           target :missing_files_target, missing_files_target_options
+           target :abandoned_files_target, abandoned_files_target_options
+           target :outdated_files_target, outdated_files_target_options
+           source :simple, local_source_options.merge(:targets => [ :missing_files_target, :abandoned_files_target, :outdated_files_target ])
          end
 
         expect(missing_files_target).to have(3).files
@@ -105,6 +109,7 @@ describe MultiSync::Client, fakefs: true do
       it "should work with complex" do
 
         complex_empty_target_options = {
+          :type => :local,
           :target_dir => "/tmp",
           :destination_dir => "complex-empty",
           :credentials => {
@@ -113,6 +118,7 @@ describe MultiSync::Client, fakefs: true do
         }
 
         local_source_options = {
+          :type => :local,
           :source_dir => "/tmp/complex",
         }
 
@@ -123,8 +129,8 @@ describe MultiSync::Client, fakefs: true do
         expect(local_source).to have(50).files
 
         MultiSync.run do
-           target :local, :complex_empty_target, complex_empty_target_options
-           source :local, :complex, local_source_options.merge(:targets => [ :complex_empty_target ])
+           target :complex_empty_target, complex_empty_target_options
+           source :simple, local_source_options.merge(:targets => [ :complex_empty_target ])
          end
 
         expect(complex_empty_target).to have(50).files
@@ -171,6 +177,7 @@ describe MultiSync::Client, fakefs: true do
         it "should work" do
 
           missing_files_target_options = {
+            :type => :aws,
             :target_dir => "multi_sync",
             :destination_dir => "simple-with-missing-file",
             :credentials => {
@@ -181,6 +188,7 @@ describe MultiSync::Client, fakefs: true do
           }
 
           abandoned_files_target_options = {
+            :type => :aws,
             :target_dir => "multi_sync",
             :destination_dir => "simple-with-abandoned-file",
             :credentials => {
@@ -191,6 +199,7 @@ describe MultiSync::Client, fakefs: true do
           }
 
           outdated_files_target_options = {
+            :type => :aws,
             :target_dir => "multi_sync",
             :destination_dir => "simple-with-outdated-file",
             :credentials => {
@@ -201,6 +210,7 @@ describe MultiSync::Client, fakefs: true do
           }
 
           local_source_options = {
+            :type => :local,
             :source_dir => "/tmp/simple"
           }
 
@@ -218,10 +228,10 @@ describe MultiSync::Client, fakefs: true do
           expect(outdated_files_target.files[1].body).to eq "not-foo"
 
           MultiSync.run do
-             target :aws, :missing_files_target, missing_files_target_options
-             target :aws, :abandoned_files_target, abandoned_files_target_options
-             target :aws, :outdated_files_target, outdated_files_target_options
-             source :local, :simple, local_source_options.merge(:targets => [ :missing_files_target, :abandoned_files_target, :outdated_files_target ])
+             target :missing_files_target, missing_files_target_options
+             target :abandoned_files_target, abandoned_files_target_options
+             target :outdated_files_target, outdated_files_target_options
+             source :local, local_source_options.merge(:targets => [ :missing_files_target, :abandoned_files_target, :outdated_files_target ])
            end
 
           expect(missing_files_target).to have(3).files
@@ -261,6 +271,7 @@ describe MultiSync::Client, fakefs: true do
         it "should work" do
 
           without_destination_dir_target_options = {
+            :type => :aws,
             :target_dir => "without_destination_dir",
             :credentials => {
               :region => "us-east-1",
@@ -270,6 +281,7 @@ describe MultiSync::Client, fakefs: true do
           }
 
           local_source_options = {
+            :type => :local,
             :source_dir => "/tmp/simple"
           }
 
@@ -280,8 +292,8 @@ describe MultiSync::Client, fakefs: true do
           expect(local_source).to have(3).files
 
           MultiSync.run do
-             target :aws, :without_destination_dir_target, without_destination_dir_target_options
-             source :local, :simple, local_source_options.merge(:targets => :without_destination_dir_target )
+             target :without_destination_dir_target, without_destination_dir_target_options
+             source :local, local_source_options.merge(:targets => :without_destination_dir_target )
            end
 
           expect(without_destination_dir_target).to have(3).files
