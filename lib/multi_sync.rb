@@ -58,13 +58,13 @@ module MultiSync
   end
 
   # by rescuing from a LoadError we can sniff out gems in use and try to automagically hook into them
-  # REQUIREMENT_MAP.each do |(library, extension)|
-  #   begin
-  #     require library
-  #     require extension
-  #   rescue ::LoadError
-  #     next
-  #   end
-  # end
+  REQUIREMENT_MAP.each do |(library, extension)|
+    begin
+      require library
+      require extension
+    rescue ::LoadError
+      next
+    end
+  end
 
 end
