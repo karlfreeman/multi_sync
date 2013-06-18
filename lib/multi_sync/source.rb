@@ -14,10 +14,9 @@ module MultiSync
     #
     # @param options [Hash]
     def initialize(options = {})
-      self.targets << options.delete(:targets) { [] }
-      self.targets.flatten!
+      self.targets.concat([*options.delete(:targets)])
       self.include ||= options.delete(:include)
-      self.exclude = options.delete(:exclude)
+      self.exclude ||= options.delete(:exclude)
     end
 
   end
