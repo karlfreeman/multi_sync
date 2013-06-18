@@ -28,7 +28,7 @@ module MultiSync
   # include some public methods
   def_delegators :client, :target, :source, :synchronize
 
-  # Configuration
+  # Configure
   #
   # @return [MultiSync]
   def self.configure(&block)

@@ -15,14 +15,17 @@ module MultiSync
       self.path_without_root ||= options.delete(:without_root)
     end
 
+    #
     def body
       File.read(self.path_with_root)
     end
 
+    #
     def content_length
       File.size(self.path_with_root)
     end
 
+    #
     def etag
       Digest::MD5.hexdigest(self.body)
     end

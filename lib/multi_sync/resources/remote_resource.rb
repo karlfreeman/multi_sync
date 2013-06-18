@@ -16,18 +16,21 @@ module MultiSync
       self.path_without_root ||= options.delete(:without_root)
     end
 
+    #
     def body
       self.file.body
     end
 
+    #
     def content_length
       self.file.content_length
     end
 
+    #
     def etag
       begin
         self.file.etag
-      rescue NoMethodError # fog local files don't have an MD5 etag
+      rescue NoMethodError # Fog::Storage::Local::File's don't have an etag method :(
         Digest::MD5.hexdigest(File.read(self.path_with_root))
       end
     end
