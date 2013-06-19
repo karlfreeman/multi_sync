@@ -8,25 +8,29 @@
 require "multi_sync"
 
 MultiSync.configuration do |config|
-  config.target_pool_size = 8 # for each target how many threads would you like to use? (defaults to the current systems CPU count)
-  config.delete_abandoned_files = false # when an abondoned file is detected should we delete it? (defaults to false)
+  config.verbose = true  # turn on verbose logging (defaults to false)
+  # config.delete_abandoned_files = true # when an abondoned file is found whether to remove it (defaults to true)
+  # config.upload_missing_files = true # when a missing file is found whether to upload it (defaults to true)
+  # config.target_pool_size = 16 # how many threads you would like to open for each target (defaults to the amount of CPU core's your machine has)
 end
 
 MultiSync.run do
 
-  target :aws, :www, {
-    :target_dir => "multi_sync",
-    :destination_dir => "aws-target",
-    :credentials => {
-      :region => "us-east-1",
-      :aws_access_key_id => "xxx",
-      :aws_secret_access_key => "xxx"
-    }
+  source :build {
+    :type => :local, # :local is the source's type, current options are :local
+    :source_dir => "/path_to_your_build_folder",
+    :targets => [ :www ] # an array of target names that this source should sync against
   }
 
-  source :local, :build, {
-    :source_dir => "/build",
-    :targets => [ :www ] # must match each of the targets name's ( second paramater of target method )
+  target :www {
+    :type => :aws, # :aws is the target's type, current options are :aws
+    :target_dir => "your_aws_bucket",
+    :destination_dir => "an_optional_directory_inside_your_aws_bucket",
+    :credentials => {
+      :region => "us-east-1",
+      :aws_access_key_id => "super_secret",
+      :aws_secret_access_key => "super_secret"
+    }
   }
 
 end
