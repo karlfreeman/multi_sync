@@ -1,4 +1,6 @@
 require "pathname"
+require "mime/types"
+require "multi_mime"
 require "digest/md5"
 require "multi_sync/resource"
 
@@ -17,17 +19,30 @@ module MultiSync
 
     #
     def body
-      File.read(self.path_with_root)
+      begin
+        File.read(self.path_with_root.to_s)
+      rescue
+        return ""
+      end
     end
 
     #
     def content_length
-      File.size(self.path_with_root)
+      begin
+        File.size(self.path_with_root.to_s)
+      rescue
+        return 0
+      end
+    end
+
+    #
+    def content_type
+      MultiMime.type_for_path(self.path_with_root.to_s)
     end
 
     #
     def etag
-      Digest::MD5.hexdigest(self.body)
+      self.body.empty? ? "" : Digest::MD5.hexdigest(self.body)
     end
 
   end

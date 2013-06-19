@@ -27,6 +27,11 @@ module MultiSync
     end
 
     #
+    def content_type
+      self.file.content_type
+    end
+
+    #
     def etag
       begin
         self.file.etag
