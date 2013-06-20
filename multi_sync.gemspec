@@ -10,7 +10,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency "log_switch", "~> 0.4"
   gem.add_dependency "multi_mime", "~> 0.0.1"
   gem.add_dependency "mime-types", "~> 1.21"
-  gem.add_development_dependency "bundler", "~> 1.0"
   gem.name          = "multi_sync"
   gem.version       = MultiSync::VERSION
   gem.authors       = ["Karl Freeman"]
