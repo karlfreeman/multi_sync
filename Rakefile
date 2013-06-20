@@ -23,5 +23,21 @@ rescue LoadError
   warn "Cane is not available, metric:quality task not provided."
 end
 
+namespace :spec do
+
+  desc "Run specs with middleman"
+  task :middleman do
+    ENV['BUNDLE_GEMFILE'] = "gemfiles/middleman-3.1.x.gemfile"
+    Rake::Task["spec"].execute
+  end
+
+  desc "Run specs with rails"
+  task :rails do
+    ENV['BUNDLE_GEMFILE'] = "gemfiles/rails-3.2.x.gemfile"
+    Rake::Task["spec"].execute
+  end
+
+end
+
 task :default => :spec
 task :test => :spec
