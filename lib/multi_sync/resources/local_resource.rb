@@ -37,8 +37,7 @@ module MultiSync
 
     #
     def content_type
-      ::MIME::Types.type_for(self.path_with_root.to_s).first
-      # MultiMime.type_for_path(self.path_with_root.to_s)
+      MultiMime.type_for_path(self.path_with_root.to_s)
     end
 
     #

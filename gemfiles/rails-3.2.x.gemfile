@@ -10,6 +10,8 @@ gem "yard"
 # platforms :jruby do
 # end
 
+gem "multi_mime", :git => "https://github.com/karlfreeman/multi_mime"
+
 group :development do
   gem "kramdown", ">= 0.14"
   gem "pry"
