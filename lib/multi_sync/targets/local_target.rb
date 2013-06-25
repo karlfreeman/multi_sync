@@ -32,7 +32,7 @@ module MultiSync
         # directory
         next if pathname.directory?
 
-        MultiSync.log "Found RemoteResource:'#{pathname.to_s}' from #{self.class.to_s.split('::').last}:'#{(Pathname.new(self.connection.local_root) + self.destination_dir).to_s}'"
+        MultiSync.debug "Found RemoteResource:'#{pathname.to_s}' from #{self.class.to_s.split('::').last}:'#{(Pathname.new(self.connection.local_root) + self.destination_dir).to_s}'"
 
         files << MultiSync::RemoteResource.new(
           :file => file,
@@ -49,7 +49,7 @@ module MultiSync
     def upload(resource)
 
       key = resource.path_without_root.to_s
-      MultiSync.log "Upload #{resource.class.to_s.split('::').last}:'#{key}' to #{self.class.to_s.split('::').last}:'#{(Pathname.new(self.connection.local_root) + self.destination_dir).to_s}'"
+      MultiSync.debug "Upload #{resource.class.to_s.split('::').last}:'#{key}' to #{self.class.to_s.split('::').last}:'#{(Pathname.new(self.connection.local_root) + self.destination_dir).to_s}'"
       directory = self.connection.directories.get(self.destination_dir.to_s)
       return if directory.nil?
       directory.files.create(
@@ -63,7 +63,7 @@ module MultiSync
     def delete(resource)
 
       key = resource.path_without_root.to_s
-      MultiSync.log "Delete #{resource.class.to_s.split('::').last}:'#{key}' from #{self.class.to_s.split('::').last}:'#{(Pathname.new(self.connection.local_root) + self.destination_dir).to_s}'"
+      MultiSync.debug "Delete #{resource.class.to_s.split('::').last}:'#{key}' from #{self.class.to_s.split('::').last}:'#{(Pathname.new(self.connection.local_root) + self.destination_dir).to_s}'"
       self.connection.directories.get(self.destination_dir.to_s).files.get(key).destroy
 
     end

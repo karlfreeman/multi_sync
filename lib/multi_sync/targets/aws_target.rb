@@ -46,7 +46,7 @@ module MultiSync
     #
     def upload(resource)
 
-      MultiSync.log "Upload #{resource.class.to_s.split('::').last}:'#{resource.path_without_root.to_s}' to #{self.class.to_s.split('::').last}:'/#{(self.target_dir + self.destination_dir).to_s}'"
+      MultiSync.debug "Upload #{resource.class.to_s.split('::').last}:'#{resource.path_without_root.to_s}' to #{self.class.to_s.split('::').last}:'/#{(self.target_dir + self.destination_dir).to_s}'"
       directory = self.connection.directories.get(self.target_dir.to_s)
       return if directory.nil?
       directory.files.create(
@@ -59,7 +59,7 @@ module MultiSync
     #
     def delete(resource)
 
-      MultiSync.log "Delete #{resource.class.to_s.split('::').last}:'#{resource.path_without_root.to_s}' from #{self.class.to_s.split('::').last}:'/#{(self.target_dir + self.destination_dir).to_s}'"
+      MultiSync.debug "Delete #{resource.class.to_s.split('::').last}:'#{resource.path_without_root.to_s}' from #{self.class.to_s.split('::').last}:'/#{(self.target_dir + self.destination_dir).to_s}'"
       self.connection.delete_object(self.target_dir.to_s, (self.destination_dir + resource.path_without_root).to_s)
 
     end
@@ -72,9 +72,11 @@ module MultiSync
 
       # directory
       return false if pathname.to_s =~ /\/$/
+
       # overreaching AWS globbing
       return false if !self.destination_dir.to_s.empty? && !(pathname.to_s =~ /^#{self.destination_dir.to_s}\//)
 
+      #
       return true
 
     end
