@@ -27,13 +27,13 @@ namespace :spec do
 
   desc "Run specs with middleman"
   task :middleman do
-    ENV['BUNDLE_GEMFILE'] = "gemfiles/middleman-3.1.x.gemfile"
+    ENV["BUNDLE_GEMFILE"] = "gemfiles/middleman-3.1.x.gemfile"
     Rake::Task["spec"].execute
   end
 
   desc "Run specs with rails"
   task :rails do
-    ENV['BUNDLE_GEMFILE'] = "gemfiles/rails-3.2.x.gemfile"
+    ENV["BUNDLE_GEMFILE"] = "gemfiles/rails-3.2.x.gemfile"
     Rake::Task["spec"].execute
   end
 
