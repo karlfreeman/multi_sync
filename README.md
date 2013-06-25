@@ -12,6 +12,7 @@ MultiSync.configuration do |config|
   # config.delete_abandoned_files = true # when an abondoned file is found whether to remove it (defaults to true)
   # config.upload_missing_files = true # when a missing file is found whether to upload it (defaults to true)
   # config.target_pool_size = 16 # how many threads you would like to open for each target (defaults to the amount of CPU core's your machine has)
+  # config.max_sync_attempts = 1 # how many times a file should be retried if there was an error during sync (defaults to 3)
 end
 
 MultiSync.run do
