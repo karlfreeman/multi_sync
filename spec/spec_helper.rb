@@ -12,8 +12,6 @@ require "support/fakefs"
 require "support/simplecov"
 
 require "multi_sync"
-MultiSync.env = :test
-MultiSync.log = false
 
 RSpec.configure do |config|
 
@@ -22,9 +20,11 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    Celluloid.shutdown
     MultiSync.instance_variable_set('@client', nil)
     MultiSync.instance_variable_set('@configuration', nil)
+    MultiSync.env = :test
+    # MultiSync.logger = false
+    # MultiSync.verbose = true
     Celluloid.boot
   end
 

@@ -34,7 +34,9 @@ module MultiSync
       begin
         clazz = MultiSync.const_get("#{options[:type].capitalize.to_s}Target")
       rescue NameError
-        MultiSync.error "Unknown target type: #{options[:type]}"
+        # TODO custom exceptions
+        MultiSync.warn "Unknown target type: #{options[:type]}"
+        raise ArgumentError, "Unknown target type: #{options[:type]}"
       end
       self.supervisor.pool(clazz, :as => name, :args => [options], :size => MultiSync.target_pool_size)
     end
@@ -45,7 +47,9 @@ module MultiSync
       begin
         clazz = MultiSync.const_get("#{options[:type].capitalize.to_s}Source")
       rescue NameError
-        MultiSync.error "Unknown source type: #{options[:type]}"
+        # TODO custom exceptions
+        MultiSync.warn "Unknown source type: #{options[:type]}"
+        raise ArgumentError, "Unknown source type: #{options[:type]}"
       end
       self.sources << clazz.new(options)
     end
@@ -54,15 +58,17 @@ module MultiSync
     #
     def synchronize
 
+      MultiSync.info "Starting synchronization..."
+
       determine_sync if first_run?
       sync_attempted
 
-      MultiSync.log "Scheduling job(s) in the future..."
+      MultiSync.debug "Scheduling job(s) in the future..."
       self.incomplete_jobs.delete_if do | job |
         self.running_jobs << { :id => job[:id], :future => Celluloid::Actor[job[:target_id]].future.send(job[:method], job[:args]) }
       end
       
-      MultiSync.log "Fetching job(s) from the future(s)..."
+      MultiSync.debug "Fetching job(s) from the future(s)..."
       self.running_jobs.delete_if do | job |
         begin
           completed_job = { :id => job[:id], :response => job[:future].value }
@@ -85,12 +91,12 @@ module MultiSync
     def finalize
 
       if self.finished_at
-        MultiSync.log "Sync completed in #{(self.finished_at - self.started_at).to_i} seconds"
-        MultiSync.log "#{self.complete_jobs.length} file(s) have been synchronised from #{self.sources.length} source(s) to #{self.supervisor.actors.length} target(s)"
-        MultiSync.log "#{self.file_sync_attempts} failed request(s) were detected and re-tried"
+        MultiSync.info "Sync completed in #{(self.finished_at - self.started_at).to_i} seconds"
+        MultiSync.info "#{self.complete_jobs.length} file(s) have been synchronised from #{self.sources.length} source(s) to #{self.supervisor.actors.length} target(s)"
+        MultiSync.info "#{self.file_sync_attempts} failed request(s) were detected and re-tried"
       else
-        MultiSync.log "Sync failed to complete with #{self.incomplete_jobs.length} outstanding file(s) to be synchronised"
-        MultiSync.log "#{self.complete_jobs.length} file(s) were synchronised from #{self.sources.length} source(s) to #{self.supervisor.actors.length} target(s)"
+        MultiSync.info "Sync failed to complete with #{self.incomplete_jobs.length} outstanding file(s) to be synchronised"
+        MultiSync.info "#{self.complete_jobs.length} file(s) were synchronised from #{self.sources.length} source(s) to #{self.supervisor.actors.length} target(s)"
       end
 
       self.supervisor.finalize
@@ -107,7 +113,7 @@ module MultiSync
 
         source_files = []
 
-        MultiSync.log "Synchronizing: '#{source.source_dir}'"
+        MultiSync.info "Synchronizing: '#{source.source_dir}'"
         
         source_files = source.files
         source_files.sort! # sort to make sure the source's indexs match the targets
@@ -118,43 +124,43 @@ module MultiSync
           abandoned_files = []
           outdated_files = []
 
-          MultiSync.log "#{source_files.length} file(s) found from the source"
+          MultiSync.debug "#{source_files.length} file(s) found from the source"
 
-          MultiSync.log "Fetching file(s) from the target..."
+          MultiSync.debug "Fetching file(s) from the target..."
 
           target_files = Celluloid::Actor[target_id].files
           target_files.sort! # sort to make sure the target's indexs match the sources
 
-          MultiSync.log "#{target_files.length} file(s) found from the target"
+          MultiSync.debug "#{target_files.length} file(s) found from the target"
 
           missing_files = determine_missing_files(source_files, target_files)
           missing_files_msg = "#{missing_files.length} of the file(s) are missing"
           missing_files_msg += ", however we're skipping them as :upload_missing_files is false" unless MultiSync.upload_missing_files
-          MultiSync.log missing_files_msg
+          MultiSync.debug missing_files_msg
 
           abandoned_files = determine_abandoned_files(source_files, target_files)
           abandoned_files_msg = "#{abandoned_files.length} of the file(s) are abandoned"
           abandoned_files_msg += ", however we're skipping them as :delete_abandoned_files is false" unless MultiSync.delete_abandoned_files
-          MultiSync.log abandoned_files_msg
+          MultiSync.debug abandoned_files_msg
 
           # remove missing_files from source_files ( as we know they are missing so don't need to check them )
           # remove abandoned_files from target_files ( as we know they are abandoned so don't need to check them )
           outdated_files = determine_outdated_files(source_files - missing_files, target_files - abandoned_files)
-          MultiSync.log "#{outdated_files.length} of the file(s) are outdated"
+          MultiSync.debug "#{outdated_files.length} of the file(s) are outdated"
 
           # abandoned files
           abandoned_files.lazily.each do | file |
-            self.incomplete_jobs << { :id => SecureRandom.uuid, :target_id => target_id, :method => :delete, :args => file }
+            self.incomplete_jobs << { :id => Celluloid.uuid, :target_id => target_id, :method => :delete, :args => file }
           end if MultiSync.delete_abandoned_files
 
           # missing files
           missing_files.lazily.each do | file |
-            self.incomplete_jobs << { :id => SecureRandom.uuid, :target_id => target_id, :method => :upload, :args => file }
+            self.incomplete_jobs << { :id => Celluloid.uuid, :target_id => target_id, :method => :upload, :args => file }
           end if MultiSync.upload_missing_files
 
           # outdated files
           outdated_files.lazily.each do | file |
-            self.incomplete_jobs << { :id => SecureRandom.uuid, :target_id => target_id, :method => :upload, :args => file }
+            self.incomplete_jobs << { :id => Celluloid.uuid, :target_id => target_id, :method => :upload, :args => file }
           end
 
         end
@@ -193,8 +199,11 @@ module MultiSync
     def sync_attempted
       self.started_at = Time.now if first_run?
       self.sync_attempts = self.sync_attempts + 1
-      # TODO custom exceptions
-      raise ArgumentError if self.sync_attempts > 10
+      if self.sync_attempts > MultiSync.max_sync_attempts
+        # TODO custom exceptions
+        MultiSync.warn "Sync was attempted more then #{MultiSync.max_sync_attempts} times"
+        raise ArgumentError, "Sync was attempted more then #{MultiSync.max_sync_attempts} times"
+      end
     end
 
     #

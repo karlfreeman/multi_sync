@@ -1,13 +1,13 @@
-require "log_switch"
 require "forwardable"
 require "multi_sync/client"
 require "multi_sync/version"
+require "multi_sync/logging"
 require "multi_sync/environment"
 require "multi_sync/configuration"
 
 module MultiSync
   extend SingleForwardable
-  extend LogSwitch
+  extend MultiSync::Logging
   extend MultiSync::Environment
 
   # a list of libraries and thier extension file
