@@ -4,7 +4,7 @@ module MultiSync
 
     class Rails
 
-      MultiSync.log "Rails auto-detected"
+      MultiSync.info "Rails auto-detected"
 
     end
 

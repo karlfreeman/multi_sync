@@ -4,7 +4,7 @@ module MultiSync
 
     class Middleman
 
-      MultiSync.log "Middleman auto-detected"
+      MultiSync.info "Middleman auto-detected"
 
     end
 
