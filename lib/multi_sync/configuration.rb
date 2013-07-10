@@ -23,7 +23,7 @@ module MultiSync
     def initialize(options = {})
       Celluloid.logger = MultiSync.logger
       options.each_pair do |key, value|
-        send("#{key}=", value) if self.attributes.keys.include?(key)
+        self.send("#{key}=", value) if self.attributes.keys.include?(key)
       end
     end
 

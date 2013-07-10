@@ -10,17 +10,16 @@ module MultiSync
   class LocalSource < Source
     extend Virtus
 
-    attribute :include, String, :default => "**/*"
+    attribute :include, String
     attribute :exclude, String
 
     # Initialize a new Source object
     #
     # @param options [Hash]
     def initialize(options = {})
-      cloned_options = Marshal.load(Marshal.dump(options)) # deep clone options
-      self.include ||= cloned_options.delete(:include)
-      self.exclude ||= cloned_options.delete(:exclude)
-      super(cloned_options)
+      self.include = options.fetch(:include, "**/*")
+      self.exclude = options.fetch(:exclude, nil)
+      super(options)
     end
 
     #

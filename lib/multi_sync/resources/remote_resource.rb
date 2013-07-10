@@ -11,9 +11,8 @@ module MultiSync
     #
     # @param path [String]
     def initialize(options = {})
-      cloned_options = Marshal.load(Marshal.dump(options)) # deep clone options
-      self.file = options.delete(:file)
-      super(cloned_options)
+      self.file = options.fetch(:file, nil)
+      super(options)
     end
 
     #

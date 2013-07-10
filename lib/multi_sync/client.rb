@@ -6,12 +6,14 @@ require "multi_sync/sources/local_source"
 require "multi_sync/sources/manifest_source"
 require "multi_sync/targets/aws_target"
 require "multi_sync/targets/local_target"
+require "multi_sync/mixins/pluralize_helper"
 
 module MultiSync
 
   # Defines constants and methods related to the Client
   class Client
     include Virtus
+    include MultiSync::Mixins::PluralizeHelper
 
     attr_accessor :supervisor
     attribute :incomplete_jobs, Set, :default => Set.new
@@ -35,7 +37,6 @@ module MultiSync
       begin
         clazz = MultiSync.const_get("#{options[:type].capitalize.to_s}Target")
       rescue NameError
-        # TODO custom exceptions
         MultiSync.warn "Unknown target type: #{options[:type]}"
         raise ArgumentError, "Unknown target type: #{options[:type]}"
       end
@@ -48,7 +49,6 @@ module MultiSync
       begin
         clazz = MultiSync.const_get("#{options[:type].capitalize.to_s}Source")
       rescue NameError
-        # TODO custom exceptions
         MultiSync.warn "Unknown source type: #{options[:type]}"
         raise ArgumentError, "Unknown source type: #{options[:type]}"
       end
@@ -69,12 +69,12 @@ module MultiSync
       determine_sync if first_run?
       sync_attempted
 
-      MultiSync.debug "Scheduling job(s) in the future..."
+      MultiSync.debug "Scheduling jobs in the future..."
       self.incomplete_jobs.delete_if do | job |
         self.running_jobs << { :id => job[:id], :future => Celluloid::Actor[job[:target_id]].future.send(job[:method], job[:args]) }
       end
       
-      MultiSync.debug "Fetching job(s) from the future(s)..."
+      MultiSync.debug "Fetching jobs from the futures..."
       self.running_jobs.delete_if do | job |
         begin
           completed_job = { :id => job[:id], :response => job[:future].value }
@@ -97,12 +97,13 @@ module MultiSync
     def finalize
 
       if self.finished_at
-        MultiSync.info "Sync completed in #{(self.finished_at - self.started_at).to_i} seconds"
-        MultiSync.info "#{self.complete_jobs.length} file(s) have been synchronised from #{self.sources.length} source(s) to #{self.supervisor.actors.length} target(s)"
-        MultiSync.info "#{self.file_sync_attempts} failed request(s) were detected and re-tried"
+        duration = (self.finished_at - self.started_at).to_i
+        MultiSync.info "Sync completed in #{pluralize(duration, 'second')}"
+        MultiSync.info "#{pluralize(self.complete_jobs.length, 'file')} have been synchronised from #{pluralize(self.sources.length, 'source')} to #{pluralize(self.supervisor.actors.length, 'target')}"
+        MultiSync.info "#{pluralize(self.file_sync_attempts, 'failed request')} were detected and re-tried"
       else
-        MultiSync.info "Sync failed to complete with #{self.incomplete_jobs.length} outstanding file(s) to be synchronised"
-        MultiSync.info "#{self.complete_jobs.length} file(s) were synchronised from #{self.sources.length} source(s) to #{self.supervisor.actors.length} target(s)"
+        MultiSync.info "Sync failed to complete with #{pluralize(self.incomplete_jobs.length, 'outstanding file')} to be synchronised"
+        MultiSync.info "#{pluralize(self.complete_jobs.length, 'file')} were synchronised from #{pluralize(self.sources.length, 'source')} to #{pluralize(self.supervisor.actors.length, 'target')}"
       end
 
       self.supervisor.finalize
@@ -130,29 +131,29 @@ module MultiSync
           abandoned_files = []
           outdated_files = []
 
-          MultiSync.debug "#{source_files.length} file(s) found from the source"
+          MultiSync.debug "#{pluralize(source_files.length, 'file')} found from the source"
 
-          MultiSync.debug "Fetching file(s) from the target..."
+          MultiSync.debug "Fetching files from the target..."
 
           target_files = Celluloid::Actor[target_id].files
           target_files.sort! # sort to make sure the target's indexs match the sources
 
-          MultiSync.debug "#{target_files.length} file(s) found from the target"
+          MultiSync.debug "#{pluralize(target_files.length, 'file')} found from the target"
           
           missing_files = determine_missing_files(source_files, target_files)
-          missing_files_msg = "#{missing_files.length} of the file(s) are missing"
+          missing_files_msg = "#{missing_files.length} of the files are missing"
           missing_files_msg += ", however we're skipping them as :upload_missing_files is false" unless MultiSync.upload_missing_files
           MultiSync.debug missing_files_msg
 
           abandoned_files = determine_abandoned_files(source_files, target_files)
-          abandoned_files_msg = "#{abandoned_files.length} of the file(s) are abandoned"
+          abandoned_files_msg = "#{abandoned_files.length} of the files are abandoned"
           abandoned_files_msg += ", however we're skipping them as :delete_abandoned_files is false" unless MultiSync.delete_abandoned_files
           MultiSync.debug abandoned_files_msg
 
           # remove missing_files from source_files ( as we know they are missing so don't need to check them )
           # remove abandoned_files from target_files ( as we know they are abandoned so don't need to check them )
           outdated_files = determine_outdated_files(source_files - missing_files, target_files - abandoned_files)
-          MultiSync.debug "#{outdated_files.length} of the file(s) are outdated"
+          MultiSync.debug "#{outdated_files.length} of the files are outdated"
 
           # abandoned files
           abandoned_files.lazily.each do | file |
@@ -206,7 +207,6 @@ module MultiSync
       self.started_at = Time.now if first_run?
       self.sync_attempts = self.sync_attempts + 1
       if self.sync_attempts > MultiSync.max_sync_attempts
-        # TODO custom exceptions
         MultiSync.warn "Sync was attempted more then #{MultiSync.max_sync_attempts} times"
         raise ArgumentError, "Sync was attempted more then #{MultiSync.max_sync_attempts} times"
       end

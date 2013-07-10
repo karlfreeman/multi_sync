@@ -1,6 +1,7 @@
 require "virtus"
 require "pathname"
 require "celluloid"
+require "multi_sync/mixins/log_helper"
 
 module MultiSync
 
@@ -8,24 +9,26 @@ module MultiSync
   class Target
     include Virtus
     include Celluloid
+    include MultiSync::Mixins::LogHelper
 
     attr_accessor :connection
     attribute :target_dir, Pathname
-    attribute :destination_dir, Pathname, :default => Pathname.new("")
+    attribute :destination_dir, Pathname
     attribute :credentials, Hash, :default => :default_credentials
     
     # Initialize a new Target object
     #
     # @param options [Hash]
     def initialize(options = {})
-      # raise(ArgumentError, "target_dir must be present") unless options[:target_dir]
-      # raise(ArgumentError, "provider must be present and a symbol") unless options[:provider] && options[:provider].is_a?(Symbol)
-      self.target_dir = Pathname.new(options.delete(:target_dir))
-      self.destination_dir = Pathname.new(options.delete(:destination_dir)) if options[:destination_dir]
-      self.credentials.merge!(options.delete(:credentials){ Hash.new })
+      raise(ArgumentError, "target_dir must be present") unless options[:target_dir]
+      self.target_dir = Pathname.new(options.fetch(:target_dir, ""))
+      self.destination_dir = Pathname.new(options.fetch(:destination_dir, ""))
+      self.credentials.merge!(options.fetch(:credentials, Hash.new))
     end
 
+    #
     def default_credentials
+      # deep clone just in case
       Marshal.load(Marshal.dump(MultiSync.credentials))
     end
 

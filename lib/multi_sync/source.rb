@@ -1,10 +1,12 @@
 require "virtus"
+require "multi_sync/mixins/log_helper"
 
 module MultiSync
 
   # Defines constants and methods related to the Source
   class Source
     include Virtus
+    include MultiSync::Mixins::LogHelper
 
     attribute :targets, Array, :default => []
     attribute :source_dir, String
@@ -13,10 +15,9 @@ module MultiSync
     #
     # @param options [Hash]
     def initialize(options = {})
-      self.targets.concat([*options.delete(:targets)])
-      # raise(ArgumentError, "source_dir must be a directory") unless options[:source_dir] && File.directory?(options[:source_dir])
-      self.source_dir = options.delete(:source_dir) { "" }
-      self.source_dir = self.source_dir.to_s
+      self.targets.concat([*options.fetch(:targets, [])])
+      raise(ArgumentError, "source_dir must be a present") unless options[:source_dir]
+      self.source_dir = options.fetch(:source_dir).to_s
       self.source_dir << "/" unless (self.source_dir[-1, 1] == "/") # append '/' to source_dir's without one
       self.source_dir = Pathname.new(self.source_dir)
     end

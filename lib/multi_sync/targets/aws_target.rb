@@ -13,8 +13,7 @@ module MultiSync
     #
     # @param options [Hash]
     def initialize(options = {})
-      cloned_options = Marshal.load(Marshal.dump(options)) # deep clone options
-      super(cloned_options)
+      super(options)
       self.connection = ::Fog::Storage.new(self.credentials.merge(:provider => :aws))
     end
 
@@ -46,7 +45,7 @@ module MultiSync
     #
     def upload(resource)
 
-      MultiSync.debug "Upload #{resource.class.to_s.split('::').last}:'#{resource.path_without_root.to_s}' to #{self.class.to_s.split('::').last}:'/#{(self.target_dir + self.destination_dir).to_s}'"
+      MultiSync.debug "Upload #{resource.class_name}:'#{resource.path_without_root.to_s}' to #{self.class_name}:'#{File.join('/', self.target_dir + self.destination_dir)}'"
       directory = self.connection.directories.get(self.target_dir.to_s)
       return if directory.nil?
       directory.files.create(
@@ -62,7 +61,7 @@ module MultiSync
     #
     def delete(resource)
 
-      MultiSync.debug "Delete #{resource.class.to_s.split('::').last}:'#{resource.path_without_root.to_s}' from #{self.class.to_s.split('::').last}:'/#{(self.target_dir + self.destination_dir).to_s}'"
+      MultiSync.debug "Delete #{resource.class_name}:'#{resource.path_without_root.to_s}' from #{self.class_name}:'#{File.join('/', self.target_dir + self.destination_dir)}'"
       self.connection.delete_object(self.target_dir.to_s, (self.destination_dir + resource.path_without_root).to_s)
 
     end

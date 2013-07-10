@@ -46,7 +46,7 @@ describe MultiSync::LocalSource, fakefs: true do
 
     it "should find files (by type)" do
       source = MultiSync::LocalSource.new(:source_dir => "/tmp/local-source", :include => "*.txt")
-      expect(source.files).to have(4).files
+      expect(source.files).to have(2).files
     end
 
     context :with_root do

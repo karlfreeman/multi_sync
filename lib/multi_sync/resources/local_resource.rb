@@ -13,8 +13,7 @@ module MultiSync
     #
     # @param path [String]
     def initialize(options = {})
-      cloned_options = Marshal.load(Marshal.dump(options)) # deep clone options
-      super(cloned_options)
+      super(options)
     end
 
     #

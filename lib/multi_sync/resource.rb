@@ -1,5 +1,6 @@
 require "virtus"
 require "pathname"
+require "multi_sync/mixins/log_helper"
 
 module MultiSync
 
@@ -7,6 +8,7 @@ module MultiSync
   class Resource
     include Virtus
     include Comparable
+    include MultiSync::Mixins::LogHelper
 
     attribute :file, File
     attribute :path_with_root, Pathname
@@ -21,27 +23,33 @@ module MultiSync
     #
     # @param options [Hash]
     def initialize(options = {})
-      self.path_with_root ||= options.delete(:with_root)
-      self.path_without_root ||= options.delete(:without_root)
-      self.etag ||= options.delete(:etag) { self.determine_etag }
-      self.mtime ||= options.delete(:mtime) { self.determine_mtime }
-      self.content_length ||= options.delete(:content_length) { self.determine_content_length }
-      self.digest ||= options.delete(:digest)
+      raise(ArgumentError, "with_root must be present") unless options[:with_root]
+      raise(ArgumentError, "without_root must be present") unless options[:without_root]
+      self.path_with_root = options.fetch(:with_root)
+      self.path_without_root = options.fetch(:without_root)
+      self.etag = options.fetch(:etag, self.determine_etag)
+      self.mtime = options.fetch(:mtime, self.determine_mtime)
+      self.content_length = options.fetch(:content_length, self.determine_content_length)
+      self.digest = options.fetch(:digest, "")
     end
 
+    #
     def hash
       self.path_without_root.hash
     end
 
+    #
     def <=>(other)
       self.path_without_root <=> other.path_without_root
     end
 
+    #
     def ==(other)
       self.path_without_root == other.path_without_root
     end
     alias :eql? :==
 
+    #
     def has_matching_etag?(other)
       self.etag == other.etag
     end

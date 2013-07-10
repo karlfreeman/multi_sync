@@ -13,8 +13,7 @@ module MultiSync
     #
     # @param options [Hash]
     def initialize(options = {})
-      cloned_options = Marshal.load(Marshal.dump(options)) # deep clone options
-      super(cloned_options)
+      super(options)
       self.connection = ::Fog::Storage.new(self.credentials.merge(:provider => :local))
     end
 
@@ -32,7 +31,7 @@ module MultiSync
         # directory
         next if pathname.directory?
 
-        MultiSync.debug "Found RemoteResource: '#{pathname.to_s}' from #{self.class.to_s.split('::').last}: '#{(Pathname.new(self.connection.local_root) + self.destination_dir).to_s}'"
+        MultiSync.debug "Found RemoteResource:'#{pathname.to_s}' from #{self.class_name}:'#{File.join(self.connection.local_root, self.destination_dir)}'"
 
         files << MultiSync::RemoteResource.new(
           :file => file,
@@ -49,7 +48,7 @@ module MultiSync
     def upload(resource)
 
       key = resource.path_without_root.to_s
-      MultiSync.debug "Upload #{resource.class.to_s.split('::').last}: '#{key}' to #{self.class.to_s.split('::').last}: '#{(Pathname.new(self.connection.local_root) + self.destination_dir).to_s}'"
+      MultiSync.debug "Upload #{resource.class_name}:'#{key}' to #{self.class_name}:'#{File.join(self.connection.local_root, self.destination_dir)}'"
       directory = self.connection.directories.get(self.destination_dir.to_s)
       return if directory.nil?
       directory.files.create(
@@ -63,7 +62,7 @@ module MultiSync
     def delete(resource)
 
       key = resource.path_without_root.to_s
-      MultiSync.debug "Delete #{resource.class.to_s.split('::').last}: '#{key}' from #{self.class.to_s.split('::').last}: '#{(Pathname.new(self.connection.local_root) + self.destination_dir).to_s}'"
+      MultiSync.debug "Delete #{resource.class_name}:'#{key}' from #{self.class_name}:'#{File.join(self.connection.local_root, self.destination_dir)}'"
       self.connection.directories.get(self.destination_dir.to_s).files.get(key).destroy
 
     end
