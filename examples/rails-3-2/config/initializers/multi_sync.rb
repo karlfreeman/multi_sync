@@ -14,10 +14,10 @@ MultiSync.prepare do
   source :public, {
     :type => :manifest,
     :source_dir => ::Rails.root.join("public", ::Rails.application.config.assets.prefix.sub(/^\//, "")),
-    :targets => [ :www ]
+    :targets => [:assets]
   }
 
-  target :www, {
+  target :assets, {
     :type => :aws,
     :target_dir => "multi_sync",
     :credentials => {
