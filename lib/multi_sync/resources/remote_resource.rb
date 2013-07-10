@@ -11,9 +11,9 @@ module MultiSync
     #
     # @param path [String]
     def initialize(options = {})
+      cloned_options = Marshal.load(Marshal.dump(options)) # deep clone options
       self.file = options.delete(:file)
-      self.path_with_root ||= options.delete(:with_root)
-      self.path_without_root ||= options.delete(:without_root)
+      super(cloned_options)
     end
 
     #
@@ -22,22 +22,27 @@ module MultiSync
     end
 
     #
-    def content_length
-      self.file.content_length
-    end
-
-    #
     def content_type
       self.file.content_type
     end
 
     #
-    def etag
+    def determine_mtime
+      self.file.last_modified
+    end
+
+    #
+    def determine_etag
       begin
         self.file.etag
       rescue NoMethodError # Fog::Storage::Local::File's don't have an etag method :(
         Digest::MD5.hexdigest(File.read(self.path_with_root))
       end
+    end
+
+    #
+    def determine_content_length
+      self.file.content_length
     end
 
   end

@@ -21,12 +21,14 @@ module MultiSync
       # We're in verbose mode so disable all non-info logs
       return if !MultiSync.verbose && level != :info
 
+      logger.send(level, message)
+
       # If the message has multiple lines, lets print them
-      if message.respond_to? :each_line
-        message.each_line { |line| logger.send level, line.chomp }
-      else
-        logger.send(level, message)
-      end
+      # if message.respond_to? :each_line
+      #   message.each_line { |line| logger.send level, line.to_s.chomp }
+      # else
+      #   logger.send(level, message)
+      # end
 
     end
 

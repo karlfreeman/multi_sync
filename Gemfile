@@ -10,6 +10,7 @@ gem "yard"
 # platforms :jruby do
 # end
 
+gem "sprockets", :require => false
 gem "multi_mime", :git => "https://github.com/karlfreeman/multi_mime"
 
 group :development do
@@ -23,6 +24,7 @@ group :test do
   gem "rspec"
   gem "rspec-smart-formatter"
   gem "fakefs", :git => "https://github.com/defunkt/fakefs.git", :require => "fakefs/safe"
+  gem "timecop"
   gem "simplecov", :require => false
   gem "coveralls", :require => false
   gem "cane", :require => false

@@ -13,8 +13,8 @@ module MultiSync
     #
     # @param path [String]
     def initialize(options = {})
-      self.path_with_root ||= options.delete(:with_root)
-      self.path_without_root ||= options.delete(:without_root)
+      cloned_options = Marshal.load(Marshal.dump(options)) # deep clone options
+      super(cloned_options)
     end
 
     #
@@ -22,16 +22,7 @@ module MultiSync
       begin
         File.read(self.path_with_root.to_s)
       rescue
-        return ""
-      end
-    end
-
-    #
-    def content_length
-      begin
-        File.size(self.path_with_root.to_s)
-      rescue
-        return 0
+        return nil
       end
     end
 
@@ -41,8 +32,26 @@ module MultiSync
     end
 
     #
-    def etag
-      self.body.empty? ? "" : Digest::MD5.hexdigest(self.body)
+    def determine_mtime
+      begin
+        File.mtime(self.path_with_root.to_s)
+      rescue
+        return nil
+      end
+    end
+
+    #
+    def determine_etag
+      self.body.nil? ? nil : Digest::MD5.hexdigest(self.body)
+    end
+
+    #
+    def determine_content_length
+      begin
+        File.size(self.path_with_root.to_s)
+      rescue
+        return 0
+      end
     end
 
   end

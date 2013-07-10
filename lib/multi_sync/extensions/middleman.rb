@@ -3,9 +3,7 @@ module MultiSync
   module Extensions
 
     class Middleman
-
-      MultiSync.info "Middleman auto-detected"
-
+      MultiSync.info "Middleman -v #{::Middleman::VERSION} auto-detected"
     end
 
   end

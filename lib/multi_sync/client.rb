@@ -3,6 +3,7 @@ require "virtus"
 require "lazily"
 require "celluloid"
 require "multi_sync/sources/local_source"
+require "multi_sync/sources/manifest_source"
 require "multi_sync/targets/aws_target"
 require "multi_sync/targets/local_target"
 
@@ -58,7 +59,12 @@ module MultiSync
     #
     def synchronize
 
-      MultiSync.info "Starting synchronization..."
+      if sync_pointless?
+        MultiSync.info "Preventing synchronization as there are #{self.sources.length} sources to sync..."
+        return
+      else
+        MultiSync.info "Starting synchronization..."
+      end
 
       determine_sync if first_run?
       sync_attempted
@@ -132,7 +138,7 @@ module MultiSync
           target_files.sort! # sort to make sure the target's indexs match the sources
 
           MultiSync.debug "#{target_files.length} file(s) found from the target"
-
+          
           missing_files = determine_missing_files(source_files, target_files)
           missing_files_msg = "#{missing_files.length} of the file(s) are missing"
           missing_files_msg += ", however we're skipping them as :upload_missing_files is false" unless MultiSync.upload_missing_files
@@ -183,7 +189,7 @@ module MultiSync
 
     #
     def determine_outdated_files(source_files, target_files)
-      outdated_files = []  
+      outdated_files = []
 
       # TODO replace with celluloid pool of futures
       # check each source file against the matching target_file's etag
@@ -214,6 +220,10 @@ module MultiSync
     #
     def first_run?
       self.sync_attempts == 0
+    end
+
+    def sync_pointless?
+      self.sources.empty?
     end
 
   end

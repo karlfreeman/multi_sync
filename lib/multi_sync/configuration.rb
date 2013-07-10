@@ -1,6 +1,8 @@
 require "fog"
 require "virtus"
 require "celluloid"
+Fog::Logger[:warning] = nil
+
 module MultiSync
 
   # Defines constants and methods related to the Configuration
@@ -8,6 +10,7 @@ module MultiSync
     include Virtus
 
     attribute :verbose, Boolean, :default => false
+    attribute :run_on_build, Boolean, :default => true
     attribute :delete_abandoned_files, Boolean, :default => true
     attribute :upload_missing_files, Boolean, :default => true
     attribute :target_pool_size, Integer, :default => :celluloid_cores

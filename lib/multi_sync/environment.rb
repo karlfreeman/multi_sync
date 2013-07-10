@@ -28,7 +28,7 @@ module MultiSync
     alias_method :env?, :environment?
 
     # Create methods for the environment shorthands
-    [:test, :development, :production].each do |e|
+    [:test, :development, :staging, :production].each do |e|
       # Determines if we are in a particular environment
       #
       # @return [Boolean] true if current environment matches, false otherwise

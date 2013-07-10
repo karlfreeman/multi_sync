@@ -31,9 +31,15 @@ namespace :spec do
     Rake::Task["spec"].execute
   end
 
-  desc "Run specs with rails"
-  task :rails do
+  desc "Run specs with rails 3.2"
+  task :rails_3_2 do
     ENV["BUNDLE_GEMFILE"] = "gemfiles/rails-3.2.x.gemfile"
+    Rake::Task["spec"].execute
+  end
+
+  desc "Run specs with rails 4.0"
+  task :rails_4_0 do
+    ENV["BUNDLE_GEMFILE"] = "gemfiles/rails-4.0.x.gemfile"
     Rake::Task["spec"].execute
   end
 

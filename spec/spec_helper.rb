@@ -9,6 +9,7 @@ require "securerandom"
 
 require "support/pry"
 require "support/fakefs"
+require "support/timecop"
 require "support/simplecov"
 
 require "multi_sync"
@@ -20,11 +21,9 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    MultiSync.instance_variable_set('@client', nil)
-    MultiSync.instance_variable_set('@configuration', nil)
+    MultiSync.reset!
     MultiSync.env = :test
-    # MultiSync.logger = false
-    # MultiSync.verbose = true
+    MultiSync.verbose = true
     Celluloid.boot
   end
 

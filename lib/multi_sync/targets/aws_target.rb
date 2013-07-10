@@ -51,7 +51,10 @@ module MultiSync
       return if directory.nil?
       directory.files.create(
         :key => (self.destination_dir + resource.path_without_root).to_s,
-        :body => resource.body
+        :body => resource.body,
+        :content_type => resource.content_type,
+        :content_md5 => Digest::MD5.base64digest(resource.body),
+        :public => true
       )
 
     end

@@ -10,7 +10,7 @@ module MultiSync
   extend MultiSync::Logging
   extend MultiSync::Environment
 
-  # a list of libraries and thier extension file
+  # a list of libraries, extension file and class name
   REQUIREMENT_MAP = [
     ["rails", "multi_sync/extensions/rails"],
     ["middleman-core", "multi_sync/extensions/middleman"]
@@ -43,6 +43,13 @@ module MultiSync
     self.configure(&block).synchronize
   end
 
+  # Prepare
+  #
+  # @return [MultiSync]
+  def self.prepare(&block)
+    self.configure(&block)
+  end
+
   # Fetch the MultiSync::Client
   #
   # @return [MultiSync::Client]
@@ -57,8 +64,24 @@ module MultiSync
     @configuration ||= MultiSync::Configuration.new(options)
   end
 
+  # Reset the MultiSync::Client
+  def self.reset_client!
+    remove_instance_variable :@client if defined?(@client)
+  end
+
+  # Reset the MultiSync::Configuration
+  def self.reset_configuration!
+    remove_instance_variable :@configuration if defined?(@configuration)
+  end
+
+  # Reset MultiSync::Configuration and MultiSync::Client
+  def self.reset!
+    self.reset_client!
+    self.reset_configuration!
+  end
+
   # by rescuing from a LoadError we can sniff out gems in use and try to automagically hook into them
-  REQUIREMENT_MAP.each do |(library, extension)|
+  REQUIREMENT_MAP.each do |library, extension|
     begin
       require library
       require extension
