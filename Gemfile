@@ -11,7 +11,8 @@ gem "yard"
 # end
 
 gem "sprockets", :require => false
-gem "multi_mime", :git => "https://github.com/karlfreeman/multi_mime"
+gem "celluloid", :github => "celluloid/celluloid"
+gem "multi_mime", :github => "karlfreeman/multi_mime"
 
 group :development do
   gem "kramdown", ">= 0.14"
@@ -23,7 +24,7 @@ end
 group :test do
   gem "rspec"
   gem "rspec-smart-formatter"
-  gem "fakefs", :git => "https://github.com/defunkt/fakefs.git", :require => "fakefs/safe"
+  gem "fakefs", :github => "defunkt/fakefs", :require => "fakefs/safe"
   gem "timecop"
   gem "simplecov", :require => false
   gem "coveralls", :require => false
