@@ -37,6 +37,6 @@ gem 'jquery-rails'
 # To use debugger
 # gem 'debugger'
 
-gem 'awesome_print', :require => 'awesome_print'
-gem 'multi_mime', :path => "../../../multi_mime"
+# gem 'awesome_print', :require => 'awesome_print'
+# gem 'multi_mime', :path => "../../../multi_mime"
 gem 'multi_sync', :path => '../../'

@@ -7,7 +7,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "lazily", "~> 0.1"
   gem.add_dependency "virtus", "~> 0.5"
   gem.add_dependency "celluloid", "~> 0.14"
-  gem.add_dependency "multi_mime", "~> 0.0.1"
+  gem.add_dependency "multi_mime", "~> 0.0.2"
   gem.add_dependency "multi_json", "~> 1.7"
   gem.add_dependency "mime-types", "~> 1.21"
   gem.name          = "multi_sync"
