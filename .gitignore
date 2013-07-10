@@ -17,3 +17,5 @@ tmp
 .yardoc
 _yardoc
 doc/
+/examples/rails-4-0/public/assets/
+/examples/rails-3-2/public/assets/
