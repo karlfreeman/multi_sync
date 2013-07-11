@@ -22,13 +22,13 @@ MultiSync.run do
   source :build {
     :type => :local, # :local is the source's type, current options are :local, :manifest
     :source_dir => "/path_to_your_build_folder",
-    :targets => [ :www ] # an array of target names that this source should sync against
+    :targets => [ :assets ] # an array of target names that this source should sync against
   }
 
-  target :www {
+  target :assets {
     :type => :aws, # :aws is the target's type, current options are :aws
-    :target_dir => "your_aws_bucket",
-    :destination_dir => "an_optional_directory_inside_your_aws_bucket",
+    :target_dir => "your_aws_bucket", # 
+    :destination_dir => "an_optional_directory_inside_your_aws_bucket", # 
     :credentials => {
       :region => "us-east-1",
       :aws_access_key_id => "super_secret",

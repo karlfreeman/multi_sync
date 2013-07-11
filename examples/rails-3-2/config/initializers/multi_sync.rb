@@ -18,11 +18,11 @@ MultiSync.prepare do
 
   target :assets, {
     :type => :aws,
-    :target_dir => "multi_sync",
+    :target_dir => "your_aws_bucket",
     :credentials => {
       :region => "us-east-1",
-      :aws_access_key_id => "AKIAJXMAC4YJEHPBYSHQ",
-      :aws_secret_access_key => "e8HuMafMCN4R2s+iMolDnbSnf3J/jqF0ejPLEiLT"
+      :aws_access_key_id => "super_secret",
+      :aws_secret_access_key => "super_secret"
     }
   }
 
