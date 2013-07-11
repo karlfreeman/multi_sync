@@ -1,6 +1,7 @@
 MultiSync.configuration do |config|
   # config.verbose = false  # turn on verbose logging (defaults to false)
   # config.force = false  # force syncing of outdated_files (defaults to false)
+  # config.run_on_build = true # when within a framework which `builds` assets, whether to sync afterwards (defaults to true)
   # config.sync_outdated_files = true # when an outdated file is found whether to replace it (defaults to true)
   # config.delete_abandoned_files = true # when an abondoned file is found whether to remove it (defaults to true)
   # config.upload_missing_files = true # when a missing file is found whether to upload it (defaults to true)
