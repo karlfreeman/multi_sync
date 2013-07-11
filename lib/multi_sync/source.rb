@@ -18,7 +18,7 @@ module MultiSync
       self.targets.concat([*options.fetch(:targets, [])])
       raise(ArgumentError, "source_dir must be a present") unless options[:source_dir]
       self.source_dir = options.fetch(:source_dir).to_s
-      self.source_dir << "/" unless (self.source_dir[-1, 1] == "/") # append '/' to source_dir's without one
+      self.source_dir << "/" unless self.source_dir.end_with?("/")
       self.source_dir = Pathname.new(self.source_dir)
     end
 
