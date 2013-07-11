@@ -120,7 +120,9 @@ module MultiSync
 
         source_files = []
 
-        MultiSync.info "Synchronizing: '#{source.source_dir}'"
+        starting_synchronizing_msg = "ynchronizing: '#{source.source_dir}'"
+        starting_synchronizing_msg.prepend MultiSync.force ? "Forcefully s" : "S" 
+        MultiSync.info starting_synchronizing_msg
         
         source_files = source.files
         source_files.sort! # sort to make sure the source's indexs match the targets
@@ -195,7 +197,7 @@ module MultiSync
       # TODO replace with celluloid pool of futures
       # check each source file against the matching target_file's etag
       source_files.lazily.each_with_index do |file, i|
-        outdated_files << file unless file.has_matching_etag?(target_files[i])
+        outdated_files << file unless !MultiSync.force && file.has_matching_etag?(target_files[i])
       end
 
       return outdated_files

@@ -10,6 +10,7 @@ module MultiSync
     include Virtus
 
     attribute :verbose, Boolean, :default => false
+    attribute :force, Boolean, :default => false
     attribute :run_on_build, Boolean, :default => true
     attribute :delete_abandoned_files, Boolean, :default => true
     attribute :upload_missing_files, Boolean, :default => true
