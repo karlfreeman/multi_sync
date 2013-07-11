@@ -15,7 +15,7 @@ module MultiSync
     include Virtus
     include MultiSync::Mixins::PluralizeHelper
 
-    attr_accessor :supervisor
+    attribute :supervisor
     attribute :incomplete_jobs, Set, :default => Set.new
     attribute :running_jobs, Set, :default => Set.new
     attribute :complete_jobs, Set, :default => Set.new

@@ -11,7 +11,7 @@ module MultiSync
     include Celluloid
     include MultiSync::Mixins::LogHelper
 
-    attr_accessor :connection
+    attribute :connection
     attribute :target_dir, Pathname
     attribute :destination_dir, Pathname
     attribute :credentials, Hash, :default => :default_credentials
@@ -23,7 +23,7 @@ module MultiSync
       raise(ArgumentError, "target_dir must be present") unless options[:target_dir]
       self.target_dir = Pathname.new(options.fetch(:target_dir, ""))
       self.destination_dir = Pathname.new(options.fetch(:destination_dir, ""))
-      self.credentials.merge!(options.fetch(:credentials, Hash.new))
+      self.credentials.merge!(options.fetch(:credentials, {}))
     end
 
     #
