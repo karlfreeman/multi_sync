@@ -1,3 +1,4 @@
+require "fog"
 require "pathname"
 require "mime/types"
 require "multi_mime"
@@ -46,11 +47,7 @@ module MultiSync
 
     #
     def determine_content_length
-      begin
-        File.size(self.path_with_root.to_s)
-      rescue
-        return 0
-      end
+      Fog::Storage.get_body_size(self.body)
     end
 
   end
