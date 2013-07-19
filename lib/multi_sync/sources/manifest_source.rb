@@ -54,13 +54,14 @@ module MultiSync
     #
     def parse_manifest(manifest_path)
       manifest_hash = {}
+      manifest_data = File.read(manifest_path)
 
       # manifest files can be YAML or JSON but Sprockets::Manifest isn't backwards compatible with that in mind :(
       case File.extname(manifest_path)
       when ".json"
-        manifest_hash = MultiJson.load(File.read(manifest_path))
+        manifest_hash = MultiJson.load(manifest_data)
       when ".yml", ".yaml"
-        manifest_hash = YAML.load(File.read(manifest_path))
+        manifest_hash = YAML.load(manifest_data)
       end
 
       # different versions of Sprockets have different manifest layouts, lets try and work around this by checking for the presence of "files" and "assets" in the manifest first

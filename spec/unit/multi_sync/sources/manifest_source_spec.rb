@@ -14,7 +14,7 @@ describe MultiSync::ManifestSource do
     env = Sprockets::Environment.new(".") do |e|
       e.append_path("/tmp/local-manifest")
     end
-    manifest = Sprockets::Manifest.new(env, "/tmp/local-manifest/manifest.yaml")
+    manifest = Sprockets::Manifest.new(env, "/tmp/local-manifest")
     manifest.compile("foo.txt", "bar.txt")
 
   end
