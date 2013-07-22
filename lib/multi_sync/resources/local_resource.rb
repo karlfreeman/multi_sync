@@ -27,8 +27,8 @@ module MultiSync
     end
 
     #
-    def content_type
-      MultiMime.type_for_path(self.path_with_root.to_s)
+    def determine_etag
+      self.body.nil? ? nil : Digest::MD5.hexdigest(self.body)
     end
 
     #
@@ -41,8 +41,8 @@ module MultiSync
     end
 
     #
-    def determine_etag
-      self.body.nil? ? nil : Digest::MD5.hexdigest(self.body)
+    def determine_content_type
+      MultiMime.type_for_path(self.path_with_root.to_s)
     end
 
     #

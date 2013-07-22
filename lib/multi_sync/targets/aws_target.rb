@@ -48,13 +48,21 @@ module MultiSync
       MultiSync.debug "Upload #{resource.class_name}:'#{resource.path_without_root.to_s}' to #{self.class_name}:'#{File.join('/', self.target_dir + self.destination_dir)}'"
       directory = self.connection.directories.get(self.target_dir.to_s)
       return if directory.nil?
-      directory.files.create(
+
+      upload_hash = {
         :key => (self.destination_dir + resource.path_without_root).to_s,
         :body => resource.body,
         :content_type => resource.content_type,
-        :content_md5 => Digest::MD5.base64digest(resource.body),
-        :public => true
-      )
+        :content_md5 => Digest::MD5.base64digest(resource.body)
+      }
+
+      MultiSync::Resource::AWS_ATTRIBUTES.each do |attribute_hash|
+        upload_hash[attribute_hash[:name]] = resource.send(attribute_hash[:name])
+      end
+
+      directory.files.create(upload_hash)
+
+      return resource
 
     end
 
@@ -63,6 +71,8 @@ module MultiSync
 
       MultiSync.debug "Delete #{resource.class_name}:'#{resource.path_without_root.to_s}' from #{self.class_name}:'#{File.join('/', self.target_dir + self.destination_dir)}'"
       self.connection.delete_object(self.target_dir.to_s, (self.destination_dir + resource.path_without_root).to_s)
+
+      return resource
 
     end
 

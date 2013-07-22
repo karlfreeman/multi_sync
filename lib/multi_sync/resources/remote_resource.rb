@@ -21,8 +21,12 @@ module MultiSync
     end
 
     #
-    def content_type
-      self.file.content_type
+    def determine_etag
+      begin
+        self.file.etag
+      rescue NoMethodError # Fog::Storage::Local::File's don't have an etag method :(
+        Digest::MD5.hexdigest(File.read(self.path_with_root))
+      end
     end
 
     #
@@ -31,12 +35,8 @@ module MultiSync
     end
 
     #
-    def determine_etag
-      begin
-        self.file.etag
-      rescue NoMethodError # Fog::Storage::Local::File's don't have an etag method :(
-        Digest::MD5.hexdigest(File.read(self.path_with_root))
-      end
+    def determine_content_type
+      self.file.content_type
     end
 
     #

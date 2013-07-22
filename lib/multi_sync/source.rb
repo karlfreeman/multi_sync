@@ -10,6 +10,7 @@ module MultiSync
 
     attribute :targets, Array, :default => []
     attribute :source_dir, String
+    attribute :source_options, Hash
 
     # Initialize a new Source object
     #
@@ -20,6 +21,7 @@ module MultiSync
       self.source_dir = options.fetch(:source_dir).to_s
       self.source_dir << "/" unless self.source_dir.end_with?("/")
       self.source_dir = Pathname.new(self.source_dir)
+      self.source_options = options.fetch(:source_options, {})
     end
 
     private
@@ -30,7 +32,7 @@ module MultiSync
       MultiSync::LocalResource.new({
         :with_root => pathname,
         :without_root => pathname.relative_path_from(self.source_dir).cleanpath
-      }.merge(options))
+      }.merge(options).merge(self.source_options))
     end
 
 

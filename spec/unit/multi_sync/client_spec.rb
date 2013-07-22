@@ -93,11 +93,11 @@ describe MultiSync::Client, fakefs: true do
         expect(outdated_files_target.files[1].body).to eq "not-foo"
 
         MultiSync.run do
-           target :missing_files_target, missing_files_target_options
-           target :abandoned_files_target, abandoned_files_target_options
-           target :outdated_files_target, outdated_files_target_options
-           source :simple, local_source_options.merge(:targets => [ :missing_files_target, :abandoned_files_target, :outdated_files_target ])
-         end
+          target :missing_files_target, missing_files_target_options
+          target :abandoned_files_target, abandoned_files_target_options
+          target :outdated_files_target, outdated_files_target_options
+          source :simple, local_source_options.merge(:targets => [ :missing_files_target, :abandoned_files_target, :outdated_files_target ])
+        end
 
         expect(missing_files_target).to have(3).files
         expect(abandoned_files_target).to have(3).files
@@ -129,9 +129,9 @@ describe MultiSync::Client, fakefs: true do
         expect(local_source).to have(50).files
 
         MultiSync.run do
-           target :complex_empty_target, complex_empty_target_options
-           source :simple, local_source_options.merge(:targets => [ :complex_empty_target ])
-         end
+          target :complex_empty_target, complex_empty_target_options
+          source :simple, local_source_options.merge(:targets => [ :complex_empty_target ])
+        end
 
         expect(complex_empty_target).to have(50).files
 
@@ -228,11 +228,11 @@ describe MultiSync::Client, fakefs: true do
           expect(outdated_files_target.files[1].body).to eq "not-foo"
 
           MultiSync.run do
-             target :missing_files_target, missing_files_target_options
-             target :abandoned_files_target, abandoned_files_target_options
-             target :outdated_files_target, outdated_files_target_options
-             source :local, local_source_options.merge(:targets => [ :missing_files_target, :abandoned_files_target, :outdated_files_target ])
-           end
+            target :missing_files_target, missing_files_target_options
+            target :abandoned_files_target, abandoned_files_target_options
+            target :outdated_files_target, outdated_files_target_options
+            source :local, local_source_options.merge(:targets => [ :missing_files_target, :abandoned_files_target, :outdated_files_target ])
+          end
 
           expect(missing_files_target).to have(3).files
           expect(abandoned_files_target).to have(3).files
@@ -282,7 +282,11 @@ describe MultiSync::Client, fakefs: true do
 
           local_source_options = {
             :type => :local,
-            :source_dir => "/tmp/simple"
+            :source_dir => "/tmp/simple",
+            :source_options => {
+              :content_type => "lol/plain",
+              :expires => 1
+            }
           }
 
           without_destination_dir_target = MultiSync::AwsTarget.new(without_destination_dir_target_options)
@@ -292,9 +296,9 @@ describe MultiSync::Client, fakefs: true do
           expect(local_source).to have(3).files
 
           MultiSync.run do
-             target :without_destination_dir_target, without_destination_dir_target_options
-             source :local, local_source_options.merge(:targets => :without_destination_dir_target )
-           end
+            target :without_destination_dir_target, without_destination_dir_target_options
+            source :local, local_source_options.merge(:targets => :without_destination_dir_target )
+          end
 
           expect(without_destination_dir_target).to have(3).files
 

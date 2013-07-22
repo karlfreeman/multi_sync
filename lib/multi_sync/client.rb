@@ -97,9 +97,12 @@ module MultiSync
     def finalize
 
       if self.finished_at
-        duration = (self.finished_at - self.started_at).to_i
-        MultiSync.info "Sync completed in #{pluralize(duration, 'second')}"
-        MultiSync.info "#{pluralize(self.complete_jobs.length, 'file')} have been synchronised from #{pluralize(self.sources.length, 'source')} to #{pluralize(self.supervisor.actors.length, 'target')}"
+        elapsed = self.finished_at.to_f - self.started_at.to_f
+        minutes, seconds = elapsed.divmod 60.0
+        kilobytes = self.get_total_file_size_from_complete_jobs / 1024.0
+        MultiSync.info "Sync completed in %d:%02d" % [ minutes, seconds ]
+        MultiSync.info "#{pluralize(self.complete_jobs.length, 'file')} were synchronised from #{pluralize(self.sources.length, 'source')} to #{pluralize(self.supervisor.actors.length, 'target')}"
+        MultiSync.info "The weight of this sync totalled %.#{0}f #{pluralize(kilobytes, 'KB', 'KB', false)}" % kilobytes
         MultiSync.info "#{pluralize(self.file_sync_attempts, 'failed request')} were detected and re-tried"
       else
         MultiSync.info "Sync failed to complete with #{pluralize(self.incomplete_jobs.length, 'outstanding file')} to be synchronised"
@@ -110,6 +113,15 @@ module MultiSync
       
     end
     alias_method :fin, :finalize
+
+    #
+    def get_total_file_size_from_complete_jobs
+      total_file_size = 0
+      self.complete_jobs.each do | job |
+        total_file_size = total_file_size + job[:response].content_length
+      end
+      return total_file_size
+    end
 
     private
 
@@ -224,6 +236,7 @@ module MultiSync
       self.sync_attempts == 0
     end
 
+    #
     def sync_pointless?
       self.sources.empty?
     end

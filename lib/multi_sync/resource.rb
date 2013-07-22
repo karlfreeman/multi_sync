@@ -17,7 +17,30 @@ module MultiSync
     attribute :etag, String
     attribute :mtime, Time
     attribute :content_length, Numeric
+    attribute :content_type, String
     attribute :digest, String
+
+    AWS_ATTRIBUTES = [{
+      :name => :storage_class,
+      :type => String,
+      :default_value => "STANDARD"
+    },{
+      :name => :acl,
+      :type => String,
+      :default_value => "public-read"
+    },{
+      :name => :expires,
+      :type => Numeric,
+      :default_value => nil
+    },{
+      :name => :encryption,
+      :type => String,
+      :default_value => nil
+    }].freeze
+
+    AWS_ATTRIBUTES.each do |attribute_hash|
+      self.send(:attribute, attribute_hash[:name], attribute_hash[:type])
+    end
 
     # Initialize a new Resource object
     #
@@ -30,7 +53,13 @@ module MultiSync
       self.etag = options.fetch(:etag, self.determine_etag)
       self.mtime = options.fetch(:mtime, self.determine_mtime)
       self.content_length = options.fetch(:content_length, self.determine_content_length)
+      self.content_type = options.fetch(:content_type, self.determine_content_type)
       self.digest = options.fetch(:digest, "")
+
+      AWS_ATTRIBUTES.each do |attribute_hash|
+        self.send("#{attribute_hash[:name]}=".to_sym, options.fetch(attribute_hash[:name], attribute_hash[:default_value]))
+      end
+
     end
 
     #
