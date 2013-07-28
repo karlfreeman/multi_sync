@@ -22,7 +22,7 @@ module MultiSync
       files = []
 
       directory = self.connection.directories.get(self.target_dir.to_s, :prefix => self.destination_dir.to_s)
-      return if directory.nil?
+      return files if directory.nil?
 
       directory.files.lazily.each { |file|
 
