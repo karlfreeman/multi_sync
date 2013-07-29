@@ -71,13 +71,13 @@ module MultiSync
 
       MultiSync.debug "Scheduling jobs in the future..."
       self.incomplete_jobs.delete_if do | job |
-        self.running_jobs << { :id => job[:id], :future => Celluloid::Actor[job[:target_id]].future.send(job[:method], job[:args]) }
+        self.running_jobs << { :id => job[:id], :future => Celluloid::Actor[job[:target_id]].future.send(job[:method], job[:args]), :method => job[:method] }
       end
       
       MultiSync.debug "Fetching jobs from the futures..."
       self.running_jobs.delete_if do | job |
         begin
-          completed_job = { :id => job[:id], :response => job[:future].value }
+          completed_job = { :id => job[:id], :response => job[:future].value, :method => job[:method] }
         rescue
           self.file_sync_attempts = self.file_sync_attempts + 1
           false
@@ -100,13 +100,13 @@ module MultiSync
         elapsed = self.finished_at.to_f - self.started_at.to_f
         minutes, seconds = elapsed.divmod 60.0
         kilobytes = self.get_total_file_size_from_complete_jobs / 1024.0
-        MultiSync.info "Sync completed in %d:%02d" % [ minutes, seconds ]
-        MultiSync.info "#{pluralize(self.complete_jobs.length, 'file')} were synchronised from #{pluralize(self.sources.length, 'source')} to #{pluralize(self.supervisor.actors.length, 'target')}"
-        MultiSync.info "The weight of this sync totalled %.#{0}f #{pluralize(kilobytes, 'KB', 'KB', false)}" % kilobytes
+        MultiSync.info "Sync completed in #{pluralize(minutes.round, 'minute')} and #{pluralize(seconds.round, 'second')}"
+        MultiSync.info "#{pluralize(self.complete_jobs.length, 'file')} were synchronised (#{pluralize(get_complete_deleted_jobs.length, 'deleted file')} and #{pluralize(get_complete_upload_jobs.length, 'uploaded file')}) from #{pluralize(self.sources.length, 'source')} to #{pluralize(self.supervisor.actors.length, 'target')}"
+        MultiSync.info "The upload weight totalled %.#{0}f #{pluralize(kilobytes, 'KB', 'KB', false)}" % kilobytes
         MultiSync.info "#{pluralize(self.file_sync_attempts, 'failed request')} were detected and re-tried"
       else
         MultiSync.info "Sync failed to complete with #{pluralize(self.incomplete_jobs.length, 'outstanding file')} to be synchronised"
-        MultiSync.info "#{pluralize(self.complete_jobs.length, 'file')} were synchronised from #{pluralize(self.sources.length, 'source')} to #{pluralize(self.supervisor.actors.length, 'target')}"
+        MultiSync.info "#{pluralize(self.complete_jobs.length, 'file')} were synchronised (#{pluralize(get_complete_deleted_jobs.length, 'deleted file')} and #{pluralize(get_complete_upload_jobs.length, 'uploaded file')}) from #{pluralize(self.sources.length, 'source')} to #{pluralize(self.supervisor.actors.length, 'target')}"
       end
 
       self.supervisor.finalize
@@ -115,9 +115,19 @@ module MultiSync
     alias_method :fin, :finalize
 
     #
+    def get_complete_deleted_jobs
+      self.complete_jobs.find_all {|job| job[:method] == :delete }
+    end
+
+    #
+    def get_complete_upload_jobs
+      self.complete_jobs.find_all {|job| job[:method] == :upload }
+    end
+
+    #
     def get_total_file_size_from_complete_jobs
       total_file_size = 0
-      self.complete_jobs.each do | job |
+      get_complete_upload_jobs.each do | job |
         total_file_size = total_file_size + job[:response].content_length
       end
       return total_file_size
