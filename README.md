@@ -6,7 +6,7 @@
 
 At MultiSync's core is [Celluloid] allowing for the synchronisation of assets to be truly parallel. Each target you define creates a pool of resources which allows for parallel execution of uploads and deletes. Meaning that when your uploading thousands of files, you get alot more bang for your buck.
 
-MultiSync tries to expose its asset synchronisation in a flexible way, allowing for it to be used in `Rails (WIP)`, `Sinatra (WIP)`, `Rake (WIP)` and `POR (WIP)` with extensions too. Listed below are examples of how to get setup.
+MultiSync tries to expose its asset synchronisation in a flexible way, allowing for it to be used in `Rails (WIP)`, `Sinatra (WIP)`, `Rake (WIP)` and `Plain old ruby (WIP)` as well as extensions for `Middleman (WIP)`, `Nanoc (WIP)` and others too. Listed below are examples of how to get setup.
 
 ### POR (WIP)
 ```ruby
