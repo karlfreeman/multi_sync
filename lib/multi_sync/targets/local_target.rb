@@ -8,7 +8,7 @@ module MultiSync
 
   # Defines constants and methods related to the LocalTarget
   class LocalTarget < Target
-    
+
     # Initialize a new LocalTarget object
     #
     # @param options [Hash]

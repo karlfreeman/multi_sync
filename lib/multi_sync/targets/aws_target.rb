@@ -8,7 +8,7 @@ module MultiSync
 
   # Defines constants and methods related to the AwsTarget
   class AwsTarget < Target
-    
+
     # Initialize a new AwsTarget object
     #
     # @param options [Hash]

@@ -73,7 +73,7 @@ module MultiSync
       self.incomplete_jobs.delete_if do | job |
         self.running_jobs << { :id => job[:id], :future => Celluloid::Actor[job[:target_id]].future.send(job[:method], job[:args]), :method => job[:method] }
       end
-      
+
       MultiSync.debug "Fetching jobs from the futures..."
       self.running_jobs.delete_if do | job |
         begin
@@ -110,7 +110,7 @@ module MultiSync
       end
 
       self.supervisor.finalize
-      
+
     end
     alias_method :fin, :finalize
 
@@ -143,9 +143,9 @@ module MultiSync
         source_files = []
 
         starting_synchronizing_msg = "ynchronizing: '#{source.source_dir}'"
-        starting_synchronizing_msg.prepend MultiSync.force ? "Forcefully s" : "S" 
+        starting_synchronizing_msg.prepend MultiSync.force ? "Forcefully s" : "S"
         MultiSync.info starting_synchronizing_msg
-        
+
         source_files = source.files
         source_files.sort! # sort to make sure the source's indexs match the targets
 
@@ -163,7 +163,7 @@ module MultiSync
           target_files.sort! # sort to make sure the target's indexs match the sources
 
           MultiSync.debug "#{pluralize(target_files.length, 'file')} found from the target"
-          
+
           missing_files = determine_missing_files(source_files, target_files)
           missing_files_msg = "#{missing_files.length} of the files are missing"
           missing_files_msg += ", however we're skipping them as :upload_missing_files is false" unless MultiSync.upload_missing_files

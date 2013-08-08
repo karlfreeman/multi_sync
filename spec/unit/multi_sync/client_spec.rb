@@ -101,7 +101,7 @@ describe MultiSync::Client, fakefs: true do
 
         expect(missing_files_target).to have(3).files
         expect(abandoned_files_target).to have(3).files
-        expect(outdated_files_target).to have(3).files   
+        expect(outdated_files_target).to have(3).files
         expect(outdated_files_target.files[1].body).to eq "foo"
 
       end
@@ -284,8 +284,9 @@ describe MultiSync::Client, fakefs: true do
             :type => :local,
             :source_dir => "/tmp/simple",
             :source_options => {
-              :content_type => "lol/plain",
-              :expires => 1
+              # :content_type => "lol/plain",
+              # :expires => 1
+              :storage_class => "REDUCED_REDUNDANCY"
             }
           }
 
@@ -299,6 +300,8 @@ describe MultiSync::Client, fakefs: true do
             target :without_destination_dir_target, without_destination_dir_target_options
             source :local, local_source_options.merge(:targets => :without_destination_dir_target )
           end
+
+          ap without_destination_dir_target.files
 
           expect(without_destination_dir_target).to have(3).files
 

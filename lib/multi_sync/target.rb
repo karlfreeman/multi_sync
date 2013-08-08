@@ -15,7 +15,7 @@ module MultiSync
     attribute :target_dir, Pathname
     attribute :destination_dir, Pathname
     attribute :credentials, Hash, :default => :default_credentials
-    
+
     # Initialize a new Target object
     #
     # @param options [Hash]

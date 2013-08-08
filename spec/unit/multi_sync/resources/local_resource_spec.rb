@@ -45,7 +45,7 @@ describe MultiSync::LocalResource, fakefs: true do
     end
 
     context :unknown do
-      
+
       it "should return default file details" do
         resource = MultiSync::LocalResource.new(
           :with_root => Pathname.new("/tmp/local-resource/missing.txt"),
