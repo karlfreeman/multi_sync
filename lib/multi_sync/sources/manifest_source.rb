@@ -24,7 +24,7 @@ module MultiSync
       manifest_hash = {}
 
       # ::ActionView::Base has a shortcut to the manifest file
-      # else lets hunt down that manifest file!
+      # otherwise lets hunt down that manifest file!
       if defined?(::ActionView::Base) && ::ActionView::Base.respond_to?(:assets_manifest)
         manifest_hash = ::ActionView::Base.assets_manifest.files
       else

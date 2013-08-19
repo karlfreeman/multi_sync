@@ -9,6 +9,11 @@ At MultiSync's core is [Celluloid] allowing for the synchronisation of assets to
 MultiSync tries to expose its asset synchronisation in a flexible way, allowing for it to be used in `Rails (WIP)`, `Sinatra (WIP)`, `Rake (WIP)` and `Plain old ruby (WIP)` as well as extensions for `Middleman (WIP)`, `Nanoc (WIP)` and others too. Listed below are examples of how to get setup.
 
 ### POR (WIP)
+
+```ruby
+gem "multi_sync", "~> 0.0.1"
+```
+
 ```ruby
 require "multi_sync"
 
@@ -49,7 +54,7 @@ end
 ### Rails
 
 ```ruby
-gemfile "multi_sync"
+gem "multi_sync", "~> 0.0.1"
 ```
 
 in `/config/initializers/multi_sync`

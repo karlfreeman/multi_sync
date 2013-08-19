@@ -1,14 +1,7 @@
 source "https://rubygems.org"
 
-gem "rake", ">= 1.2"
+gem "rake", "~> 10.0"
 gem "yard"
-
-# platforms :ruby_18 do
-# end
-# platforms :ruby, :mswin, :mingw do
-# end
-# platforms :jruby do
-# end
 
 gem "sprockets", :require => false
 gem "celluloid", :github => "celluloid/celluloid"
