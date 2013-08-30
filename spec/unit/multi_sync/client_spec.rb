@@ -285,7 +285,7 @@ describe MultiSync::Client, fakefs: true do
             :source_dir => "/tmp/simple",
             :source_options => {
               :content_type => "lol/plain",
-              :expires => 1
+              :expires => "public, max-age=31557600"
             }
           }
 

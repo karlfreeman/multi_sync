@@ -30,7 +30,11 @@ module MultiSync
       :default_value => "public-read"
     },{
       :name => :expires,
-      :type => Numeric,
+      :type => String,
+      :default_value => nil
+    },{
+      :name => :cache_control,
+      :type => String,
       :default_value => nil
     },{
       :name => :encryption,
