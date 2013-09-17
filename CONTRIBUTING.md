@@ -14,7 +14,7 @@ Here are some ways *you* can contribute:
 * by writing code (**no patch is too small**: fix typos, add comments, clean up
   inconsistent whitespace)
 * by refactoring code
-* by closing [issues]
+* by closing [issues][]
 * by reviewing patches
 
 [issues]: https://github.com/karlfreeman/multi_sync/issues

@@ -108,6 +108,8 @@ By having `multi_sync` included in your `Gemfile`, the rake task `rake assets:sy
 [![Code Quality](https://codeclimate.com/github/karlfreeman/multi_sync.png)][codeclimate]
 [![Coverage Status](https://coveralls.io/repos/karlfreeman/multi_sync/badge.png?branch=master)][coveralls]
 
+## Supported services
+
 ## Supported Ruby Versions
 This library aims to support and is [tested against][travis] the following Ruby
 implementations:
