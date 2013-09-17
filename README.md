@@ -1,6 +1,6 @@
 # MultiSync (WIP)
 
-[Celluloid] based, [Fog::Storage] backed, asset synchronisation library
+Asset synchronisation library
 
 ## Features / Usage Examples
 
