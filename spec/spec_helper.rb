@@ -13,7 +13,8 @@ require "support/timecop"
 require "support/simplecov"
 
 require "multi_sync"
-Celluloid.shutdown_timeout = 1
+
+require 'celluloid/test'
 
 RSpec.configure do |config|
 
@@ -25,10 +26,6 @@ RSpec.configure do |config|
     MultiSync.reset!
     MultiSync.env = :test
     MultiSync.verbose = true
-    Celluloid.shutdown
-    sleep 0.01
-    Celluloid.internal_pool.assert_inactive
-    Celluloid.boot
   end
 
 end
