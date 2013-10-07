@@ -4,8 +4,6 @@ gem "rake", "~> 10.0"
 gem "yard"
 
 gem "sprockets", :require => false
-gem "celluloid", :github => "celluloid/celluloid"
-gem "multi_mime", :github => "karlfreeman/multi_mime"
 
 group :development do
   gem "kramdown", ">= 0.14"
