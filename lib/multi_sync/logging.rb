@@ -6,6 +6,9 @@ module MultiSync
   module Logging
 
     #
+    @@logger_mutex = Mutex.new
+
+    #
     def logger
       @logger || initialize_logger
     end
@@ -16,19 +19,37 @@ module MultiSync
     end
 
     #
+    def status_logger
+      @status_logger
+    end
+
+    #
+    def status_logger=(new_status_logger)
+      @status_logger = new_status_logger ? new_status_logger : nil
+    end
+
+    #
+    def say_status(status, message, log_status=true)
+
+      return if status_logger.nil?
+
+      if defined?(Thor) && status_logger.is_a?(Thor)
+        @@logger_mutex.synchronize do
+          status_logger.say_status status, message, log_status
+        end
+      end
+
+    end
+
+    #
     def log(message, level = :debug)
 
       # We're in verbose mode so disable all non-info logs
       return if !MultiSync.verbose && level != :info
 
-      logger.send(level, message)
-
-      # If the message has multiple lines, lets print them
-      # if message.respond_to? :each_line
-      #   message.each_line { |line| logger.send level, line.to_s.chomp }
-      # else
-      #   logger.send(level, message)
-      # end
+      @@logger_mutex.synchronize do
+        logger.send(level, message)
+      end
 
     end
 

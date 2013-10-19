@@ -1,6 +1,6 @@
-MultiSync.configuration do |config|
-  # config.verbose = false  # turn on verbose logging (defaults to false)
-  # config.force = false  # force syncing of outdated_files (defaults to false)
+MultiSync.configure do |config|
+  config.verbose = true  # turn on verbose logging (defaults to false)
+  config.force = true  # force syncing of outdated_files (defaults to false)
   # config.run_on_build = true # when within a framework which `builds` assets, whether to sync afterwards (defaults to true)
   # config.sync_outdated_files = true # when an outdated file is found whether to replace it (defaults to true)
   # config.delete_abandoned_files = true # when an abondoned file is found whether to remove it (defaults to true)
@@ -13,17 +13,20 @@ MultiSync.prepare do
 
   source :public, {
     :type => :manifest,
-    :source_dir => ::Rails.root.join("public", ::Rails.application.config.assets.prefix.sub(/^\//, "")),
-    :targets => [:assets]
+    :source_dir => MultiSync::Extensions::Rails.source_dir, # ::Rails.root.join("public", ::Rails.application.config.assets.prefix.sub(/^\//, "")),
+    :targets => [:assets],
+    :source_options => {
+      :storage_class => "REDUCED_REDUNDANCY"
+    }
   }
 
   target :assets, {
     :type => :aws,
-    :target_dir => "your_aws_bucket",
+    :target_dir => "multi_sync",
     :credentials => {
       :region => "us-east-1",
-      :aws_access_key_id => "super_secret",
-      :aws_secret_access_key => "super_secret"
+      :aws_access_key_id => "AKIAJXMAC4YJEHPBYSHQ",
+      :aws_secret_access_key => "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"
     }
   }
 

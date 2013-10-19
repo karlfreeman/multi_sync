@@ -36,11 +36,11 @@ module MultiSync
     def add_target(name, options={})
       begin
         clazz = MultiSync.const_get("#{options[:type].capitalize.to_s}Target")
+        self.supervisor.pool(clazz, :as => name, :args => [options], :size => MultiSync.target_pool_size)
       rescue NameError
         MultiSync.warn "Unknown target type: #{options[:type]}"
         raise ArgumentError, "Unknown target type: #{options[:type]}"
       end
-      self.supervisor.pool(clazz, :as => name, :args => [options], :size => MultiSync.target_pool_size)
     end
     alias_method :target, :add_target
 
@@ -48,11 +48,11 @@ module MultiSync
     def add_source(name, options={})
       begin
         clazz = MultiSync.const_get("#{options[:type].capitalize.to_s}Source")
+        self.sources << clazz.new(options)
       rescue NameError
         MultiSync.warn "Unknown source type: #{options[:type]}"
         raise ArgumentError, "Unknown source type: #{options[:type]}"
       end
-      self.sources << clazz.new(options)
     end
     alias_method :source, :add_source
 
@@ -97,16 +97,16 @@ module MultiSync
     def finalize
 
       if self.finished_at
-        elapsed = self.finished_at.to_f - self.started_at.to_f
-        minutes, seconds = elapsed.divmod 60.0
-        kilobytes = self.get_total_file_size_from_complete_jobs / 1024.0
-        MultiSync.info "Sync completed in #{pluralize(minutes.round, 'minute')} and #{pluralize(seconds.round, 'second')}"
-        MultiSync.info "#{pluralize(self.complete_jobs.length, 'file')} were synchronised (#{pluralize(get_complete_deleted_jobs.length, 'deleted file')} and #{pluralize(get_complete_upload_jobs.length, 'uploaded file')}) from #{pluralize(self.sources.length, 'source')} to #{pluralize(self.supervisor.actors.length, 'target')}"
-        MultiSync.info "The upload weight totalled %.#{0}f #{pluralize(kilobytes, 'KB', 'KB', false)}" % kilobytes
-        MultiSync.info "#{pluralize(self.file_sync_attempts, 'failed request')} were detected and re-tried"
+        # elapsed = self.finished_at.to_f - self.started_at.to_f
+        # minutes, seconds = elapsed.divmod 60.0
+        # kilobytes = get_total_file_size_from_complete_jobs / 1024.0
+        # MultiSync.info "Sync completed in #{pluralize(minutes.round, 'minute')} and #{pluralize(seconds.round, 'second')}"
+        # MultiSync.info "#{pluralize(self.complete_jobs.length, 'file')} were synchronised (#{pluralize(get_complete_deleted_jobs.length, 'deleted file')} and #{pluralize(get_complete_upload_jobs.length, 'uploaded file')}) from #{pluralize(self.sources.length, 'source')} to #{pluralize(self.supervisor.actors.length, 'target')}"
+        # MultiSync.info "The upload weight totalled %.#{0}f #{pluralize(kilobytes, 'KB', 'KB', false)}" % kilobytes
+        # MultiSync.info "#{pluralize(self.file_sync_attempts, 'failed request')} were detected and re-tried"
       else
-        MultiSync.info "Sync failed to complete with #{pluralize(self.incomplete_jobs.length, 'outstanding file')} to be synchronised"
-        MultiSync.info "#{pluralize(self.complete_jobs.length, 'file')} were synchronised (#{pluralize(get_complete_deleted_jobs.length, 'deleted file')} and #{pluralize(get_complete_upload_jobs.length, 'uploaded file')}) from #{pluralize(self.sources.length, 'source')} to #{pluralize(self.supervisor.actors.length, 'target')}"
+        # MultiSync.info "Sync failed to complete with #{pluralize(self.incomplete_jobs.length, 'outstanding file')} to be synchronised"
+        # MultiSync.info "#{pluralize(self.complete_jobs.length, 'file')} were synchronised (#{pluralize(get_complete_deleted_jobs.length, 'deleted file')} and #{pluralize(get_complete_upload_jobs.length, 'uploaded file')}) from #{pluralize(self.sources.length, 'source')} to #{pluralize(self.supervisor.actors.length, 'target')}"
       end
 
       self.supervisor.finalize
@@ -128,7 +128,12 @@ module MultiSync
     def get_total_file_size_from_complete_jobs
       total_file_size = 0
       get_complete_upload_jobs.each do | job |
-        total_file_size = total_file_size + job[:response].content_length
+        # MultiSync.info job[:response]
+        # MultiSync.info job[:response].determine_content_length
+        if job[:response].content_length
+          total_file_size = total_file_size + job[:response].content_length
+        end
+        
       end
       return total_file_size
     end

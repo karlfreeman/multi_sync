@@ -22,7 +22,13 @@ module MultiSync
     #
     # @param options [Hash]
     def initialize(options = {})
-      Celluloid.logger = MultiSync.logger
+
+      if MultiSync.test?
+        Celluloid.logger = MultiSync.logger
+      else
+        Celluloid.logger = nil
+      end
+
       options.each_pair do |key, value|
         self.send("#{key}=", value) if self.attributes.keys.include?(key)
       end

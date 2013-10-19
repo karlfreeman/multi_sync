@@ -6,6 +6,11 @@ module MultiSync
 
     class Rails
       MultiSync.debug "Rails -v #{::Rails::VERSION::STRING} auto-detected"
+
+      def self.source_dir
+        ::Rails.root.join("public", ::Rails.application.config.assets.prefix.sub(/^\//, ""))
+      end
+
     end
 
   end

@@ -47,7 +47,7 @@ module MultiSync
 
     #
     def determine_content_length
-      Fog::Storage.get_body_size(self.body)
+      self.body.nil? ? 0 : Fog::Storage.get_body_size(self.body)
     end
 
   end

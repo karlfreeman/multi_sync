@@ -48,6 +48,7 @@ module MultiSync
     def upload(resource)
 
       key = resource.path_without_root.to_s
+      MultiSync.say_status :upload, key
       MultiSync.debug "Upload #{resource.class_name}:'#{key}' to #{self.class_name}:'#{File.join(self.connection.local_root, self.destination_dir)}'"
       directory = self.connection.directories.get(self.destination_dir.to_s)
       return if directory.nil?
@@ -64,6 +65,7 @@ module MultiSync
     def delete(resource)
 
       key = resource.path_without_root.to_s
+      MultiSync.say_status :delete, key
       MultiSync.debug "Delete #{resource.class_name}:'#{key}' from #{self.class_name}:'#{File.join(self.connection.local_root, self.destination_dir)}'"
       self.connection.directories.get(self.destination_dir.to_s).files.get(key).destroy
 
