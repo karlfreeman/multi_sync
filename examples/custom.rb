@@ -17,6 +17,7 @@ MultiSync.run do
     :type => :local, # :local is the source's type, current options are :local, :manifest
     :source_dir => "/path_to_your_build_folder",
     :targets => [ :www ] # an array of target names that this source should sync against
+    # targets optional? default to all
   }
 
   target :www {

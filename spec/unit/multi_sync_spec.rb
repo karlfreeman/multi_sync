@@ -1,4 +1,4 @@
-require "spec_helper"
+require 'spec_helper'
 
 describe MultiSync do
 
@@ -38,7 +38,7 @@ describe MultiSync do
 
   context :configure do
 
-    it "should allow you to set configuration" do
+    it 'should allow you to set configuration' do
 
       MultiSync.configure do |config|
         config.verbose = true

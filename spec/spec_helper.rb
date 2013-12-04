@@ -1,20 +1,13 @@
-$:.unshift(File.join(File.dirname(__FILE__), "..", "lib"))
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
-require "bundler"
+require 'bundler'
 Bundler.setup
-begin; require "awesome_print"; rescue LoadError; end
 
-require "rspec"
-require "securerandom"
+%w(support).each do |dir|
+  Dir.glob(File.expand_path("../#{dir}/**/*.rb", __FILE__), &method(:require))
+end
 
-require "support/pry"
-require "support/fakefs"
-require "support/timecop"
-require "support/simplecov"
-
-require "multi_sync"
-
-require 'celluloid/test'
+require 'multi_sync'
 
 RSpec.configure do |config|
 

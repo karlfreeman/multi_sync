@@ -5,13 +5,13 @@ module MultiSync
     module PluralizeHelper
 
       #
-      def pluralize(n, singular, plural=nil, prefix=true)
+      def pluralize(n, singular, plural = nil, prefix = true)
         if n == 1
-          (prefix ? "1 " : "") + singular
+          (prefix ? '1 ' : '') + singular
         elsif plural
-          (prefix ? "#{n} " : "") + plural
+          (prefix ? "#{n} " : '') + plural
         else
-          (prefix ? "#{n} " : "") + "#{singular}s"
+          (prefix ? "#{n} " : '') + "#{singular}s"
         end
       end
 

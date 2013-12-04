@@ -7,7 +7,7 @@ module MultiSync
     #
     # @return [String] the current environment
     def environment
-      @environment ||= ENV["MULTI_SYNC_ENV"] || ENV["RAILS_ENV"] || ENV["RACK_ENV"] || "development"
+      @environment ||= ENV['MULTI_SYNC_ENV'] || ENV['RAILS_ENV'] || ENV['RACK_ENV'] || 'development'
     end
     alias_method :env, :environment
 

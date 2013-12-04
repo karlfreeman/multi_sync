@@ -1,0 +1,23 @@
+AllCops:
+  Includes:
+    - Rakefile
+    - config.ru
+  Excludes:
+    - config/db/**
+    - script/**
+    - vendor/**
+    - bin/**
+LineLength:
+  Max: 10_000
+Documentation:
+  Enabled: false
+CommentAnnotation:
+  Enabled: false
+HandleExceptions:
+  Enabled: false
+AlignParameters:
+  Enabled: false
+Blocks:
+  Enabled: false
+SignalException:
+  Enabled: false

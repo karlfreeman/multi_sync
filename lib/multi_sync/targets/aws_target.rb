@@ -1,8 +1,8 @@
-require "fog"
-require "lazily"
-require "pathname"
-require "multi_sync/target"
-require "multi_sync/resources/remote_resource"
+require 'fog'
+require 'lazily'
+require 'pathname'
+require 'multi_sync/target'
+require 'multi_sync/resources/remote_resource'
 
 module MultiSync
 
@@ -14,14 +14,14 @@ module MultiSync
     # @param options [Hash]
     def initialize(options = {})
       super(options)
-      self.connection = ::Fog::Storage.new(self.credentials.merge(:provider => :aws))
+      self.connection = ::Fog::Storage.new(credentials.merge(provider: :aws))
     end
 
     #
     def files
       files = []
 
-      directory = self.connection.directories.get(self.target_dir.to_s, :prefix => self.destination_dir.to_s)
+      directory = connection.directories.get(target_dir.to_s, prefix: destination_dir.to_s)
       return files if directory.nil?
 
       directory.files.lazily.each { |file|
@@ -32,29 +32,29 @@ module MultiSync
         next unless valid_path?(pathname)
 
         files << MultiSync::RemoteResource.new(
-          :file => file,
-          :with_root => self.target_dir + pathname, # pathname seems to already have the prefix ( destination_dir )
-          :without_root => (self.destination_dir != "") ? pathname.relative_path_from(self.destination_dir).cleanpath : pathname,
+          file: file,
+          with_root: target_dir + pathname, # pathname seems to already have the prefix ( destination_dir )
+          without_root: (destination_dir != '') ? pathname.relative_path_from(destination_dir).cleanpath : pathname,
         )
 
       }
 
-      return files
+      files
     end
 
     #
     def upload(resource)
 
       MultiSync.say_status :upload, resource.path_without_root.to_s
-      MultiSync.debug "Upload #{resource.class_name}:'#{resource.path_without_root.to_s}' to #{self.class_name}:'#{File.join('/', self.target_dir + self.destination_dir)}'"
-      directory = self.connection.directories.get(self.target_dir.to_s)
+      MultiSync.debug "Upload #{resource.class_name}:'#{resource.path_without_root.to_s}' to #{class_name}:'#{File.join('/', target_dir + destination_dir)}'"
+      directory = connection.directories.get(target_dir.to_s)
       return if directory.nil?
 
       upload_hash = {
-        :key => (self.destination_dir + resource.path_without_root).to_s,
-        :body => resource.body,
-        :content_type => resource.content_type,
-        :content_md5 => Digest::MD5.base64digest(resource.body)
+        key: (destination_dir + resource.path_without_root).to_s,
+        body: resource.body,
+        content_type: resource.content_type,
+        content_md5: Digest::MD5.base64digest(resource.body)
       }
 
       MultiSync::Resource::AWS_ATTRIBUTES.each do |attribute_hash|
@@ -63,7 +63,7 @@ module MultiSync
 
       directory.files.create(upload_hash)
 
-      return resource
+      resource
 
     end
 
@@ -71,10 +71,10 @@ module MultiSync
     def delete(resource)
 
       MultiSync.say_status :upload, resource.path_without_root.to_s
-      MultiSync.debug "Delete #{resource.class_name}:'#{resource.path_without_root.to_s}' from #{self.class_name}:'#{File.join('/', self.target_dir + self.destination_dir)}'"
-      self.connection.delete_object(self.target_dir.to_s, (self.destination_dir + resource.path_without_root).to_s)
+      MultiSync.debug "Delete #{resource.class_name}:'#{resource.path_without_root.to_s}' from #{class_name}:'#{File.join('/', target_dir + destination_dir)}'"
+      connection.delete_object(target_dir.to_s, (destination_dir + resource.path_without_root).to_s)
 
-      return resource
+      resource
 
     end
 
@@ -88,10 +88,10 @@ module MultiSync
       return false if pathname.to_s =~ /\/$/
 
       # overreaching AWS globbing
-      return false if !self.destination_dir.to_s.empty? && !(pathname.to_s =~ /^#{self.destination_dir.to_s}\//)
+      return false if !destination_dir.to_s.empty? && !(pathname.to_s =~ /^#{destination_dir.to_s}\//)
 
       #
-      return true
+      true
 
     end
 

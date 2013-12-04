@@ -7,7 +7,7 @@ module MultiSync
       railtie_name :multi_sync
 
       rake_tasks do
-        load "tasks/multi_sync_rails.rake"
+        load 'tasks/multi_sync_rails.rake'
       end
 
     end

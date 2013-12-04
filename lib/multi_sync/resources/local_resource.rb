@@ -1,9 +1,9 @@
-require "fog"
-require "pathname"
-require "mime/types"
-require "multi_mime"
-require "digest/md5"
-require "multi_sync/resource"
+require 'fog'
+require 'pathname'
+require 'mime/types'
+require 'multi_mime'
+require 'digest/md5'
+require 'multi_sync/resource'
 
 module MultiSync
 
@@ -20,7 +20,7 @@ module MultiSync
     #
     def body
       begin
-        File.read(self.path_with_root.to_s)
+        File.read(path_with_root.to_s)
       rescue
         return nil
       end
@@ -28,13 +28,13 @@ module MultiSync
 
     #
     def determine_etag
-      self.body.nil? ? nil : Digest::MD5.hexdigest(self.body)
+      body.nil? ? nil : Digest::MD5.hexdigest(body)
     end
 
     #
     def determine_mtime
       begin
-        File.mtime(self.path_with_root.to_s)
+        File.mtime(path_with_root.to_s)
       rescue
         return nil
       end
@@ -42,12 +42,12 @@ module MultiSync
 
     #
     def determine_content_type
-      MultiMime.type_for_path(self.path_with_root.to_s)
+      MultiMime.type_for_path(path_with_root.to_s)
     end
 
     #
     def determine_content_length
-      self.body.nil? ? 0 : Fog::Storage.get_body_size(self.body)
+      body.nil? ? 0 : Fog::Storage.get_body_size(body)
     end
 
   end

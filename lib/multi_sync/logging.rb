@@ -1,4 +1,4 @@
-require "logger"
+require 'logger'
 
 module MultiSync
 
@@ -15,7 +15,7 @@ module MultiSync
 
     #
     def logger=(new_logger)
-      @logger = (new_logger ? new_logger : Logger.new("/dev/null"))
+      @logger = (new_logger ? new_logger : Logger.new('/dev/null'))
     end
 
     #
@@ -29,7 +29,7 @@ module MultiSync
     end
 
     #
-    def say_status(status, message, log_status=true)
+    def say_status(status, message, log_status = true)
 
       return if status_logger.nil?
 
@@ -57,7 +57,7 @@ module MultiSync
     [:info, :debug, :warn, :error].each do |log_method|
       # Shorthand log method
       define_method log_method do |message|
-        self.send(:log, message, log_method)
+        send(:log, message, log_method)
       end
     end
 

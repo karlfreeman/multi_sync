@@ -1,8 +1,8 @@
-require "virtus"
-require "lazily"
-require "pathname"
-require "multi_sync/source"
-require "multi_sync/resources/local_resource"
+require 'virtus'
+require 'lazily'
+require 'pathname'
+require 'multi_sync/source'
+require 'multi_sync/resources/local_resource'
 
 module MultiSync
 
@@ -17,7 +17,7 @@ module MultiSync
     #
     # @param options [Hash]
     def initialize(options = {})
-      self.include = options.fetch(:include, "**/*")
+      self.include = options.fetch(:include, '**/*')
       self.exclude = options.fetch(:exclude, nil)
       super(options)
     end
@@ -25,13 +25,13 @@ module MultiSync
     #
     def files
       files = []
-      included_files = Dir.glob(self.source_dir + self.include)
-      excluded_files = self.exclude.nil? ? [] : Dir.glob(self.source_dir + self.exclude)
+      included_files = Dir.glob(source_dir + include)
+      excluded_files = exclude.nil? ? [] : Dir.glob(source_dir + exclude)
       (included_files - excluded_files).lazily.each { |path|
         next if File.directory?(path)
         files << path_to_local_resource(path)
       }
-      return files
+      files
     end
 
   end

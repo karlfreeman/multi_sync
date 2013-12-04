@@ -1,7 +1,7 @@
-require "virtus"
-require "pathname"
-require "celluloid"
-require "multi_sync/mixins/log_helper"
+require 'virtus'
+require 'pathname'
+require 'celluloid'
+require 'multi_sync/mixins/log_helper'
 
 module MultiSync
 
@@ -14,16 +14,16 @@ module MultiSync
     attribute :connection
     attribute :target_dir, Pathname
     attribute :destination_dir, Pathname
-    attribute :credentials, Hash, :default => :default_credentials
+    attribute :credentials, Hash, default: :default_credentials
 
     # Initialize a new Target object
     #
     # @param options [Hash]
     def initialize(options = {})
-      raise(ArgumentError, "target_dir must be present") unless options[:target_dir]
-      self.target_dir = Pathname.new(options.fetch(:target_dir, ""))
-      self.destination_dir = Pathname.new(options.fetch(:destination_dir, ""))
-      self.credentials.merge!(options.fetch(:credentials, {}))
+      raise(ArgumentError, 'target_dir must be present') unless options[:target_dir]
+      self.target_dir = Pathname.new(options.fetch(:target_dir, ''))
+      self.destination_dir = Pathname.new(options.fetch(:destination_dir, ''))
+      credentials.merge!(options.fetch(:credentials, {}))
     end
 
     #
