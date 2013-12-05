@@ -1,0 +1,21 @@
+defaults: &defaults
+  fog_provider: "AWS"
+  aws_access_key_id: "AKIAJXMAC4YJEHPBYSHQ"
+  aws_secret_access_key: "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"
+  region: "us-east-1"
+  run_on_precompile: false
+
+development:
+  <<: *defaults
+  fog_directory: "multi_sync"
+  existing_remote_files: keep
+
+test:
+  <<: *defaults
+  fog_directory: "multi_sync"
+  existing_remote_files: keep
+
+production:
+  <<: *defaults
+  fog_directory: "multi_sync"
+  existing_remote_files: delete

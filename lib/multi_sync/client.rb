@@ -34,6 +34,7 @@ module MultiSync
 
     #
     def add_target(name, options = {})
+      raise ArgumentError, "Duplicate target names detected, please rename '#{name}' to be unique" if supervisor_actor_names.include?(name)
       begin
         clazz = MultiSync.const_get("#{options[:type].capitalize.to_s}Target")
         supervisor.pool(clazz, as: name, args: [options], size: MultiSync.target_pool_size)
@@ -74,7 +75,7 @@ module MultiSync
         running_jobs << { id: job[:id], future: Celluloid::Actor[job[:target_id]].future.send(job[:method], job[:args]), method: job[:method] }
       end
 
-      MultiSync.debug 'Fetching jobs from the futures...'
+      MultiSync.debug 'Fetching jobs from the future...'
       running_jobs.delete_if do | job |
         begin
           completed_job = { id: job[:id], response: job[:future].value, method: job[:method] }
@@ -153,6 +154,9 @@ module MultiSync
 
         source_files = source.files
         source_files.sort! # sort to make sure the source's indexs match the targets
+
+        # when no targets are specified, assume all targets
+        source.targets = supervisor_actor_names if source.targets.empty?
 
         source.targets.lazily.each do | target_id |
 
@@ -254,6 +258,11 @@ module MultiSync
     #
     def sync_pointless?
       sources.empty?
+    end
+
+    #
+    def supervisor_actor_names
+      supervisor.actors.map { |actor| actor.registered_name }
     end
 
   end

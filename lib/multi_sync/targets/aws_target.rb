@@ -33,7 +33,7 @@ module MultiSync
 
         files << MultiSync::RemoteResource.new(
           file: file,
-          with_root: target_dir + pathname, # pathname seems to already have the prefix ( destination_dir )
+          with_root: target_dir + pathname, # pathname seems to already have the prefix (destination_dir)
           without_root: (destination_dir != '') ? pathname.relative_path_from(destination_dir).cleanpath : pathname,
         )
 
