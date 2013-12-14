@@ -2,20 +2,18 @@
 
 Asset synchronisation library
 
-## Features / Usage Examples
-
 At MultiSync's core is [Celluloid] allowing for the synchronisation of assets to be truly parallel. Each target you define creates a pool of resources which allows for parallel execution of uploads and deletes. Meaning that when your uploading thousands of files, you get alot more bang for your buck.
 
 MultiSync tries to expose its asset synchronisation in a flexible way, allowing for it to be used in `Rails (WIP)`, `Sinatra (WIP)`, `Rake (WIP)` and `Plain old ruby (WIP)` as well as extensions for `Middleman (WIP)`, `Nanoc (WIP)` and others too. Listed below are examples of how to get setup.
 
-### POR (WIP)
+## Installation
 
 ```ruby
-gem "multi_sync", "~> 0.0.1"
+gem 'multi_sync', '~> 0.0.1'
 ```
 
 ```ruby
-require "multi_sync"
+require 'multi_sync'
 
 MultiSync.configuration do |config|
   # config.verbose = false  # turn on verbose logging (defaults to false)
@@ -28,22 +26,30 @@ MultiSync.configuration do |config|
   # config.max_sync_attempts = 1 # how many times a file should be retried if there was an error during sync (defaults to 3)
 end
 
+```
+
+## Features / Usage Examples
+
+### POR (WIP)
+
+```ruby
+
 MultiSync.run do
 
   source :build {
     :type => :local, # :local is the source's type, current options are :local, :manifest
-    :source_dir => "/path_to_your_build_folder",
+    :source_dir => '/path_to_your_build_folder',
     :targets => [ :assets ] # an array of target names that this source should sync against
   }
 
   target :assets {
     :type => :aws, # :aws is the target's type, current options are :aws
-    :target_dir => "your_aws_bucket", # 
-    :destination_dir => "an_optional_directory_inside_your_aws_bucket", # 
+    :target_dir => 'your_aws_bucket', # 
+    :destination_dir => 'an_optional_directory_inside_your_aws_bucket', # 
     :credentials => {
-      :region => "us-east-1",
-      :aws_access_key_id => "super_secret",
-      :aws_secret_access_key => "super_secret"
+      :region => 'us-east-1',
+      :aws_access_key_id => 'super_secret',
+      :aws_secret_access_key => 'super_secret'
     }
   }
 
@@ -54,7 +60,7 @@ end
 ### Rails
 
 ```ruby
-gem "multi_sync", "~> 0.0.1"
+gem 'multi_sync', '~> 0.0.1'
 ```
 
 in `/config/initializers/multi_sync`
@@ -74,17 +80,17 @@ MultiSync.prepare do
 
   source :public, {
     :type => :manifest,
-    :source_dir => ::Rails.root.join("public", ::Rails.application.config.assets.prefix.sub(/^\//, "")), # hopefully will abstract away
+    :source_dir => ::Rails.root.join('public', ::Rails.application.config.assets.prefix.sub(/^\//, '')), # hopefully will abstract away
     :targets => [:assets]
   }
 
   target :assets, {
     :type => :aws,
-    :target_dir => "your_aws_bucket",
+    :target_dir => 'your_aws_bucket',
     :credentials => {
-      :region => "us-east-1",
-      :aws_access_key_id => "super_secret",
-      :aws_secret_access_key => "super_secret"
+      :region => 'us-east-1',
+      :aws_access_key_id => 'super_secret',
+      :aws_secret_access_key => 'super_secret'
     }
   }
 
@@ -98,35 +104,49 @@ By having `multi_sync` included in your `Gemfile`, the rake task `rake assets:sy
 
 ### Sinatra (WIP)
 
+```ruby
+```
+
 ### Rake (WIP)
 
-## Build & Dependency Status
+```ruby
+```
+
+## Badges
 
 [![Gem Version](https://badge.fury.io/rb/multi_sync.png)][gem]
 [![Build Status](https://travis-ci.org/karlfreeman/multi_sync.png)][travis]
-[![Dependency Status](https://gemnasium.com/karlfreeman/multi_sync.png?travis)][gemnasium]
 [![Code Quality](https://codeclimate.com/github/karlfreeman/multi_sync.png)][codeclimate]
 [![Coverage Status](https://coveralls.io/repos/karlfreeman/multi_sync/badge.png?branch=master)][coveralls]
+[![Gittip](http://img.shields.io/gittip/karlfreeman.png)][gittip]
 
-## Supported services
+## Supported Storage Services
+
+Behind the scenes we're using [Fog::Storage][fog::storage] which allows us to support the most popular storage providers
+
+* [Amazon S3](http://aws.amazon.com/s3)
+* [Rackspace CloudFiles](http://www.rackspace.com/cloud/files)
+* [Google Cloud Storage](https://developers.google.com/storage)
 
 ## Supported Ruby Versions
+
 This library aims to support and is [tested against][travis] the following Ruby
 implementations:
 
 * Ruby 1.9.3
 * Ruby 2.0.0
-* [JRuby][]
-* [Rubinius][]
+* [JRuby][jruby]
+* [Rubinius][rubinius]
 
 # Credits
 
-[celluloid]: http://celluloid.io
-[fog::storage]: http://fog.io/storage
 [gem]: https://rubygems.org/gems/multi_sync
 [travis]: http://travis-ci.org/karlfreeman/multi_sync
-[gemnasium]: https://gemnasium.com/karlfreeman/multi_sync
 [coveralls]: https://coveralls.io/r/karlfreeman/multi_sync
 [codeclimate]: https://codeclimate.com/github/karlfreeman/multi_sync
+[gittip]: https://www.gittip.com/karlfreeman
 [jruby]: http://www.jruby.org
 [rubinius]: http://rubini.us
+
+[celluloid]: http://celluloid.io
+[fog::storage]: http://fog.io/storage
