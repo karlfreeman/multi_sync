@@ -4,40 +4,44 @@ module MultiSync
 
     class AssetSync
 
-      def self.asset_sync_yml_exists?
-        ::Rails.root.nil? ? false : File.exists?(self.asset_sync_yml_path)
-      end
+      class << self
 
-      def self.asset_sync_yml_path
-        ::Rails.root.join('config', 'asset_sync.yml')
-      end
+        def asset_sync_yml_exists?
+          ::Rails.root.nil? ? false : File.exists?(self.asset_sync_yml_path)
+        end
 
-      def self.asset_sync_yml
-        @asset_sync_yml ||= YAML.load_file(asset_sync_yml_path)[MultiSync.env]
-      end
+        def asset_sync_yml_path
+          ::Rails.root.join('config', 'asset_sync.yml')
+        end
 
-      def self.check_and_migrate
-        return unless self.asset_sync_yml_exists?
-        MultiSync.info 'AssetSync YAML file found, migrating options...'
+        def asset_sync_yml
+          @asset_sync_yml ||= YAML.load_file(asset_sync_yml_path)[MultiSync.env]
+        end
 
-        MultiSync.source(:rails, {
-          type: :manifest,
-          source_dir: MultiSync::Extensions::Rails.source_dir
-        })
+        def check_and_migrate
+          return unless self.asset_sync_yml_exists?
+          MultiSync.info 'AssetSync YAML file found, migrating options...'
 
-        MultiSync.target(:assets, {
-          type: asset_sync_yml["fog_provider"],
-          target_dir: asset_sync_yml["fog_directory"],
-          destination_dir: MultiSync::Extensions::Rails.assets_prefix,
-          :credentials => {
-            region: asset_sync_yml["region"],
-            aws_access_key_id: asset_sync_yml["aws_access_key_id"],
-            aws_secret_access_key: asset_sync_yml["aws_secret_access_key"]
-          }
-        })
+          MultiSync.source(:rails, {
+            type: :manifest,
+            source_dir: MultiSync::Extensions::Rails.source_dir
+          })
 
-        MultiSync.delete_abandoned_files = asset_sync_yml["existing_remote_files"] == 'delete'
-        MultiSync.run_on_build = asset_sync_yml["run_on_precompile"]
+          MultiSync.target(:assets, {
+            type: asset_sync_yml['fog_provider'],
+            target_dir: asset_sync_yml['fog_directory'],
+            destination_dir: MultiSync::Extensions::Rails.destination_dir,
+            :credentials => {
+              region: asset_sync_yml['region'],
+              aws_access_key_id: asset_sync_yml['aws_access_key_id'],
+              aws_secret_access_key: asset_sync_yml['aws_secret_access_key']
+            }
+          })
+
+          MultiSync.delete_abandoned_files = asset_sync_yml['existing_remote_files'] == 'delete'
+          MultiSync.run_on_build = asset_sync_yml['run_on_precompile']
+
+        end
 
       end
 

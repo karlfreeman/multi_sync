@@ -6,14 +6,18 @@ module MultiSync
     require 'multi_sync/extensions/rails/asset_sync'
 
     class Rails
-      MultiSync.debug "Rails -v #{::Rails::VERSION::STRING} auto-detected"
+      MultiSync.info "Rails -v #{::Rails::VERSION::STRING} auto-detected"
 
-      def self.source_dir
-        ::Rails.root.join('public', self.assets_prefix)
-      end
+      class << self
 
-      def self.assets_prefix
-        ::Rails.application.config.assets.prefix.sub(/^\//, '')
+        def source_dir
+          ::Rails.root.join('public', destination_dir)
+        end
+
+        def destination_dir
+          ::Rails.application.config.assets.prefix.sub(/^\//, '')
+        end
+
       end
 
     end
