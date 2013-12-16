@@ -61,10 +61,10 @@ module MultiSync
     def synchronize
 
       if sync_pointless?
-        MultiSync.info "Preventing synchronization as there are #{sources.length} sources to sync..."
+        MultiSync.debug "Preventing synchronization as there are #{sources.length} sources to sync..."
         return
       else
-        MultiSync.info 'Starting synchronization...'
+        MultiSync.debug 'Starting synchronization...'
       end
 
       determine_sync if first_run?
@@ -101,13 +101,13 @@ module MultiSync
         # elapsed = self.finished_at.to_f - self.started_at.to_f
         # minutes, seconds = elapsed.divmod 60.0
         # kilobytes = get_total_file_size_from_complete_jobs / 1024.0
-        # MultiSync.info "Sync completed in #{pluralize(minutes.round, 'minute')} and #{pluralize(seconds.round, 'second')}"
-        # MultiSync.info "#{pluralize(self.complete_jobs.length, 'file')} were synchronised (#{pluralize(get_complete_deleted_jobs.length, 'deleted file')} and #{pluralize(get_complete_upload_jobs.length, 'uploaded file')}) from #{pluralize(self.sources.length, 'source')} to #{pluralize(self.supervisor.actors.length, 'target')}"
-        # MultiSync.info "The upload weight totalled %.#{0}f #{pluralize(kilobytes, 'KB', 'KB', false)}" % kilobytes
-        # MultiSync.info "#{pluralize(self.file_sync_attempts, 'failed request')} were detected and re-tried"
+        # MultiSync.debug "Sync completed in #{pluralize(minutes.round, 'minute')} and #{pluralize(seconds.round, 'second')}"
+        # MultiSync.debug "#{pluralize(self.complete_jobs.length, 'file')} were synchronised (#{pluralize(get_complete_deleted_jobs.length, 'deleted file')} and #{pluralize(get_complete_upload_jobs.length, 'uploaded file')}) from #{pluralize(self.sources.length, 'source')} to #{pluralize(self.supervisor.actors.length, 'target')}"
+        # MultiSync.debug "The upload weight totalled %.#{0}f #{pluralize(kilobytes, 'KB', 'KB', false)}" % kilobytes
+        # MultiSync.debug "#{pluralize(self.file_sync_attempts, 'failed request')} were detected and re-tried"
       else
-        # MultiSync.info "Sync failed to complete with #{pluralize(self.incomplete_jobs.length, 'outstanding file')} to be synchronised"
-        # MultiSync.info "#{pluralize(self.complete_jobs.length, 'file')} were synchronised (#{pluralize(get_complete_deleted_jobs.length, 'deleted file')} and #{pluralize(get_complete_upload_jobs.length, 'uploaded file')}) from #{pluralize(self.sources.length, 'source')} to #{pluralize(self.supervisor.actors.length, 'target')}"
+        # MultiSync.debug "Sync failed to complete with #{pluralize(self.incomplete_jobs.length, 'outstanding file')} to be synchronised"
+        # MultiSync.debug "#{pluralize(self.complete_jobs.length, 'file')} were synchronised (#{pluralize(get_complete_deleted_jobs.length, 'deleted file')} and #{pluralize(get_complete_upload_jobs.length, 'uploaded file')}) from #{pluralize(self.sources.length, 'source')} to #{pluralize(self.supervisor.actors.length, 'target')}"
       end
 
       supervisor.finalize
