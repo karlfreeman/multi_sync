@@ -34,7 +34,8 @@ module MultiSync
             :credentials => {
               region: asset_sync_yml['region'],
               aws_access_key_id: asset_sync_yml['aws_access_key_id'],
-              aws_secret_access_key: asset_sync_yml['aws_secret_access_key']
+              aws_secret_access_key: asset_sync_yml['aws_secret_access_key'],
+              path_style: asset_sync_yml['path_style']
             }
           })
 
