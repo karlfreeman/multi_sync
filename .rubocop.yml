@@ -1,7 +1,7 @@
 AllCops:
   Includes:
     - Rakefile
-    - config.ru
+    - Gemfile
   Excludes:
     - script/**
     - vendor/**
