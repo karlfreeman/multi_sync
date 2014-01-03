@@ -5,10 +5,7 @@ require 'multi_sync/target'
 require 'multi_sync/resources/remote_resource'
 
 module MultiSync
-
-  # Defines constants and methods related to the LocalTarget
   class LocalTarget < Target
-
     # Initialize a new LocalTarget object
     #
     # @param options [Hash]
@@ -17,7 +14,6 @@ module MultiSync
       self.connection = ::Fog::Storage.new(credentials.merge(provider: :local))
     end
 
-    #
     def files
       files = []
 
@@ -44,9 +40,7 @@ module MultiSync
       files
     end
 
-    #
     def upload(resource)
-
       key = resource.path_without_root.to_s
       MultiSync.say_status :upload, key
       MultiSync.debug "Upload #{resource.class_name}:'#{key}' to #{class_name}:'#{File.join(connection.local_root, destination_dir)}'"
@@ -56,23 +50,15 @@ module MultiSync
         key: key,
         body: resource.body
       )
-
       resource
-
     end
 
-    #
     def delete(resource)
-
       key = resource.path_without_root.to_s
       MultiSync.say_status :delete, key
       MultiSync.debug "Delete #{resource.class_name}:'#{key}' from #{class_name}:'#{File.join(connection.local_root, destination_dir)}'"
       connection.directories.get(destination_dir.to_s).files.get(key).destroy
-
       resource
-
     end
-
   end
-
 end

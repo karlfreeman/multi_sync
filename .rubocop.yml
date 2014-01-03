@@ -3,21 +3,22 @@ AllCops:
     - Rakefile
     - config.ru
   Excludes:
-    - config/db/**
     - script/**
     - vendor/**
     - bin/**
+    - examples/**
+    - gemfiles/**
 LineLength:
-  Max: 10_000
+  Enabled: false
+MethodLength:
+  Enabled: false
+ClassLength:
+  Enabled: false
 Documentation:
   Enabled: false
-CommentAnnotation:
-  Enabled: false
-HandleExceptions:
-  Enabled: false
-AlignParameters:
+Encoding:
   Enabled: false
 Blocks:
   Enabled: false
-SignalException:
-  Enabled: false
+HashSyntax:
+  EnforcedStyle: ruby19

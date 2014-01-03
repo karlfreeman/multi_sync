@@ -5,10 +5,7 @@ require 'multi_sync/target'
 require 'multi_sync/resources/remote_resource'
 
 module MultiSync
-
-  # Defines constants and methods related to the AwsTarget
   class AwsTarget < Target
-
     # Initialize a new AwsTarget object
     #
     # @param options [Hash]
@@ -17,7 +14,6 @@ module MultiSync
       self.connection = ::Fog::Storage.new(credentials.merge(provider: :aws))
     end
 
-    #
     def files
       files = []
 
@@ -34,7 +30,7 @@ module MultiSync
         files << MultiSync::RemoteResource.new(
           file: file,
           with_root: target_dir + pathname, # pathname seems to already have the prefix (destination_dir)
-          without_root: (destination_dir != '') ? pathname.relative_path_from(destination_dir).cleanpath : pathname,
+          without_root: destination_dir != '' ? pathname.relative_path_from(destination_dir).cleanpath : pathname,
         )
 
       }
@@ -42,9 +38,7 @@ module MultiSync
       files
     end
 
-    #
     def upload(resource)
-
       MultiSync.say_status :upload, resource.path_without_root.to_s
       MultiSync.debug "Upload #{resource.class_name}:'#{resource.path_without_root.to_s}' to #{class_name}:'#{File.join('/', target_dir + destination_dir)}'"
       directory = connection.directories.get(target_dir.to_s)
@@ -64,26 +58,19 @@ module MultiSync
       directory.files.create(upload_hash)
 
       resource
-
     end
 
-    #
     def delete(resource)
-
       MultiSync.say_status :upload, resource.path_without_root.to_s
       MultiSync.debug "Delete #{resource.class_name}:'#{resource.path_without_root.to_s}' from #{class_name}:'#{File.join('/', target_dir + destination_dir)}'"
       connection.delete_object(target_dir.to_s, (destination_dir + resource.path_without_root).to_s)
-
       resource
-
     end
 
     private
 
-
     # directory or overreaching AWS globbing
     def valid_path?(pathname)
-
       # directory
       return false if pathname.to_s =~ /\/$/
 
@@ -92,9 +79,6 @@ module MultiSync
 
       #
       true
-
     end
-
   end
-
 end

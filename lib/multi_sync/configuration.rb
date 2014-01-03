@@ -4,8 +4,6 @@ require 'celluloid'
 Fog::Logger[:warning] = nil
 
 module MultiSync
-
-  # Defines constants and methods related to the Configuration
   class Configuration
     include Virtus
 
@@ -28,16 +26,12 @@ module MultiSync
       end
     end
 
-    #
     def celluloid_cores
       Celluloid.cores
     end
 
-    #
     def fog_credentials
       Fog.credentials
     end
-
   end
-
 end

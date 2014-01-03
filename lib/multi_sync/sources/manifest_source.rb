@@ -6,8 +6,6 @@ require 'multi_sync/source'
 require 'multi_sync/resources/local_resource'
 
 module MultiSync
-
-  # Defines constants and methods related to the LocalSource
   class ManifestSource < Source
     extend Virtus
 
@@ -18,7 +16,6 @@ module MultiSync
       super(options)
     end
 
-    #
     def files
       files = []
       manifest_hash = {}
@@ -34,11 +31,11 @@ module MultiSync
 
       # create a local_resource from each file
       manifest_hash.lazily.each { |key, value|
-        files << path_to_local_resource(source_dir + key, {
+        files << path_to_local_resource(source_dir + key, 
           mtime: value['mtime'],
           digest: value['digest'],
           content_length: value['size']
-        })
+        )
       }
 
       files
@@ -46,12 +43,10 @@ module MultiSync
 
     private
 
-    #
     def locate_manifest(dir)
       Dir.glob(dir.to_s + 'manifest*.{json,yaml,yml}').max { |f| File.ctime(f) }
     end
 
-    #
     def parse_manifest(manifest_path)
       manifest_hash = {}
       manifest_data = File.read(manifest_path)
@@ -93,9 +88,6 @@ module MultiSync
       end
 
       manifest_hash
-
     end
-
   end
-
 end

@@ -9,7 +9,6 @@ require 'multi_sync/targets/local_target'
 require 'multi_sync/mixins/pluralize_helper'
 
 module MultiSync
-
   # Defines constants and methods related to the Client
   class Client
     include Virtus
@@ -59,7 +58,6 @@ module MultiSync
 
     #
     def synchronize
-
       if sync_pointless?
         MultiSync.debug "Preventing synchronization as there are #{sources.length} sources to sync..."
         return
@@ -90,13 +88,11 @@ module MultiSync
 
       finish_sync
       finalize
-
     end
     alias_method :sync, :synchronize
 
     #
     def finalize
-
       if finished_at
         # elapsed = self.finished_at.to_f - self.started_at.to_f
         # minutes, seconds = elapsed.divmod 60.0
@@ -111,7 +107,6 @@ module MultiSync
       end
 
       supervisor.finalize
-
     end
     alias_method :fin, :finalize
 
@@ -143,7 +138,6 @@ module MultiSync
 
     #
     def determine_sync
-
       sources.lazily.each do |source|
 
         source_files = []
@@ -206,7 +200,6 @@ module MultiSync
         end
 
       end
-
     end
 
     #
@@ -232,7 +225,6 @@ module MultiSync
       end
 
       outdated_files
-
     end
 
     #
@@ -247,7 +239,7 @@ module MultiSync
 
     #
     def finish_sync
-      (incomplete_jobs.length != 0) ? synchronize : self.finished_at = Time.now
+      incomplete_jobs.length != 0 ? synchronize : self.finished_at = Time.now
     end
 
     #
@@ -264,7 +256,5 @@ module MultiSync
     def supervisor_actor_names
       supervisor.actors.map { |actor| actor.registered_name }
     end
-
   end
-
 end

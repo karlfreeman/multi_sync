@@ -3,10 +3,7 @@ require 'digest/md5'
 require 'multi_sync/resource'
 
 module MultiSync
-
-  # Defines constants and methods related to the RemoteResource
   class RemoteResource < Resource
-
     # Initialize a new RemoteResource object
     #
     # @param path [String]
@@ -15,12 +12,10 @@ module MultiSync
       super(options)
     end
 
-    #
     def body
       file.body
     end
 
-    #
     def determine_etag
       begin
         file.etag
@@ -29,21 +24,16 @@ module MultiSync
       end
     end
 
-    #
     def determine_mtime
       file.last_modified
     end
 
-    #
     def determine_content_type
       file.content_type
     end
 
-    #
     def determine_content_length
       file.content_length
     end
-
   end
-
 end

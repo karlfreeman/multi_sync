@@ -4,7 +4,6 @@ require 'multi_sync/mixins/log_helper'
 
 module MultiSync
 
-  # Defines constants and methods related to the Resource
   class Resource
     include Virtus
     include Comparable
@@ -40,7 +39,7 @@ module MultiSync
       name: :encryption,
       type: String,
       default_value: nil
-    }].freeze
+    }]
 
     AWS_ATTRIBUTES.each do |attribute_hash|
       send(:attribute, attribute_hash[:name], attribute_hash[:type])
@@ -66,23 +65,19 @@ module MultiSync
 
     end
 
-    #
     def hash
       path_without_root.hash
     end
 
-    #
     def <=>(other)
       path_without_root <=> other.path_without_root
     end
 
-    #
     def ==(other)
       path_without_root == other.path_without_root
     end
     alias :eql? :==
 
-    #
     def has_matching_etag?(other)
       etag == other.etag
     end

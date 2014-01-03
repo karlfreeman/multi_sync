@@ -3,7 +3,6 @@ require 'multi_sync/mixins/log_helper'
 
 module MultiSync
 
-  # Defines constants and methods related to the Source
   class Source
     include Virtus
     include MultiSync::Mixins::LogHelper
@@ -26,7 +25,6 @@ module MultiSync
 
     private
 
-    #
     def path_to_local_resource(path, options = {})
       pathname = Pathname.new(path)
       MultiSync::LocalResource.new({

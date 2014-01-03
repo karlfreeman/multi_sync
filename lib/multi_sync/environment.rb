@@ -1,8 +1,5 @@
 module MultiSync
-
-  # Defines constants and methods related to the environment
   module Environment
-
     # Retrieves the current MultiSync environment
     #
     # @return [String] the current environment
@@ -36,7 +33,5 @@ module MultiSync
         environment? e
       end
     end
-
   end
-
 end

@@ -5,7 +5,6 @@ require 'multi_sync/source'
 require 'multi_sync/resources/local_resource'
 
 module MultiSync
-
   # Defines constants and methods related to the LocalSource
   class LocalSource < Source
     extend Virtus
@@ -22,7 +21,6 @@ module MultiSync
       super(options)
     end
 
-    #
     def files
       files = []
       included_files = Dir.glob(source_dir + include)
@@ -33,7 +31,5 @@ module MultiSync
       }
       files
     end
-
   end
-
 end

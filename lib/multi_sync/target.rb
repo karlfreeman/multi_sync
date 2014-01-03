@@ -5,7 +5,6 @@ require 'multi_sync/mixins/log_helper'
 
 module MultiSync
 
-  # Defines constants and methods related to the Target
   class Target
     include Virtus
     include Celluloid
@@ -26,7 +25,6 @@ module MultiSync
       credentials.merge!(options.fetch(:credentials, {}))
     end
 
-    #
     def default_credentials
       # deep clone just in case
       Marshal.load(Marshal.dump(MultiSync.credentials))
