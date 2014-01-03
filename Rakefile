@@ -35,5 +35,5 @@ namespace :spec do
 
 end
 
-task default: [:spec, :rubocop]
+task default: :spec
 task test: :spec
