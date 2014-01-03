@@ -20,5 +20,7 @@ Encoding:
   Enabled: false
 Blocks:
   Enabled: false
+AlignParameters:
+  Enabled: false
 HashSyntax:
   EnforcedStyle: ruby19

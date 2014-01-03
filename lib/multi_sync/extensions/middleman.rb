@@ -13,7 +13,7 @@ module MultiSync
         end
       end
 
-      MultiSync.source(:middleman, 
+      MultiSync.source(:middleman,
         type: :local,
         source_dir: MultiSync::Extensions::Middleman.source_dir
       )

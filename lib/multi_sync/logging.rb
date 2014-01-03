@@ -10,11 +10,11 @@ module MultiSync
     end
 
     def logger=(new_logger)
-      @logger = (new_logger.nil? ? new_logger : Logger.new('/dev/null'))
+      @logger = new_logger ? new_logger : Logger.new('/dev/null')
     end
 
     def status_logger
-      @status_logger
+      @status_logger || initialize_status_logger
     end
 
     def status_logger=(new_status_logger)
@@ -57,6 +57,10 @@ module MultiSync
     # Configure default logger
     def initialize_logger
       @logger = ::Logger.new(STDOUT)
+    end
+
+    def initialize_status_logger
+      @status_logger = nil
     end
 
 

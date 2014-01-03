@@ -27,7 +27,7 @@ describe MultiSync::LocalResource, fakefs: true do
 
     context :known do
 
-      it 'should return correct file details ( with overwritten info )' do
+      it 'should return correct file details (with overwritten info)' do
         resource = MultiSync::LocalResource.new(
           with_root: Pathname.new('/tmp/local-resource/foo.txt'),
           without_root: Pathname.new('foo.txt'),

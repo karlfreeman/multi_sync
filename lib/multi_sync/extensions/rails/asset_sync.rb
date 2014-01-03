@@ -18,12 +18,12 @@ module MultiSync
           return unless self.asset_sync_yml_exists?
           MultiSync.info 'AssetSync YAML file found, migrating options...'
 
-          MultiSync.source(:rails, 
+          MultiSync.source(:rails,
             type: :manifest,
             source_dir: MultiSync::Extensions::Rails.source_dir
           )
 
-          MultiSync.target(:assets, 
+          MultiSync.target(:assets,
             type: asset_sync_yml['fog_provider'],
             target_dir: asset_sync_yml['fog_directory'],
             destination_dir: MultiSync::Extensions::Rails.destination_dir,

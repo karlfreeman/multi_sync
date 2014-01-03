@@ -31,9 +31,8 @@ module MultiSync
       self.supervisor = Celluloid::SupervisionGroup.run!
     end
 
-    #
     def add_target(name, options = {})
-      raise ArgumentError, "Duplicate target names detected, please rename '#{name}' to be unique" if supervisor_actor_names.include?(name)
+      fail ArgumentError, "Duplicate target names detected, please rename '#{name}' to be unique" if supervisor_actor_names.include?(name)
       begin
         clazz = MultiSync.const_get("#{options[:type].capitalize.to_s}Target")
         supervisor.pool(clazz, as: name, args: [options], size: MultiSync.target_pool_size)
@@ -44,7 +43,6 @@ module MultiSync
     end
     alias_method :target, :add_target
 
-    #
     def add_source(name, options = {})
       begin
         clazz = MultiSync.const_get("#{options[:type].capitalize.to_s}Source")
@@ -91,36 +89,32 @@ module MultiSync
     end
     alias_method :sync, :synchronize
 
-    #
     def finalize
       if finished_at
-        # elapsed = self.finished_at.to_f - self.started_at.to_f
-        # minutes, seconds = elapsed.divmod 60.0
-        # kilobytes = get_total_file_size_from_complete_jobs / 1024.0
-        # MultiSync.debug "Sync completed in #{pluralize(minutes.round, 'minute')} and #{pluralize(seconds.round, 'second')}"
-        # MultiSync.debug "#{pluralize(self.complete_jobs.length, 'file')} were synchronised (#{pluralize(get_complete_deleted_jobs.length, 'deleted file')} and #{pluralize(get_complete_upload_jobs.length, 'uploaded file')}) from #{pluralize(self.sources.length, 'source')} to #{pluralize(self.supervisor.actors.length, 'target')}"
-        # MultiSync.debug "The upload weight totalled %.#{0}f #{pluralize(kilobytes, 'KB', 'KB', false)}" % kilobytes
-        # MultiSync.debug "#{pluralize(self.file_sync_attempts, 'failed request')} were detected and re-tried"
+        elapsed = finished_at.to_f - started_at.to_f
+        minutes, seconds = elapsed.divmod 60.0
+        kilobytes = get_total_file_size_from_complete_jobs / 1024.0
+        MultiSync.debug "Sync completed in #{pluralize(minutes.round, 'minute')} and #{pluralize(seconds.round, 'second')}"
+        MultiSync.debug "#{pluralize(complete_jobs.length, 'file')} were synchronised (#{pluralize(get_complete_deleted_jobs.length, 'deleted file')} and #{pluralize(get_complete_upload_jobs.length, 'uploaded file')}) from #{pluralize(sources.length, 'source')} to #{pluralize(supervisor.actors.length, 'target')}"
+        MultiSync.debug "The upload weight totalled %.#{0}f #{pluralize(kilobytes, 'KB', 'KB', false)}" % kilobytes
+        MultiSync.debug "#{pluralize(file_sync_attempts, 'failed request')} were detected and re-tried"
       else
-        # MultiSync.debug "Sync failed to complete with #{pluralize(self.incomplete_jobs.length, 'outstanding file')} to be synchronised"
-        # MultiSync.debug "#{pluralize(self.complete_jobs.length, 'file')} were synchronised (#{pluralize(get_complete_deleted_jobs.length, 'deleted file')} and #{pluralize(get_complete_upload_jobs.length, 'uploaded file')}) from #{pluralize(self.sources.length, 'source')} to #{pluralize(self.supervisor.actors.length, 'target')}"
+        MultiSync.debug "Sync failed to complete with #{pluralize(incomplete_jobs.length, 'outstanding file')} to be synchronised"
+        MultiSync.debug "#{pluralize(complete_jobs.length, 'file')} were synchronised (#{pluralize(get_complete_deleted_jobs.length, 'deleted file')} and #{pluralize(get_complete_upload_jobs.length, 'uploaded file')}) from #{pluralize(sources.length, 'source')} to #{pluralize(supervisor.actors.length, 'target')}"
       end
 
       supervisor.finalize
     end
     alias_method :fin, :finalize
 
-    #
     def get_complete_deleted_jobs
       complete_jobs.select { |job| job[:method] == :delete }
     end
 
-    #
     def get_complete_upload_jobs
       complete_jobs.select { |job| job[:method] == :upload }
     end
 
-    #
     def get_total_file_size_from_complete_jobs
       total_file_size = 0
       get_complete_upload_jobs.each do | job |
@@ -136,7 +130,6 @@ module MultiSync
 
     private
 
-    #
     def determine_sync
       sources.lazily.each do |source|
 
@@ -147,7 +140,7 @@ module MultiSync
         MultiSync.info starting_synchronizing_msg
 
         source_files = source.files
-        source_files.sort! # sort to make sure the source's indexs match the targets
+        source_files.sort! # sort to make sure the source's indexes match the targets
 
         # when no targets are specified, assume all targets
         source.targets = supervisor_actor_names if source.targets.empty?
@@ -202,57 +195,49 @@ module MultiSync
       end
     end
 
-    #
     def determine_missing_files(source_files, target_files)
       missing_files = (source_files - target_files)
       missing_files
     end
 
-    #
     def determine_abandoned_files(source_files, target_files)
       abandoned_files = (target_files - source_files)
       abandoned_files
     end
 
-    #
     def determine_outdated_files(source_files, target_files)
       outdated_files = []
 
       # TODO replace with celluloid pool of futures
       # check each source file against the matching target_file's etag
       source_files.lazily.each_with_index do |file, i|
-        outdated_files << file unless !MultiSync.force && file.has_matching_etag?(target_files[i])
+        outdated_files << file unless !MultiSync.force && file.matching_etag?(target_files[i])
       end
 
       outdated_files
     end
 
-    #
     def sync_attempted
       self.started_at = Time.now if first_run?
-      self.sync_attempts = sync_attempts + 1
+      self.sync_attempts = sync_attempts.next
       if sync_attempts > MultiSync.max_sync_attempts
         MultiSync.warn "Sync was attempted more then #{MultiSync.max_sync_attempts} times"
-        raise ArgumentError, "Sync was attempted more then #{MultiSync.max_sync_attempts} times"
+        fail ArgumentError, "Sync was attempted more then #{MultiSync.max_sync_attempts} times"
       end
     end
 
-    #
     def finish_sync
       incomplete_jobs.length != 0 ? synchronize : self.finished_at = Time.now
     end
 
-    #
     def first_run?
       sync_attempts == 0
     end
 
-    #
     def sync_pointless?
       sources.empty?
     end
 
-    #
     def supervisor_actor_names
       supervisor.actors.map { |actor| actor.registered_name }
     end

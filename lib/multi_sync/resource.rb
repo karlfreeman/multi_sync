@@ -3,7 +3,6 @@ require 'pathname'
 require 'multi_sync/mixins/log_helper'
 
 module MultiSync
-
   class Resource
     include Virtus
     include Comparable
@@ -49,8 +48,8 @@ module MultiSync
     #
     # @param options [Hash]
     def initialize(options = {})
-      raise(ArgumentError, 'with_root must be present') unless options[:with_root]
-      raise(ArgumentError, 'without_root must be present') unless options[:without_root]
+      fail(ArgumentError, 'with_root must be present') unless options[:with_root]
+      fail(ArgumentError, 'without_root must be present') unless options[:without_root]
       self.path_with_root = options.fetch(:with_root)
       self.path_without_root = options.fetch(:without_root)
       self.etag = options.fetch(:etag, determine_etag)
@@ -62,7 +61,6 @@ module MultiSync
       AWS_ATTRIBUTES.each do |attribute_hash|
         send("#{attribute_hash[:name]}=".to_sym, options.fetch(attribute_hash[:name], attribute_hash[:default_value]))
       end
-
     end
 
     def hash
@@ -76,12 +74,10 @@ module MultiSync
     def ==(other)
       path_without_root == other.path_without_root
     end
-    alias :eql? :==
+    alias_method :eql?, :==
 
-    def has_matching_etag?(other)
+    def matching_etag?(other)
       etag == other.etag
     end
-
   end
-
 end

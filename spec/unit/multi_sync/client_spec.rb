@@ -158,7 +158,7 @@ describe MultiSync::Client, fakefs: true do
             public: true
           )
 
-          ['simple', 'simple-with-missing-file', 'simple-with-abandoned-file', 'simple-with-outdated-file'].each do |fixture_name|
+          %w(simple simple-with-missing-file simple-with-abandoned-file simple-with-outdated-file).each do |fixture_name|
             Dir.glob("/tmp/#{fixture_name}/**/*").reject { |path| File.directory?(path) }.each do |path|
               directory.files.create(
                 key: path.gsub('/tmp/', ''),
@@ -257,7 +257,7 @@ describe MultiSync::Client, fakefs: true do
             aws_secret_access_key: '6oL/CygBvmuonZFL1+41SssFWf6QE1EI+xFg/ECB',
           )
 
-          directory = connection.directories.create(
+          connection.directories.create(
             key: 'without_destination_dir',
             public: true
           )
