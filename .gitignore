@@ -12,14 +12,9 @@ test/tmp
 test/version_tmp
 tmp
 *.lock
-
-# YARD artifacts
 .yardoc
 _yardoc
 doc/
+bin
 /examples/rails-4-0/public/assets/
 /examples/rails-3-2/public/assets/
-/.ruby-version
-
-# ignore binstubs
-bin
