@@ -2,7 +2,7 @@
 
 Asset synchronisation library
 
-At MultiSync's core is [Celluloid] allowing for the synchronisation of assets to be truly parallel. Each target you define creates a pool of resources which allows for parallel execution of uploads and deletes. Meaning that when your uploading thousands of files, you get alot more bang for your buck.
+At MultiSync's core is [Celluloid](http://celluloid.io) allowing for the synchronisation of assets to be truly parallel. Each target you define creates a pool of resources which allows for parallel execution of uploads and deletes. Meaning that when your uploading thousands of files, you get alot more bang for your buck.
 
 MultiSync tries to expose its asset synchronisation in a flexible way, allowing for it to be used in `Rails (WIP)`, `Sinatra (WIP)`, `Rake (WIP)` and `Plain old ruby (WIP)` as well as extensions for `Middleman (WIP)`, `Nanoc (WIP)` and others too. Listed below are examples of how to get setup.
 
@@ -117,37 +117,32 @@ By having `multi_sync` included in your `Gemfile`, the rake task `rake assets:sy
 [![Gem Version](https://badge.fury.io/rb/multi_sync.png)][gem]
 [![Build Status](https://travis-ci.org/karlfreeman/multi_sync.png)][travis]
 [![Code Quality](https://codeclimate.com/github/karlfreeman/multi_sync.png)][codeclimate]
-[![Coverage Status](https://coveralls.io/repos/karlfreeman/multi_sync/badge.png?branch=master)][coveralls]
 [![Gittip](http://img.shields.io/gittip/karlfreeman.png)][gittip]
 
 ## Supported Storage Services
 
-Behind the scenes we're using [Fog::Storage][fog::storage] which allows us to support the most popular storage providers
+Behind the scenes we're using [Fog::Storage](http://fog.io/storage) which allows us to support the most popular storage providers
 
-* [Amazon S3](http://aws.amazon.com/s3)
-* [Rackspace CloudFiles](http://www.rackspace.com/cloud/files)
-* [Google Cloud Storage](https://developers.google.com/storage)
+- [Amazon S3](http://aws.amazon.com/s3)
+- [Rackspace CloudFiles](http://www.rackspace.com/cloud/files)
+- [Google Cloud Storage](https://developers.google.com/storage)
 
 ## Supported Ruby Versions
 
 This library aims to support and is [tested against][travis] the following Ruby
 implementations:
 
-* Ruby 2.1.0
-* Ruby 2.0.0
-* Ruby 1.9.3
-* [JRuby][jruby]
-* [Rubinius][rubinius]
+- Ruby 2.1.0
+- Ruby 2.0.0
+- Ruby 1.9.3
+- [JRuby][jruby]
+- [Rubinius][rubinius]
 
 # Credits
 
 [gem]: https://rubygems.org/gems/multi_sync
 [travis]: http://travis-ci.org/karlfreeman/multi_sync
-[coveralls]: https://coveralls.io/r/karlfreeman/multi_sync
 [codeclimate]: https://codeclimate.com/github/karlfreeman/multi_sync
 [gittip]: https://www.gittip.com/karlfreeman
 [jruby]: http://www.jruby.org
 [rubinius]: http://rubini.us
-
-[celluloid]: http://celluloid.io
-[fog::storage]: http://fog.io/storage

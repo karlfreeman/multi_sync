@@ -1,6 +1,5 @@
 require 'fog'
 require 'pathname'
-require 'mime/types'
 require 'multi_mime'
 require 'digest/md5'
 require 'multi_sync/resource'

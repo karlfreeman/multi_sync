@@ -20,11 +20,10 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 1.9.3'
 
   spec.add_dependency 'fog', '~> 1.12'
-  spec.add_dependency 'unf'
   spec.add_dependency 'lazily', '~> 0.1'
   spec.add_dependency 'virtus', '~> 0.5'
   spec.add_dependency 'celluloid', '~> 0.15'
-  spec.add_dependency 'multi_mime', '~> 0.0.2'
+  spec.add_dependency 'multi_mime', '~> 0.0.3'
   spec.add_dependency 'multi_json', '~> 1.7'
   spec.add_dependency 'mime-types', '~> 1.21'
 end
