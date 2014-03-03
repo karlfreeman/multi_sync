@@ -14,7 +14,6 @@ module MultiSync
     attribute :include, String
     attribute :exclude, String
 
-
     # Initialize a new Source object
     #
     # @param options [Hash]

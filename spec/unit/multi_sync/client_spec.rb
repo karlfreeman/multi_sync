@@ -219,7 +219,7 @@ describe MultiSync::Client, fakefs: true do
             aws_secret_access_key: 'xxx'
           )
 
-          directory = connection.directories.create(key: 'multi_sync', public: true)
+          connection.directories.create(key: 'multi_sync', public: true)
         end
 
         it 'should work' do

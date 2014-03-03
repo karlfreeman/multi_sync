@@ -22,7 +22,7 @@ module MultiSync
       # making sure to skip any that do not match the include/exclude patterns
       manifest_hash.lazily.each { |key, value|
         path = source_dir + key
-        next if !path.fnmatch?(include.to_s) or path.fnmatch?(exclude.to_s || "")
+        next if !path.fnmatch?(include.to_s) or path.fnmatch?(exclude.to_s || '')
         file = path_to_local_resource(path, mtime: value['mtime'], digest: value['digest'], content_length: value['size'])
         files << file
       }
