@@ -2,7 +2,7 @@
 
 :heavy_exclamation_mark: **a WIP that is functioning but just a warning, not finished yet.** :heavy_exclamation_mark:
 
-Asset synchronisation library
+A flexible synchronisation library for your assets.
 
 At MultiSync's core is [Celluloid](http://celluloid.io) allowing for the synchronisation of assets to be truly parallel. Each target you define creates a pool of resources which allows for parallel execution of uploads and deletes. Meaning that when your synchronising thousands of files, you get alot more :boom: for your :dollar:.
 
