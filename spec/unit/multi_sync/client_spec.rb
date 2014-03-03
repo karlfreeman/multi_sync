@@ -119,7 +119,7 @@ describe MultiSync::Client, fakefs: true do
 
         local_source_options = {
           type: :local,
-          source_dir: '/tmp/complex',
+          source_dir: '/tmp/complex'
         }
 
         complex_empty_target = MultiSync::LocalTarget.new(complex_empty_target_options)
@@ -150,7 +150,7 @@ describe MultiSync::Client, fakefs: true do
             provider: :aws,
             region: 'us-east-1',
             aws_access_key_id: 'AKIAI263OMKGV6YDWWAQ',
-            aws_secret_access_key: '6oL/CygBvmuonZFL1+41SssFWf6QE1EI+xFg/ECB',
+            aws_secret_access_key: '6oL/CygBvmuonZFL1+41SssFWf6QE1EI+xFg/ECB'
           )
 
           directory = connection.directories.create(
@@ -183,7 +183,7 @@ describe MultiSync::Client, fakefs: true do
             credentials: {
               region: 'us-east-1',
               aws_access_key_id: 'AKIAI263OMKGV6YDWWAQ',
-              aws_secret_access_key: '6oL/CygBvmuonZFL1+41SssFWf6QE1EI+xFg/ECB',
+              aws_secret_access_key: '6oL/CygBvmuonZFL1+41SssFWf6QE1EI+xFg/ECB'
             }
           }
 
@@ -194,7 +194,7 @@ describe MultiSync::Client, fakefs: true do
             credentials: {
               region: 'us-east-1',
               aws_access_key_id: 'AKIAI263OMKGV6YDWWAQ',
-              aws_secret_access_key: '6oL/CygBvmuonZFL1+41SssFWf6QE1EI+xFg/ECB',
+              aws_secret_access_key: '6oL/CygBvmuonZFL1+41SssFWf6QE1EI+xFg/ECB'
             }
           }
 
@@ -205,7 +205,7 @@ describe MultiSync::Client, fakefs: true do
             credentials: {
               region: 'us-east-1',
               aws_access_key_id: 'AKIAI263OMKGV6YDWWAQ',
-              aws_secret_access_key: '6oL/CygBvmuonZFL1+41SssFWf6QE1EI+xFg/ECB',
+              aws_secret_access_key: '6oL/CygBvmuonZFL1+41SssFWf6QE1EI+xFg/ECB'
             }
           }
 
@@ -241,11 +241,9 @@ describe MultiSync::Client, fakefs: true do
 
         end
 
-
       end
 
       context 'without a destination_dir' do
-
 
         before do
           Fog.mock!
@@ -254,7 +252,7 @@ describe MultiSync::Client, fakefs: true do
             provider: :aws,
             region: 'us-east-1',
             aws_access_key_id: 'AKIAI263OMKGV6YDWWAQ',
-            aws_secret_access_key: '6oL/CygBvmuonZFL1+41SssFWf6QE1EI+xFg/ECB',
+            aws_secret_access_key: '6oL/CygBvmuonZFL1+41SssFWf6QE1EI+xFg/ECB'
           )
 
           connection.directories.create(
@@ -276,7 +274,7 @@ describe MultiSync::Client, fakefs: true do
             credentials: {
               region: 'us-east-1',
               aws_access_key_id: 'AKIAI263OMKGV6YDWWAQ',
-              aws_secret_access_key: '6oL/CygBvmuonZFL1+41SssFWf6QE1EI+xFg/ECB',
+              aws_secret_access_key: '6oL/CygBvmuonZFL1+41SssFWf6QE1EI+xFg/ECB'
             }
           }
 

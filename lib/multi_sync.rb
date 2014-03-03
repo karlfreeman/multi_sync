@@ -89,5 +89,4 @@ module MultiSync
       next
     end
   end
-
 end

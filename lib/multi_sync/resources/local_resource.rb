@@ -14,11 +14,9 @@ module MultiSync
     end
 
     def body
-      begin
-        File.read(path_with_root.to_s)
-      rescue
-        return nil
-      end
+      File.read(path_with_root.to_s)
+    rescue
+      return nil
     end
 
     def determine_etag
@@ -26,11 +24,9 @@ module MultiSync
     end
 
     def determine_mtime
-      begin
-        File.mtime(path_with_root.to_s)
-      rescue
-        return nil
-      end
+      File.mtime(path_with_root.to_s)
+    rescue
+      return nil
     end
 
     def determine_content_type

@@ -31,7 +31,7 @@ module MultiSync
 
       # create a local_resource from each file
       manifest_hash.lazily.each { |key, value|
-        files << path_to_local_resource(source_dir + key, 
+        files << path_to_local_resource(source_dir + key,
           mtime: value['mtime'],
           digest: value['digest'],
           content_length: value['size']

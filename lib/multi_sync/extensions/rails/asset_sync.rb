@@ -3,7 +3,7 @@ module MultiSync
     class AssetSync
       class << self
         def asset_sync_yml_exists?
-          ::Rails.root.nil? ? false : File.exists?(asset_sync_yml_path)
+          ::Rails.root.nil? ? false : File.exist?(asset_sync_yml_path)
         end
 
         def asset_sync_yml_path

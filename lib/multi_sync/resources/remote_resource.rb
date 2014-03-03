@@ -17,11 +17,9 @@ module MultiSync
     end
 
     def determine_etag
-      begin
-        file.etag
-      rescue NoMethodError # Fog::Storage::Local::File's don't have an etag method :(
-        Digest::MD5.hexdigest(File.read(path_with_root))
-      end
+      file.etag
+    rescue NoMethodError # Fog::Storage::Local::File's don't have an etag method :(
+      Digest::MD5.hexdigest(File.read(path_with_root))
     end
 
     def determine_mtime

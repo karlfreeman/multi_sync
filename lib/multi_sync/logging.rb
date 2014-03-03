@@ -2,7 +2,6 @@ require 'logger'
 
 module MultiSync
   module Logging
-
     MUTEX = Mutex.new
 
     def logger
@@ -22,7 +21,6 @@ module MultiSync
     end
 
     def say_status(status, message, log_status = true)
-
       return if status_logger.nil?
 
       if defined?(Thor) && status_logger.is_a?(Thor)
@@ -30,18 +28,15 @@ module MultiSync
           status_logger.say_status status, message, log_status
         end
       end
-
     end
 
     def log(message, level = :debug)
-
       # We're in verbose mode so disable all non-info logs
       return if !MultiSync.verbose && level != :info
 
       MUTEX.synchronize do
         logger.send(level, message)
       end
-
     end
 
     # Create methods for the different shorthand log methods
@@ -62,8 +57,5 @@ module MultiSync
     def initialize_status_logger
       @status_logger = nil
     end
-
-
   end
-
 end

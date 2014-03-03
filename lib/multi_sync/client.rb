@@ -33,24 +33,20 @@ module MultiSync
 
     def add_target(name, options = {})
       fail ArgumentError, "Duplicate target names detected, please rename '#{name}' to be unique" if supervisor_actor_names.include?(name)
-      begin
-        clazz = MultiSync.const_get("#{options[:type].capitalize.to_s}Target")
-        supervisor.pool(clazz, as: name, args: [options], size: MultiSync.target_pool_size)
-      rescue NameError
-        MultiSync.warn "Unknown target type: #{options[:type]}"
-        raise ArgumentError, "Unknown target type: #{options[:type]}"
-      end
+      clazz = MultiSync.const_get("#{options[:type].capitalize}Target")
+      supervisor.pool(clazz, as: name, args: [options], size: MultiSync.target_pool_size)
+    rescue NameError
+      MultiSync.warn "Unknown target type: #{options[:type]}"
+      raise ArgumentError, "Unknown target type: #{options[:type]}"
     end
     alias_method :target, :add_target
 
     def add_source(name, options = {})
-      begin
-        clazz = MultiSync.const_get("#{options[:type].capitalize.to_s}Source")
-        sources << clazz.new(options)
-      rescue NameError
-        MultiSync.warn "Unknown source type: #{options[:type]}"
-        raise ArgumentError, "Unknown source type: #{options[:type]}"
-      end
+      clazz = MultiSync.const_get("#{options[:type].capitalize}Source")
+      sources << clazz.new(options)
+    rescue NameError
+      MultiSync.warn "Unknown source type: #{options[:type]}"
+      raise ArgumentError, "Unknown source type: #{options[:type]}"
     end
     alias_method :source, :add_source
 
@@ -121,7 +117,7 @@ module MultiSync
         # MultiSync.info job[:response]
         # MultiSync.info job[:response].determine_content_length
         if job[:response].content_length
-          total_file_size = total_file_size + job[:response].content_length
+          total_file_size += job[:response].content_length
         end
 
       end
@@ -160,30 +156,34 @@ module MultiSync
 
           MultiSync.debug "#{pluralize(target_files.length, 'file')} found from the target"
 
-          missing_files = determine_missing_files(source_files, target_files)
+          missing_files.concat determine_missing_files(source_files, target_files)
           missing_files_msg = "#{missing_files.length} of the files are missing"
           missing_files_msg += ", however we're skipping them as :upload_missing_files is false" unless MultiSync.upload_missing_files
           MultiSync.debug missing_files_msg
 
-          abandoned_files = determine_abandoned_files(source_files, target_files)
+          abandoned_files.concat determine_abandoned_files(source_files, target_files)
           abandoned_files_msg = "#{abandoned_files.length} of the files are abandoned"
           abandoned_files_msg += ", however we're skipping them as :delete_abandoned_files is false" unless MultiSync.delete_abandoned_files
           MultiSync.debug abandoned_files_msg
 
           # remove missing_files from source_files ( as we know they are missing so don't need to check them )
           # remove abandoned_files from target_files ( as we know they are abandoned so don't need to check them )
-          outdated_files = determine_outdated_files(source_files - missing_files, target_files - abandoned_files)
+          outdated_files.concat determine_outdated_files(source_files - missing_files, target_files - abandoned_files)
           MultiSync.debug "#{outdated_files.length} of the files are outdated"
 
           # abandoned files
-          abandoned_files.lazily.each do | file |
-            incomplete_jobs << { id: Celluloid.uuid, target_id: target_id, method: :delete, args: file }
-          end if MultiSync.delete_abandoned_files
+          if MultiSync.delete_abandoned_files
+            abandoned_files.lazily.each do | file |
+              incomplete_jobs << { id: Celluloid.uuid, target_id: target_id, method: :delete, args: file }
+            end
+          end
 
           # missing files
-          missing_files.lazily.each do | file |
-            incomplete_jobs << { id: Celluloid.uuid, target_id: target_id, method: :upload, args: file }
-          end if MultiSync.upload_missing_files
+          if MultiSync.upload_missing_files
+            missing_files.lazily.each do | file |
+              incomplete_jobs << { id: Celluloid.uuid, target_id: target_id, method: :upload, args: file }
+            end
+          end
 
           # outdated files
           outdated_files.lazily.each do | file |
@@ -208,7 +208,7 @@ module MultiSync
     def determine_outdated_files(source_files, target_files)
       outdated_files = []
 
-      # TODO replace with celluloid pool of futures
+      # TODO: replace with celluloid pool of futures
       # check each source file against the matching target_file's etag
       source_files.lazily.each_with_index do |file, i|
         outdated_files << file unless !MultiSync.force && file.matching_etag?(target_files[i])

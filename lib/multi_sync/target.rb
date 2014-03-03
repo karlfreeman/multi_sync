@@ -4,7 +4,6 @@ require 'celluloid'
 require 'multi_sync/mixins/log_helper'
 
 module MultiSync
-
   class Target
     include Virtus
     include Celluloid
@@ -19,7 +18,7 @@ module MultiSync
     #
     # @param options [Hash]
     def initialize(options = {})
-      raise(ArgumentError, 'target_dir must be present') unless options[:target_dir]
+      fail(ArgumentError, 'target_dir must be present') unless options[:target_dir]
       self.target_dir = Pathname.new(options.fetch(:target_dir, ''))
       self.destination_dir = Pathname.new(options.fetch(:destination_dir, ''))
       credentials.merge!(options.fetch(:credentials, {}))
@@ -29,7 +28,5 @@ module MultiSync
       # deep clone just in case
       Marshal.load(Marshal.dump(MultiSync.credentials))
     end
-
   end
-
 end

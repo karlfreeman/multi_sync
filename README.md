@@ -25,7 +25,6 @@ MultiSync.configuration do |config|
   # config.target_pool_size = 8 # how many threads you would like to open for each target (defaults to the amount of CPU core's your machine has)
   # config.max_sync_attempts = 1 # how many times a file should be retried if there was an error during sync (defaults to 3)
 end
-
 ```
 
 ## Features / Usage Examples
@@ -33,7 +32,6 @@ end
 ### POR (WIP)
 
 ```ruby
-
 MultiSync.run do
 
   source :build {
@@ -54,7 +52,6 @@ MultiSync.run do
   }
 
 end
-
 ```
 
 ### Rails
@@ -91,7 +88,6 @@ MultiSync.prepare do
   }
 
 end
-
 ```
 
 which will run `MultiSync.run` after `rake assets:precompile`

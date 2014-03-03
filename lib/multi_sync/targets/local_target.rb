@@ -27,7 +27,7 @@ module MultiSync
         # directory
         next if pathname.directory?
 
-        MultiSync.debug "Found RemoteResource:'#{pathname.to_s}' from #{class_name}:'#{File.join(connection.local_root, destination_dir)}'"
+        MultiSync.debug "Found RemoteResource:'#{pathname}' from #{class_name}:'#{File.join(connection.local_root, destination_dir)}'"
 
         files << MultiSync::RemoteResource.new(
           file: file,
