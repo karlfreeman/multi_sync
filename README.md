@@ -1,4 +1,6 @@
-# MultiSync (WIP)
+# MultiSync
+
+:heavy_exclamation_mark: **a WIP that is functioning but just a warning, not finished yet.** :heavy_exclamation_mark:
 
 Asset synchronisation library
 
