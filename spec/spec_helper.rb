@@ -10,7 +10,6 @@ end
 require 'multi_sync'
 
 RSpec.configure do |config|
-
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
@@ -20,5 +19,4 @@ RSpec.configure do |config|
     MultiSync.env = :test
     MultiSync.verbose = true
   end
-
 end

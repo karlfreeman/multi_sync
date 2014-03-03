@@ -59,10 +59,6 @@ end
 
 ### Rails
 
-```ruby
-gem 'multi_sync', '~> 0.0.1'
-```
-
 in `/config/initializers/multi_sync`
 ```ruby
 MultiSync.configure do |config|
@@ -114,10 +110,10 @@ By having `multi_sync` included in your `Gemfile`, the rake task `rake assets:sy
 
 ## Badges
 
-[![Gem Version](https://badge.fury.io/rb/multi_sync.png)][gem]
-[![Build Status](https://travis-ci.org/karlfreeman/multi_sync.png)][travis]
-[![Code Quality](https://codeclimate.com/github/karlfreeman/multi_sync.png)][codeclimate]
-[![Gittip](http://img.shields.io/gittip/karlfreeman.png)][gittip]
+[![Gem Version](http://img.shields.io/gem/v/multi_sync.svg)][gem]
+[![Build Status](http://img.shields.io/travis/karlfreeman/multi_sync.svg)][travis]
+[![Code Quality](http://img.shields.io/codeclimate/github/karlfreeman/multi_sync.svg)][codeclimate]
+[![Gittip](http://img.shields.io/gittip/karlfreeman.svg)][gittip]
 
 ## Supported Storage Services
 
