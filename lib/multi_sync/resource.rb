@@ -1,5 +1,6 @@
 require 'virtus'
 require 'pathname'
+require 'digest/md5'
 require 'multi_sync/mixins/log_helper'
 
 module MultiSync

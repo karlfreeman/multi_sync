@@ -1,4 +1,6 @@
 require 'virtus'
+require 'pathname'
+require 'lazily'
 require 'multi_sync/mixins/log_helper'
 
 module MultiSync
@@ -9,17 +11,21 @@ module MultiSync
     attribute :targets, Array, default: []
     attribute :source_dir, String
     attribute :source_options, Hash
+    attribute :include, String
+    attribute :exclude, String
+
 
     # Initialize a new Source object
     #
     # @param options [Hash]
     def initialize(options = {})
-      targets.concat([*options.fetch(:targets, [])])
       fail(ArgumentError, 'source_dir must be a present') unless options[:source_dir]
+      targets.concat([*options.fetch(:targets, [])])
       self.source_dir = options.fetch(:source_dir).to_s
       source_dir << '/' unless source_dir.end_with?('/')
       self.source_dir = Pathname.new(source_dir)
-      self.source_options = options.fetch(:source_options, {})
+      self.include = options.fetch(:include, '**/*')
+      self.exclude = options.fetch(:exclude, nil)
     end
 
     private

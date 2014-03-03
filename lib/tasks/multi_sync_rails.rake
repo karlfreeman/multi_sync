@@ -10,6 +10,6 @@ namespace :assets do
   end
 end
 
-Rake::Task["assets:precompile"].enhance do
-  Rake::Task["assets:sync"].invoke if defined?(MultiSync) && MultiSync.run_on_build
+Rake::Task['assets:precompile'].enhance do
+  Rake::Task['assets:sync'].invoke if defined?(MultiSync) && MultiSync.run_on_build
 end

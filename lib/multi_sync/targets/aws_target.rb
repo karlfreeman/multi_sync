@@ -1,6 +1,3 @@
-require 'fog'
-require 'lazily'
-require 'pathname'
 require 'multi_sync/target'
 require 'multi_sync/resources/remote_resource'
 
@@ -77,7 +74,6 @@ module MultiSync
       # overreaching AWS globbing
       return false if !destination_dir.to_s.empty? && !(pathname.to_s =~ /^#{destination_dir.to_s}\//)
 
-      #
       true
     end
   end

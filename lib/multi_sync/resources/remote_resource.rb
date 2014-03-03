@@ -1,12 +1,7 @@
-require 'pathname'
-require 'digest/md5'
 require 'multi_sync/resource'
 
 module MultiSync
   class RemoteResource < Resource
-    # Initialize a new RemoteResource object
-    #
-    # @param path [String]
     def initialize(options = {})
       self.file = options.fetch(:file, nil)
       super(options)

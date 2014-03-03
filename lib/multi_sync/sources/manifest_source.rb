@@ -1,21 +1,10 @@
-require 'virtus'
-require 'lazily'
-require 'pathname'
+require 'yaml'
 require 'multi_json'
 require 'multi_sync/source'
 require 'multi_sync/resources/local_resource'
 
 module MultiSync
   class ManifestSource < Source
-    extend Virtus
-
-    # Initialize a new Source object
-    #
-    # @param options [Hash]
-    def initialize(options = {})
-      super(options)
-    end
-
     def files
       files = []
       manifest_hash = {}
@@ -30,12 +19,12 @@ module MultiSync
       end
 
       # create a local_resource from each file
+      # making sure to skip any that do not match the include/exclude patterns
       manifest_hash.lazily.each { |key, value|
-        files << path_to_local_resource(source_dir + key,
-          mtime: value['mtime'],
-          digest: value['digest'],
-          content_length: value['size']
-        )
+        path = source_dir + key
+        next if !path.fnmatch?(include.to_s) or path.fnmatch?(exclude.to_s || "")
+        file = path_to_local_resource(path, mtime: value['mtime'], digest: value['digest'], content_length: value['size'])
+        files << file
       }
 
       files

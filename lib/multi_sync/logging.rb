@@ -49,7 +49,6 @@ module MultiSync
 
     private
 
-    # Configure default logger
     def initialize_logger
       @logger = ::Logger.new(STDOUT)
     end

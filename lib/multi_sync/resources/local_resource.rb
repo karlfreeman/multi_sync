@@ -1,18 +1,8 @@
-require 'fog'
-require 'pathname'
 require 'multi_mime'
-require 'digest/md5'
 require 'multi_sync/resource'
 
 module MultiSync
   class LocalResource < Resource
-    # Initialize a new LocalResource object
-    #
-    # @param path [String]
-    def initialize(options = {})
-      super(options)
-    end
-
     def body
       File.read(path_with_root.to_s)
     rescue

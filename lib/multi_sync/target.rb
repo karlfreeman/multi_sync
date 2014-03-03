@@ -1,3 +1,5 @@
+require 'fog'
+require 'lazily'
 require 'virtus'
 require 'pathname'
 require 'celluloid'

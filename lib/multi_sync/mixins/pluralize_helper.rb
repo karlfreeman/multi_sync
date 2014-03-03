@@ -1,7 +1,6 @@
 module MultiSync
   module Mixins
     module PluralizeHelper
-      #
       def pluralize(n, singular, plural = nil, prefix = true)
         if n == 1
           (prefix ? '1 ' : '') + singular

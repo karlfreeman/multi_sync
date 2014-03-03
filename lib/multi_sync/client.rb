@@ -9,7 +9,6 @@ require 'multi_sync/targets/local_target'
 require 'multi_sync/mixins/pluralize_helper'
 
 module MultiSync
-  # Defines constants and methods related to the Client
   class Client
     include Virtus
     include MultiSync::Mixins::PluralizeHelper
@@ -50,7 +49,6 @@ module MultiSync
     end
     alias_method :source, :add_source
 
-    #
     def synchronize
       if sync_pointless?
         MultiSync.debug "Preventing synchronization as there are #{sources.length} sources to sync..."
@@ -86,18 +84,18 @@ module MultiSync
     alias_method :sync, :synchronize
 
     def finalize
-      if finished_at
-        elapsed = finished_at.to_f - started_at.to_f
-        minutes, seconds = elapsed.divmod 60.0
-        kilobytes = get_total_file_size_from_complete_jobs / 1024.0
-        MultiSync.debug "Sync completed in #{pluralize(minutes.round, 'minute')} and #{pluralize(seconds.round, 'second')}"
-        MultiSync.debug "#{pluralize(complete_jobs.length, 'file')} were synchronised (#{pluralize(get_complete_deleted_jobs.length, 'deleted file')} and #{pluralize(get_complete_upload_jobs.length, 'uploaded file')}) from #{pluralize(sources.length, 'source')} to #{pluralize(supervisor.actors.length, 'target')}"
-        MultiSync.debug "The upload weight totalled %.#{0}f #{pluralize(kilobytes, 'KB', 'KB', false)}" % kilobytes
-        MultiSync.debug "#{pluralize(file_sync_attempts, 'failed request')} were detected and re-tried"
-      else
-        MultiSync.debug "Sync failed to complete with #{pluralize(incomplete_jobs.length, 'outstanding file')} to be synchronised"
-        MultiSync.debug "#{pluralize(complete_jobs.length, 'file')} were synchronised (#{pluralize(get_complete_deleted_jobs.length, 'deleted file')} and #{pluralize(get_complete_upload_jobs.length, 'uploaded file')}) from #{pluralize(sources.length, 'source')} to #{pluralize(supervisor.actors.length, 'target')}"
-      end
+      # if finished_at
+      #   elapsed = finished_at.to_f - started_at.to_f
+      #   minutes, seconds = elapsed.divmod 60.0
+      #   kilobytes = get_total_file_size_from_complete_jobs / 1024.0
+      #   MultiSync.debug "Sync completed in #{pluralize(minutes.round, 'minute')} and #{pluralize(seconds.round, 'second')}"
+      #   MultiSync.debug "#{pluralize(complete_jobs.length, 'file')} were synchronised (#{pluralize(get_complete_deleted_jobs.length, 'deleted file')} and #{pluralize(get_complete_upload_jobs.length, 'uploaded file')}) from #{pluralize(sources.length, 'source')} to #{pluralize(supervisor.actors.length, 'target')}"
+      #   MultiSync.debug "The upload weight totalled %.#{0}f #{pluralize(kilobytes, 'KB', 'KB', false)}" % kilobytes
+      #   MultiSync.debug "#{pluralize(file_sync_attempts, 'failed request')} were detected and re-tried"
+      # else
+      #   MultiSync.debug "Sync failed to complete with #{pluralize(incomplete_jobs.length, 'outstanding file')} to be synchronised"
+      #   MultiSync.debug "#{pluralize(complete_jobs.length, 'file')} were synchronised (#{pluralize(get_complete_deleted_jobs.length, 'deleted file')} and #{pluralize(get_complete_upload_jobs.length, 'uploaded file')}) from #{pluralize(sources.length, 'source')} to #{pluralize(supervisor.actors.length, 'target')}"
+      # end
 
       supervisor.finalize
     end

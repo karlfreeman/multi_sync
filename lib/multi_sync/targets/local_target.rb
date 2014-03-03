@@ -1,6 +1,3 @@
-require 'fog'
-require 'lazily'
-require 'pathname'
 require 'multi_sync/target'
 require 'multi_sync/resources/remote_resource'
 
@@ -46,10 +43,7 @@ module MultiSync
       MultiSync.debug "Upload #{resource.class_name}:'#{key}' to #{class_name}:'#{File.join(connection.local_root, destination_dir)}'"
       directory = connection.directories.get(destination_dir.to_s)
       return if directory.nil?
-      directory.files.create(
-        key: key,
-        body: resource.body
-      )
+      directory.files.create(key: key, body: resource.body)
       resource
     end
 

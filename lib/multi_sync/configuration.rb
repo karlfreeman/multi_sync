@@ -1,7 +1,6 @@
-require 'fog'
 require 'virtus'
+require 'fog'
 require 'celluloid'
-Fog::Logger[:warning] = nil
 
 module MultiSync
   class Configuration
