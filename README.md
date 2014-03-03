@@ -35,7 +35,7 @@ end
 
 ### AssetSync compatibility
 
-Many people use [AssetSync](https://github.com/rumblelabs/asset_sync) and for `MultiSync`'s first release. Compatibility with it has been built in. When within a `Rails` environment `MultiSync` will check for `asset_sync.yml` and read in its settings. You should be able to simply require `multi_sync` and try things out.
+Many people use [AssetSync](https://github.com/rumblelabs/asset_sync) and for `MultiSync`'s first release compatibility with it has been built in. When within a `Rails` environment `MultiSync` will check for `asset_sync.yml` and read in its settings. You should be able to simply require `multi_sync` and try things out.
 
 #### Unsupported features
 
