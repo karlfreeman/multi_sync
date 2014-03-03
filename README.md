@@ -71,7 +71,7 @@ MultiSync.prepare do
 end
 ```
 
-`MultiSync.prepare` simply bootstraps `MultiSync` which is then ran during `rake assets:precompile`. By having `multi_sync` included in your `Gemfile`, the rake task `rake assets:sync` will be available. Paired with turning `MultiSync.run_on_build` off will allow you to sync on your terms.
+`MultiSync.prepare` simply bootstraps `MultiSync` which is then ran during `rake assets:precompile`. By having `multi_sync` included in your `Gemfile`, the rake task `rake assets:sync` will be available.
 
 ### Plain Old Ruby
 
