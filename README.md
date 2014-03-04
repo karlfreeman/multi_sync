@@ -107,17 +107,17 @@ ___
 ```ruby
 # A source named ':image_assets' which will use a Sprockets ':manifest'
 # within '../public/assets' including only 'jpg, gif, png' files
-# and synchronising with the target `:images` and sets `cache_control`
-# and `expires` headers.
+# which sets `cache_control` and `expires` headers and
+# synchronises with the target `:images`
 source :image_assets, {
   type: :manifest,
   source_dir: '../public/assets',
   include: '*.{jpg,gif,png}',
-  targets: :images
   resource_options: {
     cache_control: 'public, max-age=31557600',
     expires: CGI.rfc1123_date(Time.now + 31557600)
-  }
+  },
+  targets: :images
 }
 ```
 
