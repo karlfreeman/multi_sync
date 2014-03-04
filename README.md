@@ -45,9 +45,82 @@ end
 
 ### Source
 
+A source takes two arguments. The first is a `name` to reference this source by and the second is a `Hash` of configuration listed below.
+
+| Key | Values | Type | Default | Description |
+| ------ | ------ | ---- | ------- | ----------- |
+| `type` | `:local`, `:manifest` | `Symbol` | `nil` | The `type` of source this is |
+| `source_dir` | - | `Pathname`, `String` | `nil` | The location this source should use |
+| `targets` | - | `Symbol`, `Array` | All targets | The targets this source should sync too |
+| `include` | - | `String` ([shell glob](http://www.ruby-doc.org/core-2.1.1/Dir.html#method-c-glob)) | `nil` | A shell globe to use for inclusion |
+| `exclude` | - | `String` ([shell glob](http://www.ruby-doc.org/core-2.1.1/Dir.html#method-c-glob)) | `nil` | A shell globe to use for exclusion |
+___
+
 ```ruby
-...
+# A source named ':www' which is ':local' and will use all files within '../public'
+source :www, {
+  type: :local,
+  source_dir: '../build'
+}
 ```
+___
+
+```ruby
+# A source named ':assets' which will look for a Sprockets ':manifest' within '../public/assets'
+source :assets, {
+  type: :manifest,
+  source_dir: '../public/assets'
+}
+```
+___
+
+```ruby
+# A source named ':video_assets' which is `:local' and will use all files
+# within '../public' including only 'mp4, mpg, mov'
+source :video_assets, {
+  type: :local,
+  source_dir: '../public/assets',
+  include: '*.{mp4,mpg,mov}'
+}
+```
+___
+
+```ruby
+# A source named ':no_images' which is `:local' and will use all files
+# within '../build' excluding any 'jpg, gif, png'
+source :no_images, {
+  type: :local,
+  source_dir: '../build',
+  exclude: '*.{jpg,gif,png}'
+}
+```
+___
+
+```ruby
+# A source named ':www' which is `:local' and will use all files
+# within '../build' excluding any 'jpg, gif, png' files
+# and only synchronising with a target named `:www`
+source :www, {
+  type: :local,
+  source_dir: '../build',
+  exclude: '*.{jpg,gif,png}',
+  targets: :www
+}
+```
+___
+
+```ruby
+# A source named ':www' which is `:local' and will use all files
+# within '../build' excluding any 'jpg, gif, png' files
+# and only synchronising with a target named `:www`
+source :www, {
+  type: :local,
+  source_dir: '../build',
+  exclude: '*.{jpg,gif,png}',
+  targets: :www
+}
+```
+
 
 ## Supported extensions
 
