@@ -35,7 +35,21 @@ end
 
 ## Features / Usage Examples
 
-### Built in support
+`MultiSync` in its simplist form is the pairing of `target`s and `source`s.
+
+### Target
+
+```ruby
+...
+```
+
+### Source
+
+```ruby
+...
+```
+
+## Supported extensions
 
 - [Rails](https://github.com/karlfreeman/multi_sync/wiki/rails)
 - [Plain Old Ruby](https://github.com/karlfreeman/multi_sync/wiki/plain-old-ruby)
