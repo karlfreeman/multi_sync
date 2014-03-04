@@ -1,9 +1,7 @@
 require 'spec_helper'
 
 describe MultiSync do
-
   context :methods do
-
     describe :version do
       subject { MultiSync::VERSION }
       it { should be_kind_of(String) }
@@ -33,13 +31,10 @@ describe MultiSync do
       subject { MultiSync.respond_to?(:configure) }
       it { should be_true }
     end
-
   end
 
   context :configure do
-
     it 'should allow you to set configuration' do
-
       MultiSync.configure do |config|
         config.verbose = true
         config.target_pool_size = 2
@@ -47,9 +42,6 @@ describe MultiSync do
 
       expect(MultiSync.verbose).to be_true
       expect(MultiSync.target_pool_size).to be 2
-
     end
-
   end
-
 end

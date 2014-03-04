@@ -50,12 +50,8 @@ module MultiSync
     alias_method :source, :add_source
 
     def synchronize
-      if sync_pointless?
-        MultiSync.debug "Preventing synchronization as there are #{sources.length} sources to sync..."
-        return
-      else
-        MultiSync.debug 'Starting synchronization...'
-      end
+      MultiSync.debug 'Preventing synchronization as there are no sources found.' && return if sync_pointless?
+      MultiSync.debug 'Starting synchronization...'
 
       determine_sync if first_run?
       sync_attempted
@@ -164,8 +160,8 @@ module MultiSync
           abandoned_files_msg += ", however we're skipping them as :delete_abandoned_files is false" unless MultiSync.delete_abandoned_files
           MultiSync.debug abandoned_files_msg
 
-          # remove missing_files from source_files ( as we know they are missing so don't need to check them )
-          # remove abandoned_files from target_files ( as we know they are abandoned so don't need to check them )
+          # remove missing_files from source_files (as we know they are missing so don't need to check them)
+          # remove abandoned_files from target_files (as we know they are abandoned so don't need to check them)
           outdated_files.concat determine_outdated_files(source_files - missing_files, target_files - abandoned_files)
           MultiSync.debug "#{outdated_files.length} of the files are outdated"
 
