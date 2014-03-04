@@ -296,6 +296,9 @@ describe MultiSync::Client, fakefs: true do
           expect(without_destination_dir_target).to have(3).files
         end
       end
+
+      context 'with resource_options' do
+      end
     end
   end
 end
