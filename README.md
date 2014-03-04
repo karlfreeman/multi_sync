@@ -6,7 +6,7 @@ A flexible synchronisation library for your assets.
 
 At `MultiSync`'s core is [Celluloid](http://celluloid.io) allowing for the synchronisation of assets to be truly parallel. Each `target` you define creates a pool of workers which allows for parallel execution of uploads and deletes. Meaning that when your synchronising thousands of files, you get alot more :boom: for your :dollar:.
 
-`MultiSync` tries to expose its asset synchronisation in a flexible way which should allow you to define how and where your assets live. Where possible though, `MultiSync` will try to provide support for [various well known libraries  ](#supported-libraries).
+`MultiSync` tries to expose its asset synchronisation in a flexible way which should allow you to define how and where your assets live. Where possible though, `MultiSync` will try to provide support for [various well known libraries](#supported-libraries).
 
 Listed below are examples of how to get setup and started.
 
