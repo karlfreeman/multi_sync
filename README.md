@@ -41,19 +41,19 @@ end
 
 A source takes two arguments. The first is a `name` to reference this source by and the second is a `Hash` of configuration detailed below.
 
-| Key | Values | Type | Default | Description |
-| ------ | ------ | ---- | ------- | ----------- |
-| `type` | `:local`, `:manifest` | `Symbol` | `nil` | The `type` of source this is |
-| `source_dir` | - | `Pathname`, `String` | `nil` | The location this source should use |
-| `source_options` | - | `Hash` | `nil` | A hash of options that the sources should pass along to their |
-| `targets` | - | `Symbol`, `Array` | All targets | The targets this source should sync too |
-| `include` | - | `String` ([shell glob](http://www.ruby-doc.org/core-2.1.1/Dir.html#method-c-glob)) | `nil` | A shell globe to use for inclusion |
-| `exclude` | - | `String` ([shell glob](http://www.ruby-doc.org/core-2.1.1/Dir.html#method-c-glob)) | `nil` | A shell globe to use for exclusion |
+| Key | Type | Default | Description |
+| :-- | :--- | :------ | :---------- |
+| `type` | `Symbol` | `nil` | The `type` of source this is (`:local`, `:manifest`) |
+| `source_dir` | `Pathname`, `String` | `nil` | The location this source should use |
+| `resource_options` | `Hash` | `nil` | A hash of options for this source`s resources |
+| `targets` | `Symbol`, `Array` | All targets | The target(s) this source should sync against |
+| `include` | `String` ([shell glob](http://www.ruby-doc.org/core-2.1.1/Dir.html#method-c-glob)) | `**/*` | A shell globe to use for inclusion |
+| `exclude` | `String` ([shell glob](http://www.ruby-doc.org/core-2.1.1/Dir.html#method-c-glob)) | `nil` | A shell globe to use for exclusion |
 ___
 
 ```ruby
-# A source named ':www' which is ':local' and will use all files within '../public'
-source :www, {
+# A source named ':build' which is ':local' and will use all files within '../build'
+source :build, {
   type: :local,
   source_dir: '../build'
 }
@@ -61,7 +61,7 @@ source :www, {
 ___
 
 ```ruby
-# A source named ':assets' which will look for a Sprockets ':manifest' within '../public/assets'
+# A source named ':assets' which will use a Sprockets ':manifest' within '../public/assets'
 source :assets, {
   type: :manifest,
   source_dir: '../public/assets'
@@ -71,10 +71,10 @@ ___
 
 ```ruby
 # A source named ':video_assets' which is `:local' and will use all files
-# within '../public' including only 'mp4, mpg, mov'
+# within '../build' including only 'mp4, mpg, mov'
 source :video_assets, {
   type: :local,
-  source_dir: '../public/assets',
+  source_dir: '../build',
   include: '*.{mp4,mpg,mov}'
 }
 ```
@@ -92,12 +92,12 @@ source :no_images, {
 ___
 
 ```ruby
-# A source named ':www' which is `:local' and will use all files
-# within '../build' excluding any 'jpg, gif, png' files
+# A source named ':www' which will use a Sprockets ':manifest'
+# within '../public/assets' excluding any 'jpg, gif, png' files
 # and only synchronising with a target named `:www`
 source :www, {
-  type: :local,
-  source_dir: '../build',
+  type: :manifest,
+  source_dir: '../public/assets',
   exclude: '*.{jpg,gif,png}',
   targets: :www
 }
@@ -105,14 +105,19 @@ source :www, {
 ___
 
 ```ruby
-# A source named ':www' which is `:local' and will use all files
-# within '../build' excluding any 'jpg, gif, png' files
-# and only synchronising with a target named `:www`
-source :www, {
-  type: :local,
-  source_dir: '../build',
-  exclude: '*.{jpg,gif,png}',
-  targets: :www
+# A source named ':image_assets' which will use a Sprockets ':manifest'
+# within '../public/assets' including only 'jpg, gif, png' files
+# and synchronising with the target `:images` and sets `cache_control`
+# and `expires` headers.
+source :image_assets, {
+  type: :manifest,
+  source_dir: '../public/assets',
+  include: '*.{jpg,gif,png}',
+  targets: :images
+  resource_options: {
+    cache_control: 'public, max-age=31557600',
+    expires: => CGI.rfc1123_date(Time.now + 31557600)
+  }
 }
 ```
 
