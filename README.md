@@ -1,12 +1,12 @@
 # MultiSync
 
-:heavy_exclamation_mark: **a WIP that is functioning but just a warning, not finished yet.** :heavy_exclamation_mark:
+:heavy_exclamation_mark: **MultiSync is still a WIP, functioning but just a warning, not finished yet.** :heavy_exclamation_mark:
 
 A flexible synchronisation library for your assets.
 
 At MultiSync's core is [Celluloid](http://celluloid.io) allowing for the synchronisation of assets to be truly parallel. Each target you define creates a pool of resources which allows for parallel execution of uploads and deletes. Meaning that when your synchronising thousands of files, you get alot more :boom: for your :dollar:.
 
-MultiSync tries to expose its asset synchronisation in a flexible way, allowing for it to be used in `Rails`, `Sinatra (WIP)`, `Rake (WIP)` and `Plain old ruby` as well as extensions for `Middleman (WIP)`, `Nanoc (WIP)` and others. Listed below are examples of how to get setup.
+MultiSync tries to expose its asset synchronisation in a flexible way, allowing for it to be used in `Rails`, `Sinatra (WIP)`, `Rake (WIP)` and `Plain old ruby` as well as extensions for `Middleman (WIP)`, `Jekyll (WIP)`, `Nanoc (WIP)` and others. Listed below are examples of how to get setup.
 
 ## Installation
 
@@ -35,68 +35,15 @@ end
 
 ## Features / Usage Examples
 
-### AssetSync compatibility
+### Built in support
 
-Many people use [AssetSync](https://github.com/rumblelabs/asset_sync) and for `MultiSync`'s first release compatibility with it has been built in. When within a `Rails` environment `MultiSync` will check for `asset_sync.yml` and read in its settings. You should be able to simply require `multi_sync` and try things out.
-
-#### Unsupported features
-
-- `AssetSync`'s environment variables
-- `AssetSync`'s gzip_compression hack
-
-### Rails
-
-`MultiSync` prefers ruby backed configuration instead of `YAML` so you'll need to create an initializer `/config/initializers/multi_sync` for `MultiSync`.
-
-```ruby
-MultiSync.prepare do
-
-  source :public, {
-    type: :manifest, # load files from a Sprockets based manifest
-    source_dir: '/path_to_your_build_folder',
-    targets: [:assets] # an array of target names that this source should sync against
-  }
-
-  target :assets, {
-    type: :aws, # :aws is the target's type, current options are :aws
-    target_dir: 'your_aws_bucket',
-    destination_dir: 'an_optional_directory_inside_your_aws_bucket',
-    credentials: {
-      region: 'us-east-1',
-      aws_access_key_id: 'super_secret',
-      aws_secret_access_key: 'super_secret'
-    }
-  }
-
-end
-```
-
-`MultiSync.prepare` simply bootstraps `MultiSync` which is then ran during `rake assets:precompile`. By having `multi_sync` included in your `Gemfile`, the rake task `rake assets:sync` will be available.
-
-### Plain Old Ruby
-
-```ruby
-MultiSync.run do
-
-  source :build, {
-    type: :local, # :local is the source's type, current options are :local, :manifest
-    source_dir: '/path_to_your_build_folder',
-    targets: [:assets] # an array of target names that this source should sync against
-  }
-
-  target :assets, {
-    type: :aws, # :aws is the target's type, current options are :aws
-    target_dir: 'your_aws_bucket',
-    destination_dir: 'an_optional_directory_inside_your_aws_bucket',
-    credentials: {
-      region: 'us-east-1',
-      aws_access_key_id: 'super_secret',
-      aws_secret_access_key: 'super_secret'
-    }
-  }
-
-end
-```
+- [Rails](https://github.com/karlfreeman/multi_sync/wiki/rails)
+- [Plain Old Ruby](https://github.com/karlfreeman/multi_sync/wiki/plain-old-ruby)
+- Sinatra (WIP)
+- Middleman (WIP)
+- Jekyll (WIP)
+- Nanoc (WIP)
+- Rake (WIP)
 
 ## Badges
 
@@ -110,8 +57,8 @@ end
 Behind the scenes we're using [Fog::Storage](http://fog.io/storage) which allows us to support the most popular storage providers
 
 - [Amazon S3](http://aws.amazon.com/s3)
-- [Rackspace CloudFiles](http://www.rackspace.com/cloud/files)
-- [Google Cloud Storage](https://developers.google.com/storage)
+- [Rackspace CloudFiles](http://www.rackspace.com/cloud/files) (WIP)
+- [Google Cloud Storage](https://developers.google.com/storage) (WIP)
 
 ## Supported Ruby Versions
 
