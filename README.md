@@ -35,22 +35,17 @@ end
 
 ## Features / Usage Examples
 
-`MultiSync` in its simplist form is the pairing of `target`s and `source`s.
-
-### Target
-
-```ruby
-...
-```
+`MultiSync` in its simplist form consists of three objects. `sources`, `resources` and `targets`. A `source` defines how and where a list of files (or `resources`) can be found. A `resource` represents a file from a `source` with addional properties (such as comparisons). A `target` is destination which `resources` can be synchronised against.
 
 ### Source
 
-A source takes two arguments. The first is a `name` to reference this source by and the second is a `Hash` of configuration listed below.
+A source takes two arguments. The first is a `name` to reference this source by and the second is a `Hash` of configuration detailed below.
 
 | Key | Values | Type | Default | Description |
 | ------ | ------ | ---- | ------- | ----------- |
 | `type` | `:local`, `:manifest` | `Symbol` | `nil` | The `type` of source this is |
 | `source_dir` | - | `Pathname`, `String` | `nil` | The location this source should use |
+| `source_options` | - | `Hash` | `nil` | A hash of options that the sources should pass along to their |
 | `targets` | - | `Symbol`, `Array` | All targets | The targets this source should sync too |
 | `include` | - | `String` ([shell glob](http://www.ruby-doc.org/core-2.1.1/Dir.html#method-c-glob)) | `nil` | A shell globe to use for inclusion |
 | `exclude` | - | `String` ([shell glob](http://www.ruby-doc.org/core-2.1.1/Dir.html#method-c-glob)) | `nil` | A shell globe to use for exclusion |
@@ -119,6 +114,12 @@ source :www, {
   exclude: '*.{jpg,gif,png}',
   targets: :www
 }
+```
+
+### Target
+
+```ruby
+...
 ```
 
 
