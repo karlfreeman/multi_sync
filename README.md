@@ -133,11 +133,11 @@ source :image_assets, {
 ## Supported Libraries
 
 - [Rails](https://github.com/karlfreeman/multi_sync/wiki/rails)
-- [Plain Old Ruby](https://github.com/karlfreeman/multi_sync/wiki/plain-old-ruby)
 - Sinatra (WIP)
 - Middleman (WIP)
 - Jekyll (WIP)
 - Nanoc (WIP)
+- [POR](https://github.com/karlfreeman/multi_sync/wiki/por)
 - Rake (WIP)
 
 ## Badges
