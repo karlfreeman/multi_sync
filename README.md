@@ -116,7 +116,7 @@ source :image_assets, {
   targets: :images
   resource_options: {
     cache_control: 'public, max-age=31557600',
-    expires: => CGI.rfc1123_date(Time.now + 31557600)
+    expires: CGI.rfc1123_date(Time.now + 31557600)
   }
 }
 ```
