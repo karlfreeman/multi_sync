@@ -1,6 +1,6 @@
 # MultiSync
 
-:heavy_exclamation_mark: **MultiSync is currently a functioning WIP its not finished yet but its close!** :heavy_exclamation_mark:
+:heavy_exclamation_mark: **currently a functioning WIP thats not quite finished yet but its close!** :heavy_exclamation_mark:
 
 A flexible synchronisation library for your assets.
 
