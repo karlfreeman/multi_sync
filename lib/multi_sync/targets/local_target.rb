@@ -4,8 +4,8 @@ require 'multi_sync/resources/remote_resource'
 module MultiSync
   class LocalTarget < Target
 
-    attribute :connection, Fog::Storage, default: lambda { |target, attribute|
-      Fog::Storage.new(target.default_credentials.merge(target.credentials.merge(provider: :local)))
+    attribute :connection, Fog::Storage, lazy: true, default: lambda { |target, attribute|
+      Fog::Storage.new(target.credentials.merge(provider: :local))
     }
 
     def files

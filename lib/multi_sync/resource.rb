@@ -28,17 +28,23 @@ module MultiSync
       default: 'public-read'
     }, {
       name: :expires,
-      type: String
+      type: String,
+      required: false
     }, {
       name: :cache_control,
-      type: String
+      type: String,
+      required: false
     }, {
       name: :encryption,
-      type: String
+      type: String,
+      required: false
     }]
 
     AWS_ATTRIBUTES.each do |attribute_hash|
-      send(:attribute, attribute_hash[:name], attribute_hash[:type], default: attribute_hash.fetch(:default_value, nil))
+      def_attribute_hash = {}
+      def_attribute_hash[:default] = attribute_hash[:default] unless attribute_hash[:default].nil?
+      def_attribute_hash[:required] = attribute_hash[:required] unless attribute_hash[:required].nil?
+      send(:attribute, attribute_hash[:name], attribute_hash[:type], def_attribute_hash)
     end
 
     def hash

@@ -65,8 +65,9 @@ module MultiSync
       running_jobs.delete_if do | job |
         begin
           completed_job = { id: job[:id], response: job[:future].value, method: job[:method] }
-        rescue
+        rescue => error
           self.file_sync_attempts = file_sync_attempts + 1
+          MultiSync.warn error.inspect
           false
         else
           complete_jobs << completed_job

@@ -14,9 +14,7 @@ module MultiSync
     
     attribute :target_dir, MultiSync::Attributes::Pathname, default: Pathname.new('')
     attribute :destination_dir, MultiSync::Attributes::Pathname, default: Pathname.new('')
-    attribute :credentials, Hash, default: lambda { |target, attribute|
-      attribute.merge!(target.default_credentials)
-    }
+    attribute :credentials, Hash, default: :default_credentials
 
     def default_credentials
       Marshal.load(Marshal.dump(MultiSync.credentials))
