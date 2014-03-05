@@ -21,7 +21,7 @@ gem 'multi_sync', '~> 0.0.1'
 ```ruby
 require 'multi_sync'
 
-MultiSync.configuration do |config|
+MultiSync.configure do |config|
   # config.verbose = false  # turn on verbose logging (defaults to false)
   # config.force = false  # force syncing of outdated_files (defaults to false)
   # config.run_on_build = true # when within a framework which `builds` assets, whether to sync afterwards (defaults to true)
