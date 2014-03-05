@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 1.9.3'
 
-  spec.add_dependency 'fog', '~> 1.12'
+  spec.add_dependency 'fog', '~> 1.2'
   spec.add_dependency 'lazily', '~> 0.1'
   spec.add_dependency 'virtus', '~> 0.5'
   spec.add_dependency 'celluloid', '~> 0.15'

@@ -58,5 +58,7 @@ module Rails31
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
+
+    config.assets.paths << File.join(Rails.root, '/app/assets/bytes')
   end
 end

@@ -16,8 +16,6 @@ module MultiSync
 
         def check_and_migrate
           return unless self.asset_sync_yml_exists?
-          MultiSync.info 'AssetSync YAML file found, migrating options...'
-
           MultiSync.source(:rails,
             type: :manifest,
             source_dir: MultiSync::Extensions::Rails.source_dir
@@ -37,6 +35,8 @@ module MultiSync
 
           MultiSync.delete_abandoned_files = asset_sync_yml['existing_remote_files'] == 'delete'
           MultiSync.run_on_build = asset_sync_yml['run_on_precompile']
+
+          MultiSync.info 'AssetSync YAML file found, migrating options...' if MultiSync.run_on_build
         end
       end
     end

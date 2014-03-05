@@ -1,7 +1,7 @@
 module MultiSync
   module Extensions
     class Middleman
-      MultiSync.info "Middleman -v #{::Middleman::VERSION} auto-detected"
+      MultiSync.debug "Middleman -v #{::Middleman::VERSION} auto-detected"
 
       class << self
         def source_dir

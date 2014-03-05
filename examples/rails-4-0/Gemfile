@@ -44,7 +44,6 @@ end
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
-gem 'awesome_print', require: 'awesome_print'
-gem 'celluloid', github: 'celluloid/celluloid'
-gem 'multi_mime', github: 'karlfreeman/multi_mime'
+gem 'unf'
 gem 'multi_sync', path: '../../'
+gem 'celluloid', github: 'celluloid/celluloid'

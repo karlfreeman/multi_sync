@@ -4,7 +4,7 @@ module MultiSync
     require 'multi_sync/extensions/rails/asset_sync'
 
     class Rails
-      MultiSync.info "Rails -v #{::Rails::VERSION::STRING} auto-detected"
+      MultiSync.debug "Rails -v #{::Rails::VERSION::STRING} auto-detected"
 
       class << self
         def source_dir
