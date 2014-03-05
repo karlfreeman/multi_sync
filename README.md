@@ -39,7 +39,7 @@ end
 
 ## Features / Usage Examples
 
-`MultiSync` in its simplist form consists of three objects. `sources`, `resources` and `targets`. A `source` defines how and where a list of files (or `resources`) can be found. A `resource` represents a file from a `source` with addional properties (such as comparisons). A `target` is destination which `resources` can be synchronised against.
+`MultiSync` in its simplist form consists of three objects. `sources`, `resources` and `targets`. A `source` defines how and where a list of files (or `resources`) can be found. A `resource` represents a file from a `source` with additional properties (such as how to compare them). A `target` is destination which `resources` can be synchronised against.
 
 ### Source
 
