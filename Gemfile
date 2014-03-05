@@ -7,6 +7,7 @@ gem 'celluloid', github: 'celluloid/celluloid'
 
 group :developement do
   gem 'rubocop', github: 'bbatsov/rubocop'
+  gem 'pry'
 end
 
 group :test do

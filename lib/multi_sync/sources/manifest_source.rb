@@ -33,7 +33,7 @@ module MultiSync
     private
 
     def locate_manifest(dir)
-      Dir.glob(dir.to_s + 'manifest*.{json,yaml,yml}').max { |f| File.ctime(f) }
+      Dir.glob(dir + 'manifest*.{json,yaml,yml}').max { |f| File.ctime(f) }
     end
 
     def parse_manifest(manifest_path)

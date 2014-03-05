@@ -2,32 +2,32 @@ require 'set'
 require 'virtus'
 require 'lazily'
 require 'celluloid'
-require 'multi_sync/sources/local_source'
-require 'multi_sync/sources/manifest_source'
-require 'multi_sync/targets/aws_target'
-require 'multi_sync/targets/local_target'
+%w(sources targets).each do |dir|
+  Dir.glob(File.expand_path("../#{dir}/**/*.rb", __FILE__), &method(:require))
+end
 require 'multi_sync/mixins/pluralize_helper'
 
 module MultiSync
   class Client
-    include Virtus
+    include Virtus.model
     include MultiSync::Mixins::PluralizeHelper
 
-    attribute :supervisor
+    attribute :supervisor, Celluloid::SupervisionGroup
     attribute :incomplete_jobs, Set, default: Set.new
     attribute :running_jobs, Set, default: Set.new
     attribute :complete_jobs, Set, default: Set.new
     attribute :sources, Array, default: []
     attribute :sync_attempts, Integer, default: 0
     attribute :file_sync_attempts, Integer, default: 0
-    attribute :started_at, Time
-    attribute :finished_at, Time
+    attribute :started_at, Time, required: false
+    attribute :finished_at, Time, required: false
 
     # Initialize a new Client object
     #
     # @param options [Hash]
-    def initialize(options = {})
+    def initialize(**args)
       self.supervisor = Celluloid::SupervisionGroup.run!
+      super
     end
 
     def add_target(name, options = {})

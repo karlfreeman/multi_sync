@@ -2,10 +2,7 @@ require 'multi_sync/resource'
 
 module MultiSync
   class RemoteResource < Resource
-    def initialize(options = {})
-      self.file = options.fetch(:file, nil)
-      super(options)
-    end
+    attribute :file
 
     def body
       file.body

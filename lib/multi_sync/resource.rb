@@ -5,63 +5,40 @@ require 'multi_sync/mixins/log_helper'
 
 module MultiSync
   class Resource
-    include Virtus
     include Comparable
+    include Virtus.model
     include MultiSync::Mixins::LogHelper
 
-    attribute :file, File
     attribute :path_with_root, Pathname
     attribute :path_without_root, Pathname
 
-    attribute :etag, String
-    attribute :mtime, Time
-    attribute :content_length, Numeric
-    attribute :content_type, String
-    attribute :digest, String
+    attribute :etag, String, default: :determine_etag, lazy: true
+    attribute :mtime, Time, default: :determine_mtime, lazy: true
+    attribute :content_length, Numeric, default: :determine_content_length, lazy: true
+    attribute :content_type, String, default: :determine_content_type, lazy: true
+    attribute :digest, String, default: ''
 
     AWS_ATTRIBUTES = [{
       name: :storage_class,
       type: String,
-      default_value: 'STANDARD'
+      default: 'STANDARD'
     }, {
       name: :acl,
       type: String,
-      default_value: 'public-read'
+      default: 'public-read'
     }, {
       name: :expires,
-      type: String,
-      default_value: nil
+      type: String
     }, {
       name: :cache_control,
-      type: String,
-      default_value: nil
+      type: String
     }, {
       name: :encryption,
-      type: String,
-      default_value: nil
+      type: String
     }]
 
     AWS_ATTRIBUTES.each do |attribute_hash|
-      send(:attribute, attribute_hash[:name], attribute_hash[:type])
-    end
-
-    # Initialize a new Resource object
-    #
-    # @param options [Hash]
-    def initialize(options = {})
-      fail(ArgumentError, 'with_root must be present') unless options[:with_root]
-      fail(ArgumentError, 'without_root must be present') unless options[:without_root]
-      self.path_with_root = options.fetch(:with_root)
-      self.path_without_root = options.fetch(:without_root)
-      self.etag = options.fetch(:etag, determine_etag)
-      self.mtime = options.fetch(:mtime, determine_mtime)
-      self.content_length = options.fetch(:content_length, determine_content_length)
-      self.content_type = options.fetch(:content_type, determine_content_type)
-      self.digest = options.fetch(:digest, '')
-
-      AWS_ATTRIBUTES.each do |attribute_hash|
-        send("#{attribute_hash[:name]}=".to_sym, options.fetch(attribute_hash[:name], attribute_hash[:default_value]))
-      end
+      send(:attribute, attribute_hash[:name], attribute_hash[:type], default: attribute_hash.fetch(:default_value, nil))
     end
 
     def hash

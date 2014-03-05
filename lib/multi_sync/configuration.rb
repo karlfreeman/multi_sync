@@ -4,7 +4,7 @@ require 'celluloid'
 
 module MultiSync
   class Configuration
-    include Virtus
+    include Virtus.model
 
     attribute :verbose, Boolean, default: false
     attribute :force, Boolean, default: false
@@ -18,11 +18,9 @@ module MultiSync
     # Initialize a new Configuration object
     #
     # @param options [Hash]
-    def initialize(options = {})
+    def initialize(*args)
       Celluloid.logger = MultiSync.test? ? nil : MultiSync.logger
-      options.each_pair do |key, value|
-        send("#{key}=", value) if attributes.keys.include?(key)
-      end
+      super
     end
 
     def celluloid_cores

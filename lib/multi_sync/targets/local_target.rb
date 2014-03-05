@@ -3,13 +3,10 @@ require 'multi_sync/resources/remote_resource'
 
 module MultiSync
   class LocalTarget < Target
-    # Initialize a new LocalTarget object
-    #
-    # @param options [Hash]
-    def initialize(options = {})
-      super(options)
-      self.connection = ::Fog::Storage.new(credentials.merge(provider: :local))
-    end
+
+    attribute :connection, Fog::Storage, default: lambda { |target, attribute|
+      Fog::Storage.new(target.default_credentials.merge(target.credentials.merge(provider: :local)))
+    }
 
     def files
       files = []
@@ -28,8 +25,8 @@ module MultiSync
 
         files << MultiSync::RemoteResource.new(
           file: file,
-          with_root: target_dir + destination_dir + pathname,
-          without_root: pathname
+          path_with_root: target_dir + destination_dir + pathname,
+          path_without_root: pathname
         )
 
       }
