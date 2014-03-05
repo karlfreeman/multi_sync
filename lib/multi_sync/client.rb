@@ -25,7 +25,7 @@ module MultiSync
     # Initialize a new Client object
     #
     # @param options [Hash]
-    def initialize(**args)
+    def initialize(*args)
       self.supervisor = Celluloid::SupervisionGroup.run!
       super
     end
