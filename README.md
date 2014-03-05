@@ -35,7 +35,7 @@ end
 
 ### Fog credentials support
 
-`MultiSync` supports utilising [Fog Credentials](http://fog.io/about/getting_started.html#credentials). Simply specify either a `FOG_RC` or `.fog` and we'll use it as the base for any credentials used in a target.
+`MultiSync` supports utilising [Fog Credentials](http://fog.io/about/getting_started.html#credentials). Simply specify either a `FOG_RC` or `.fog` and we'll use it as the base for any `:credentials` used in a `target`.
 
 ## Features / Usage Examples
 
