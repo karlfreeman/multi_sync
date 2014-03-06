@@ -11,7 +11,7 @@ module MultiSync
     include Celluloid
     include Virtus.model
     include MultiSync::Mixins::LogHelper
-    
+
     attribute :target_dir, MultiSync::Attributes::Pathname, default: Pathname.new('')
     attribute :destination_dir, MultiSync::Attributes::Pathname, default: Pathname.new('')
     attribute :credentials, Hash, default: :default_credentials

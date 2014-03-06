@@ -3,7 +3,6 @@ require 'multi_sync/resource'
 
 module MultiSync
   class LocalResource < Resource
-
     def body
       File.read(path_with_root.to_s)
     rescue

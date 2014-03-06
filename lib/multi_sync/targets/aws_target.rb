@@ -3,7 +3,6 @@ require 'multi_sync/resources/remote_resource'
 
 module MultiSync
   class AwsTarget < Target
-    
     attribute :connection, Fog::Storage, lazy: true, default: lambda { |target, attribute|
       Fog::Storage.new(target.credentials.merge(provider: :aws))
     }
