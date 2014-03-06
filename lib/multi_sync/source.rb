@@ -2,13 +2,11 @@ require 'virtus'
 require 'pathname'
 require 'lazily'
 require 'multi_sync/attributes/pathname'
-require 'multi_sync/mixins/log_helper'
 require 'multi_sync/resources/local_resource'
 
 module MultiSync
   class Source
     include Virtus.model
-    include MultiSync::Mixins::LogHelper
 
     attribute :source_dir, MultiSync::Attributes::Pathname
 
