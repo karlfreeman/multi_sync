@@ -19,7 +19,8 @@ module MultiSync
     #
     # @param options [Hash]
     def initialize(*args)
-      Celluloid.logger = MultiSync.test? ? nil : MultiSync.logger
+      # Celluloid.logger = MultiSync.verbose? ? nil : MultiSync.logger
+      Celluloid.logger = nil
       super
     end
 
