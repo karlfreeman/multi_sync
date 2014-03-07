@@ -85,7 +85,7 @@ module MultiSync
         minutes, seconds = elapsed.divmod 60.0
         bytes = complete_uploaded_jobs_bytes
         kilobytes = bytes / 1024.0
-        MultiSync.debug "Sync completed in #{pluralize(minutes, 'minute')} and #{pluralize(seconds.round, 'second')}"
+        MultiSync.debug "Sync completed in #{pluralize(minutes.round, 'minute')} and #{pluralize(seconds.round, 'second')}"
         MultiSync.debug 'The combined upload weight was ' + ((bytes > 1024.0) ? pluralize(kilobytes, 'kilobyte') : pluralize(bytes, 'byte'))
         MultiSync.debug "#{pluralize(file_sync_attempts, 'failed request')} were detected and re-tried"
       else
@@ -196,12 +196,18 @@ module MultiSync
 
     def determine_outdated_files(source_files, target_files)
       outdated_files = []
+      equivalent_files = []
 
       # TODO: replace with celluloid pool of futures
       # check each source file against the matching target_file's etag
       source_files.lazily.each_with_index do |file, i|
-        outdated_files << file unless !MultiSync.force && file.matching_etag?(target_files[i])
+        unless file.matching_etag?(target_files[i]) || MultiSync.force
+          outdated_files << file
+        else
+          equivalent_files << file
+        end
       end
+      MultiSync.debug "#{equivalent_files.length} of the files are equivalent (eg no sync needed!)"
 
       outdated_files
     end

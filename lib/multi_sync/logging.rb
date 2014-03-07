@@ -33,8 +33,8 @@ module MultiSync
 
     def log(message, level = :debug)
       # We're not in verbose mode so disable all non-info logs
-      # return if !MultiSync.verbose && level != :info
       say_status :sync, message
+      return if !MultiSync.verbose && level != :info
       MUTEX.synchronize do
         logger.send(level, message)
       end
