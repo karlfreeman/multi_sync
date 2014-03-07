@@ -45,6 +45,5 @@ module MultiSync
       connection.directories.get(destination_dir.to_s).files.get(key).destroy
       resource
     end
-
   end
 end
