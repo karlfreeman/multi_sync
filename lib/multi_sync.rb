@@ -4,7 +4,6 @@ require 'multi_sync/version'
 require 'multi_sync/logging'
 require 'multi_sync/environment'
 require 'multi_sync/configuration'
-require 'active_support/inflector'
 
 module MultiSync
   extend SingleForwardable
