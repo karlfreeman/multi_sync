@@ -29,20 +29,18 @@ module MultiSync
     end
 
     def upload(resource)
-      key = resource.path_without_root.to_s
-      MultiSync.say_status :upload, key
-      MultiSync.debug "Upload #{resource} '#{key}' to #{self} '#{File.join(connection.local_root, destination_dir)}'"
+      MultiSync.say_status :upload, resource.path_with_root
+      MultiSync.debug "Upload #{resource} '#{resource.path_without_root}' to #{self} '#{File.join(connection.local_root, destination_dir)}'"
       directory = connection.directories.get(destination_dir.to_s)
       return if directory.nil?
-      directory.files.create(key: key, body: resource.body)
+      directory.files.create(key: resource.path_without_root.to_s, body: resource.body)
       resource
     end
 
     def delete(resource)
-      key = resource.path_without_root.to_s
-      MultiSync.say_status :delete, key
-      MultiSync.debug "Delete #{resource} '#{key}' from #{self} '#{File.join(connection.local_root, destination_dir)}'"
-      connection.directories.get(destination_dir.to_s).files.get(key).destroy
+      MultiSync.say_status :delete, resource.path_with_root
+      MultiSync.debug "Delete #{resource} '#{resource.path_without_root}' from #{self} '#{File.join(connection.local_root, destination_dir)}'"
+      connection.directories.get(destination_dir.to_s).files.get(resource.path_without_root.to_s).destroy
       resource
     end
   end
