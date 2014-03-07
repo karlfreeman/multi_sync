@@ -49,7 +49,7 @@ module MultiSync
     alias_method :source, :add_source
 
     def synchronize
-      MultiSync.info 'Preventing synchronization as there are no sources found.' && return if sync_pointless?
+      MultiSync.warn 'Preventing synchronization as there are no sources found.' && return if sync_pointless?
       MultiSync.debug 'Starting synchronization...'
 
       determine_sync if first_run?
@@ -122,7 +122,7 @@ module MultiSync
 
         starting_synchronizing_msg = "ynchronizing: '#{source.source_dir}'"
         starting_synchronizing_msg.prepend MultiSync.force ? 'Forcefully s' : 'S'
-        MultiSync.info starting_synchronizing_msg
+        MultiSync.debug starting_synchronizing_msg
 
         source_files = source.files
         source_files.sort! # sort to make sure the source's indexes match the targets
