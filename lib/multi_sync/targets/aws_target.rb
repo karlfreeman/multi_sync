@@ -29,7 +29,7 @@ module MultiSync
     end
 
     def upload(resource)
-      MultiSync.say_status :upload, resource.path_without_root
+      MultiSync.say_status :upload, resource.path_with_root
       MultiSync.debug "Upload #{resource} '#{resource.path_without_root}' to #{self} '/#{target_dir + destination_dir}'"
       directory = connection.directories.get(target_dir.to_s)
       return if directory.nil?
@@ -51,7 +51,7 @@ module MultiSync
     end
 
     def delete(resource)
-      MultiSync.say_status :delete, resource.path_without_root
+      MultiSync.say_status :delete, resource.path_with_root
       MultiSync.debug "Delete #{resource} '#{resource.path_without_root}' from #{self} '/#{target_dir + destination_dir}'"
       connection.delete_object(target_dir.to_s, (destination_dir + resource.path_without_root).to_s)
       resource
