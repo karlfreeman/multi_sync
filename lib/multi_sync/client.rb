@@ -82,7 +82,7 @@ module MultiSync
       if finished_at
         elapsed = finished_at.to_f - started_at.to_f
         minutes, seconds = elapsed.divmod 60.0
-        bytes = get_total_file_size_from_complete_jobs
+        bytes = complete_uploaded_jobs_bytes
         kilobytes = bytes / 1024.0
         MultiSync.debug "Sync completed in #{"#{minutes} minute".pluralize(minutes)} and #{"#{seconds} second".pluralize(seconds)}"
         MultiSync.debug 'The combined upload weight was ' + ((bytes > 1024.0) ? "#{kilobytes} kilobyte".pluralize(kilobytes) : "#{bytes} byte".pluralize(bytes))
@@ -90,27 +90,26 @@ module MultiSync
       else
         MultiSync.debug "Sync failed to complete with #{"#{incomplete_jobs.length} outstanding file".pluralize(incomplete_jobs.length)} to be synchronised"
       end
-      MultiSync.debug "#{"#{complete_jobs.length} file".pluralize(complete_jobs.length)} were synchronised (#{"#{get_complete_deleted_jobs.length} deleted file".pluralize(get_complete_deleted_jobs.length)} and #{"#{get_complete_upload_jobs.length} uploaded file".pluralize(get_complete_upload_jobs.length)}) from #{"#{sources.length} source".pluralize(sources.length)} to #{"#{supervisor.actors.length} target".pluralize(supervisor.actors.length)}"
+      MultiSync.debug "#{"#{complete_jobs.length} file".pluralize(complete_jobs.length)} were synchronised (#{"#{complete_deleted_jobs.length} deleted file".pluralize(complete_deleted_jobs.length)} and #{"#{complete_uploaded_jobs.length} uploaded file".pluralize(complete_uploaded_jobs.length)}) from #{"#{sources.length} source".pluralize(sources.length)} to #{"#{supervisor.actors.length} target".pluralize(supervisor.actors.length)}"
 
       supervisor.finalize
     end
     alias_method :fin, :finalize
 
-    def get_complete_deleted_jobs
+    def complete_deleted_jobs
       complete_jobs.select { |job| job[:method] == :delete }
     end
 
-    def get_complete_upload_jobs
+    def complete_uploaded_jobs
       complete_jobs.select { |job| job[:method] == :upload }
     end
 
-    def get_total_file_size_from_complete_jobs
-      total_file_size = 0
-      get_complete_upload_jobs.each do | job |
-        job_content_length = job[:response].content_length || job[:response].determine_content_length || 0
-        total_file_size += job_content_length
+    def complete_uploaded_jobs_bytes
+      total_bytes = 0
+      complete_uploaded_jobs.each do | job |
+        total_bytes += job[:response].content_length || job[:response].determine_content_length || 0
       end
-      total_file_size
+      total_bytes
     end
 
     private
