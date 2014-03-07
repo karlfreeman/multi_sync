@@ -14,26 +14,23 @@ module MultiSync
       return files if directory.nil?
 
       directory.files.lazily.each { |file|
-
         pathname = Pathname.new(file.key)
 
         # eg directory or overreaching AWS globbing
         next unless valid_path?(pathname)
-
         files << MultiSync::RemoteResource.new(
           file: file,
           path_with_root: target_dir + pathname, # pathname seems to already have the prefix (destination_dir)
           path_without_root: destination_dir != '' ? pathname.relative_path_from(destination_dir).cleanpath : pathname
         )
-
       }
 
       files
     end
 
     def upload(resource)
-      MultiSync.say_status :upload, resource.path_without_root.to_s
-      MultiSync.debug "Upload #{resource.class_name}:'#{resource.path_without_root}' to #{class_name}:'#{File.join('/', target_dir + destination_dir)}'"
+      MultiSync.say_status :upload, resource.path_without_root
+      MultiSync.debug "Upload #{resource} '#{resource.path_without_root}' to #{self} '/#{target_dir + destination_dir}'"
       directory = connection.directories.get(target_dir.to_s)
       return if directory.nil?
 
@@ -54,8 +51,8 @@ module MultiSync
     end
 
     def delete(resource)
-      MultiSync.say_status :delete, resource.path_without_root.to_s
-      MultiSync.debug "Delete #{resource.class_name}:'#{resource.path_without_root}' from #{class_name}:'#{File.join('/', target_dir + destination_dir)}'"
+      MultiSync.say_status :delete, resource.path_without_root
+      MultiSync.debug "Delete #{resource} '#{resource.path_without_root}' from #{self} '/#{target_dir + destination_dir}'"
       connection.delete_object(target_dir.to_s, (destination_dir + resource.path_without_root).to_s)
       resource
     end
@@ -65,7 +62,7 @@ module MultiSync
     # directory or overreaching AWS globbing
     def valid_path?(pathname)
       # directory
-      return false if pathname.to_s =~ /\/$/
+      return false if pathname.directory?
 
       # overreaching AWS globbing
       return false if !destination_dir.to_s.empty? && !(pathname.to_s =~ /^#{destination_dir.to_s}\//)

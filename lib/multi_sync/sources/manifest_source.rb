@@ -47,7 +47,7 @@ module MultiSync
       when '.yml', '.yaml'
         manifest_hash = YAML.load(manifest_data)
       else
-        raise ArgumentError, "Unknown manifest type: #{manifest_path}"
+        fail ArgumentError, "Unknown manifest type: #{manifest_path}"
       end
 
       # different versions of Sprockets have different manifest layouts, lets try and work around this by checking for the presence of "files" and "assets" in the manifest first

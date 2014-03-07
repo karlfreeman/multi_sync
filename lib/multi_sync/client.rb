@@ -5,12 +5,10 @@ require 'celluloid'
 %w(sources targets).each do |dir|
   Dir.glob(File.expand_path("../#{dir}/**/*.rb", __FILE__), &method(:require))
 end
-require 'multi_sync/mixins/pluralize_helper'
 
 module MultiSync
   class Client
     include Virtus.model
-    include MultiSync::Mixins::PluralizeHelper
 
     attribute :supervisor, Celluloid::SupervisionGroup
     attribute :incomplete_jobs, Set, default: Set.new
@@ -85,19 +83,14 @@ module MultiSync
         elapsed = finished_at.to_f - started_at.to_f
         minutes, seconds = elapsed.divmod 60.0
         bytes = get_total_file_size_from_complete_jobs
-        MultiSync.debug "Sync completed in #{pluralize(minutes.round, 'minute')} and #{pluralize(seconds.round, 'second')}"
-        MultiSync.debug "#{pluralize(complete_jobs.length, 'file')} were synchronised (#{pluralize(get_complete_deleted_jobs.length, 'deleted file')} and #{pluralize(get_complete_upload_jobs.length, 'uploaded file')}) from #{pluralize(sources.length, 'source')} to #{pluralize(supervisor.actors.length, 'target')}"
-        if bytes > 1024.0
-          kilobytes = bytes / 1024.0
-          MultiSync.debug "The upload weight totalled %.#{0}f #{pluralize(kilobytes, 'kilobyte', nil, false)}" % kilobytes
-        else
-          MultiSync.debug "The upload weight totalled %.#{0}f #{pluralize(bytes, 'byte', nil, false)}" % bytes
-        end
-        MultiSync.debug "#{pluralize(file_sync_attempts, 'failed request')} were detected and re-tried"
+        kilobytes = bytes / 1024.0
+        MultiSync.debug "Sync completed in #{"#{minutes} minute".pluralize(minutes)} and #{"#{seconds} second".pluralize(seconds)}"
+        MultiSync.debug 'The combined upload weight was ' + ((bytes > 1024.0) ? "#{kilobytes} kilobyte".pluralize(kilobytes) : "#{bytes} byte".pluralize(bytes))
+        MultiSync.debug "#{"#{file_sync_attempts} failed request".pluralize(file_sync_attempts)} were detected and re-tried"
       else
-        MultiSync.debug "Sync failed to complete with #{pluralize(incomplete_jobs.length, 'outstanding file')} to be synchronised"
-        MultiSync.debug "#{pluralize(complete_jobs.length, 'file')} were synchronised (#{pluralize(get_complete_deleted_jobs.length, 'deleted file')} and #{pluralize(get_complete_upload_jobs.length, 'uploaded file')}) from #{pluralize(sources.length, 'source')} to #{pluralize(supervisor.actors.length, 'target')}"
+        MultiSync.debug "Sync failed to complete with #{"#{incomplete_jobs.length} outstanding file".pluralize(incomplete_jobs.length)} to be synchronised"
       end
+      MultiSync.debug "#{"#{complete_jobs.length} file".pluralize(complete_jobs.length)} were synchronised (#{"#{get_complete_deleted_jobs.length} deleted file".pluralize(get_complete_deleted_jobs.length)} and #{"#{get_complete_upload_jobs.length} uploaded file".pluralize(get_complete_upload_jobs.length)}) from #{"#{sources.length} source".pluralize(sources.length)} to #{"#{supervisor.actors.length} target".pluralize(supervisor.actors.length)}"
 
       supervisor.finalize
     end
@@ -143,14 +136,14 @@ module MultiSync
           abandoned_files = []
           outdated_files = []
 
-          MultiSync.debug "#{pluralize(source_files.length, 'file')} found from the source"
+          MultiSync.debug "#{"#{source_files.length} file".pluralize(source_files.length)} found from the source"
 
           MultiSync.debug 'Fetching files from the target...'
 
           target_files = Celluloid::Actor[target_id].files
           target_files.sort! # sort to make sure the target's indexs match the sources
 
-          MultiSync.debug "#{pluralize(target_files.length, 'file')} found from the target"
+          MultiSync.debug "#{"#{target_files.length} file".pluralize(target_files.length)} found from the target"
 
           missing_files.concat determine_missing_files(source_files, target_files)
           missing_files_msg = "#{missing_files.length} of the files are missing"

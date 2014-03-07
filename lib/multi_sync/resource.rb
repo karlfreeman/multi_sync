@@ -1,13 +1,11 @@
 require 'virtus'
 require 'pathname'
 require 'digest/md5'
-require 'multi_sync/mixins/log_helper'
 
 module MultiSync
   class Resource
     include Comparable
     include Virtus.model
-    include MultiSync::Mixins::LogHelper
 
     attribute :path_with_root, Pathname
     attribute :path_without_root, Pathname
