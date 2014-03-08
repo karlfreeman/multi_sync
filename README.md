@@ -134,7 +134,7 @@ A `target` takes two arguments. The first is a `name` to reference this `target`
 | `type` | `Symbol` | `nil` | The `type` of `target` this is (`:aws`) |
 | `target_dir` | `Pathname`, `String` | `nil` | the name of the `target`'s directory (eg s3 bucket name) |
 | `destination_dir` | `Pathname`, `String` | `nil` | the name of the `target` destination's directory (eg folder within target) |
-| `credentials` | `Hash` | inherits [Fog Credentials](https://github.com/karlfreeman/multi_sync#fog-credentials-support) | `{}` | credentionals needed by [Fog](http://fog.io) |
+| `credentials` | `Hash` | inherits [Fog Credentials](https://github.com/karlfreeman/multi_sync#fog-credentials-support) | credentionals needed by [Fog](http://fog.io) |
 ___
 
 ```ruby
