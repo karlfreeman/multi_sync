@@ -134,8 +134,7 @@ source :image_assets, {
 
 ## Supported Libraries
 
-- [Rails 4](https://github.com/karlfreeman/multi_sync-rails-3) (WIP)
-- [Rails 3](https://github.com/karlfreeman/multi_sync-rails-3) (WIP)
+- [Rails](https://github.com/karlfreeman/multi_sync-rails) (WIP)
 - Sinatra (WIP)
 - [Middleman](https://github.com/karlfreeman/multi_sync-middleman) (WIP)
 - Jekyll (WIP)
