@@ -86,7 +86,7 @@ module MultiSync
         bytes = complete_uploaded_jobs_bytes
         kilobytes = bytes / 1024.0
         MultiSync.debug "Sync completed in #{pluralize(minutes.round, 'minute')} and #{pluralize(seconds.round, 'second')}"
-        MultiSync.debug 'The combined upload weight was ' + ((bytes > 1024.0) ? pluralize(kilobytes, 'kilobyte') : pluralize(bytes, 'byte'))
+        MultiSync.debug 'The combined upload weight was ' + ((bytes > 1024.0) ? pluralize(kilobytes.round, 'kilobyte') : pluralize(bytes.round, 'byte'))
         MultiSync.debug "#{pluralize(file_sync_attempts, 'failed request')} were detected and re-tried"
       else
         MultiSync.debug "Sync failed to complete with #{pluralize(incomplete_jobs.length, 'outstanding file')} to be synchronised"
