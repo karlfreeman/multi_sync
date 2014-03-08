@@ -134,13 +134,12 @@ source :image_assets, {
 
 ## Supported Libraries
 
-- [Rails](https://github.com/karlfreeman/multi_sync/wiki/rails)
+- [Rails 4](https://github.com/karlfreeman/multi_sync-rails-3) (WIP)
+- [Rails 3](https://github.com/karlfreeman/multi_sync-rails-3) (WIP)
 - Sinatra (WIP)
-- Middleman (WIP)
+- [Middleman](https://github.com/karlfreeman/multi_sync-middleman) (WIP)
 - Jekyll (WIP)
 - Nanoc (WIP)
-- [POR](https://github.com/karlfreeman/multi_sync/wiki/por)
-- Rake (WIP)
 
 ## Badges
 
