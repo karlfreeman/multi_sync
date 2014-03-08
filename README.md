@@ -43,14 +43,14 @@ end
 
 ### Source
 
-A source takes two arguments. The first is a `name` to reference this source by and the second is a `Hash` of configuration detailed below.
+A `source` takes two arguments. The first is a `name` to reference this `source` by and the second is a `Hash` of configuration detailed below.
 
 | Key | Type | Default | Description |
 | :-- | :--- | :------ | :---------- |
-| `type` | `Symbol` | `nil` | The `type` of source this is (`:local`, `:manifest`) |
-| `source_dir` | `Pathname`, `String` | `nil` | The location this source should use |
-| `resource_options` | `Hash` | `nil` | A hash of options for this source`s resources |
-| `targets` | `Symbol`, `Array` | All targets | The target(s) this source should sync against |
+| `type` | `Symbol` | `nil` | The `type` of `source` this is (`:local`, `:manifest`) |
+| `source_dir` | `Pathname`, `String` | `nil` | The location this `source` should use |
+| `resource_options` | `Hash` | `{}` | A hash of options for this `source`'s resources |
+| `targets` | `Symbol`, `Array` | All targets | The `target`(s) this `source` should sync against |
 | `include` | `String` ([shell glob](http://www.ruby-doc.org/core-2.1.1/Dir.html#method-c-glob)) | `**/*` | A shell globe to use for inclusion |
 | `exclude` | `String` ([shell glob](http://www.ruby-doc.org/core-2.1.1/Dir.html#method-c-glob)) | `nil` | A shell globe to use for exclusion |
 ___
@@ -127,10 +127,48 @@ source :image_assets, {
 
 ### Target
 
-```ruby
-...
-```
+A `target` takes two arguments. The first is a `name` to reference this `target` by and the second is a `Hash` of configuration detailed below.
 
+| Key | Type | Default | Description |
+| :-- | :--- | :------ | :---------- |
+| `type` | `Symbol` | `nil` | The `type` of `target` this is (`:aws`) |
+| `target_dir` | `Pathname`, `String` | `nil` | the name of the `target`'s directory (eg s3 bucket name) |
+| `destination_dir` | `Pathname`, `String` | `nil` | the name of the `target` destination's directory (eg folder within target) |
+| `credentials` | `Hash` | inherits [Fog Credentials](https://github.com/karlfreeman/multi_sync#fog-credentials-support) | `{}` | credentionals needed by [Fog](http://fog.io) |
+___
+
+```ruby
+# A target named ':assets' which is an ':aws' type
+# and will sync to the root of a bucket named 's3-bucket-name'
+# with region, access_key_id, and secret_access_key specified
+target :assets, {
+  type: :aws
+  target_dir: 's3-bucket-name'
+  credentials: {
+    region: 'us-east-1',
+    aws_access_key_id: 'xxx',
+    aws_secret_access_key: 'xxx'
+  }
+}
+```
+___
+
+```ruby
+# A target named ':assets_within_directory' which is an ':aws' type
+# which will sync to a bucket named 's3-bucket-name'
+# but within a directory named 'directory-within-s3'
+# with region, access_key_id, and secret_access_key specified
+target :assets_within_directory, {
+  type: :aws
+  target_dir: 's3-bucket-name'
+  destination_dir: 'directory-within-s3'
+  credentials: {
+    region: 'us-east-1',
+    aws_access_key_id: 'xxx',
+    aws_secret_access_key: 'xxx'
+  }
+}
+```
 
 ## Supported Libraries
 
