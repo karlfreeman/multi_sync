@@ -47,8 +47,8 @@ All `source`s takes one argument which is a `Hash` of configuration detailed bel
 
 #### Source Types
 
-- `local_source` - All files within...
-- `manifest_source` - Tries to find a `Sprocket` `manifest.{yml,json}` file
+- `local_source` - Uses all files within the `source_dir`
+- `manifest_source` - Tries to find a `Sprocket`s `manifest.{yml,json}` file within the `source_dir`
 
 | Key | Type | Default | Description |
 | :-- | :--- | :------ | :---------- |
@@ -115,7 +115,7 @@ All `target`s takes one argument which is a `Hash` of configuration detailed bel
 
 #### Target Types
 
-- `aws_target` - An `aws` based target (`S3`)
+- `aws_target` - Synchronises to `aws` (`S3`)
 
 | Key | Type | Default | Description |
 | :-- | :--- | :------ | :---------- |
