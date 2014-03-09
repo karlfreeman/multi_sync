@@ -182,7 +182,7 @@ module MultiSync
       end
       MultiSync.debug "#{pluralize(complete_jobs.length, 'file')} were synchronised (#{pluralize(complete_deleted_jobs.length, 'deleted file')} and #{pluralize(complete_uploaded_jobs.length, 'uploaded file')}) from #{pluralize(sources.length, 'source')} to #{pluralize(supervisor_actor_names.length, 'target')}"
 
-      self.supervisor.finalize
+      self.supervisor.terminate
     end
 
     def complete_deleted_jobs
