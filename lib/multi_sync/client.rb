@@ -219,7 +219,7 @@ module MultiSync
       # TODO: replace with celluloid pool of futures
       # check each source file against the matching target_file's etag
       source_files.lazily.each_with_index do |file, i|
-        if !file.matching_etag?(target_files[i]) || !MultiSync.force
+        if !file.matching_etag?(target_files[i]) || MultiSync.force
           outdated_files << file
         else
           equivalent_files << file
