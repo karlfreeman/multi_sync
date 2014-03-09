@@ -81,7 +81,6 @@ module MultiSync
       end
 
       finish_sync
-      finalize
     end
 
     private
@@ -169,9 +168,7 @@ module MultiSync
     def finish_sync
       # recurse when there are incomplete_jobs still
       incomplete_jobs.length != 0 ? self.sync : self.finished_at = Time.now
-    end
 
-    def finalize
       if finished_at
         elapsed = finished_at.to_f - started_at.to_f
         minutes, seconds = elapsed.divmod 60.0

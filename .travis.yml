@@ -4,21 +4,19 @@ bundler_args: --without development
 rvm:
   - ruby-head
   - jruby-head
+  - rbx-head
   - 2.1.0
   - 2.0.0
   - 1.9.3
-  - rbx-19mode
-  - jruby-19mode
-# gemfile:
-#   - gemfiles/Gemfile.middleman-3.1.x
-#   - gemfiles/Gemfile.rails-3.2.x
-#   - Gemfile
+  - rbx
+  - jruby
 matrix:
   fast_finish: true
   allow_failures:
     - rvm: ruby-head
     - rvm: jruby-head
-    - rvm: rbx-19mode
-    - rvm: jruby-19mode
+    - rvm: rbx-head
+    - rvm: rbx
+    - rvm: jruby
 notifications:
   email: false
