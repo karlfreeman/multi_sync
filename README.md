@@ -43,11 +43,15 @@ end
 
 ### Source
 
-A `source` takes two arguments. The first is a `name` to reference this `source` by and the second is a `Hash` of configuration detailed below.
+All `source`s takes one argument which is a `Hash` of configuration detailed below. There are currently two type's of `source`s which are
+
+#### Source Types
+
+- `local_source` - All files within...
+- `manifest_source` - Tries to find a `Sprocket` `manifest.{yml,json}` file
 
 | Key | Type | Default | Description |
 | :-- | :--- | :------ | :---------- |
-| `type` | `Symbol` | `nil` | The `type` of `source` this is (`:local`, `:manifest`) |
 | `source_dir` | `Pathname`, `String` | `nil` | The location this `source` should use |
 | `resource_options` | `Hash` | `{}` | A hash of options for this `source`'s resources |
 | `targets` | `Symbol`, `Array` | All targets | The `target`(s) this `source` should sync against |
@@ -56,110 +60,89 @@ A `source` takes two arguments. The first is a `name` to reference this `source`
 ___
 
 ```ruby
-# A source named ':build' which is ':local' and will use all files within '../build'
-source :build, {
-  type: :local,
+# A `local` `source` which will use all files within '../build'
+local_source({
   source_dir: '../build'
-}
+})
 ```
 ___
 
 ```ruby
-# A source named ':assets' which will use a Sprockets ':manifest' within '../public/assets'
-source :assets, {
-  type: :manifest,
+# A `manifest` `source` which will use a Sprockets ':manifest' within '../public/assets'
+manifest_source({
   source_dir: '../public/assets'
-}
+})
 ```
 ___
 
 ```ruby
-# A source named ':video_assets' which is `:local' and will use all files
-# within '../build' including only 'mp4, mpg, mov'
-source :video_assets, {
-  type: :local,
+# A `local` `source` which will use all files
+# within '../build' including only 'mp4, mpg, mov' files
+local_source({
   source_dir: '../build',
   include: '*.{mp4,mpg,mov}'
-}
+})
 ```
 ___
 
 ```ruby
-# A source named ':no_images' which is `:local' and will use all files
-# within '../build' excluding any 'jpg, gif, png'
-source :no_images, {
-  type: :local,
+# A `local` `source` which will use all files
+# within '../build' excluding any 'jpg, gif, png' files
+local_source({
   source_dir: '../build',
   exclude: '*.{jpg,gif,png}'
-}
+})
 ```
 ___
 
 ```ruby
-# A source named ':www' which will use a Sprockets ':manifest'
-# within '../public/assets' excluding any 'jpg, gif, png' files
-# and only synchronising with a target named `:www`
-source :www, {
-  type: :manifest,
-  source_dir: '../public/assets',
-  exclude: '*.{jpg,gif,png}',
-  targets: :www
-}
-```
-___
-
-```ruby
-# A source named ':image_assets' which will use a Sprockets ':manifest'
+# A `manifest` `source` which will use use a Sprockets `manifest`
 # within '../public/assets' including only 'jpg, gif, png' files
-# which sets `cache_control` and `expires` headers and
-# synchronises with the target `:images`
-source :image_assets, {
-  type: :manifest,
+# which sets `cache_control` and `expires` headers
+manifest_source({
   source_dir: '../public/assets',
   include: '*.{jpg,gif,png}',
   resource_options: {
     cache_control: 'public, max-age=31557600',
     expires: CGI.rfc1123_date(Time.now + 31557600)
-  },
-  targets: :images
-}
+  }
+})
 ```
 
 ### Target
 
-A `target` takes two arguments. The first is a `name` to reference this `target` by and the second is a `Hash` of configuration detailed below.
+All `target`s takes one argument which is a `Hash` of configuration detailed below. There is currently only one `target` type which is:
+
+#### Target Types
+
+- `aws_target` - An `aws` based target (`S3`)
 
 | Key | Type | Default | Description |
 | :-- | :--- | :------ | :---------- |
-| `type` | `Symbol` | `nil` | The `type` of `target` this is (`:aws`) |
 | `target_dir` | `Pathname`, `String` | `nil` | the name of the `target`'s directory (eg s3 bucket name) |
 | `destination_dir` | `Pathname`, `String` | `nil` | the name of the `target` destination's directory (eg folder within target) |
 | `credentials` | `Hash` | inherits [Fog Credentials](https://github.com/karlfreeman/multi_sync#fog-credentials-support) | credentionals needed by [Fog](http://fog.io) |
 ___
 
 ```ruby
-# A target named ':assets' which is an ':aws' type
-# and will sync to the root of a bucket named 's3-bucket-name'
+# An `aws` `target` which will sync to the root of a bucket named 's3-bucket-name'
 # with region, access_key_id, and secret_access_key specified
-target :assets, {
-  type: :aws
+aws_target({
   target_dir: 's3-bucket-name'
   credentials: {
     region: 'us-east-1',
     aws_access_key_id: 'xxx',
     aws_secret_access_key: 'xxx'
   }
-}
+})
 ```
 ___
 
 ```ruby
-# A target named ':assets_within_directory' which is an ':aws' type
-# which will sync to a bucket named 's3-bucket-name'
+# An `aws` `target` which will sync to a bucket named 's3-bucket-name'
 # but within a directory named 'directory-within-s3'
 # with region, access_key_id, and secret_access_key specified
-target :assets_within_directory, {
-  type: :aws
+aws_target({
   target_dir: 's3-bucket-name'
   destination_dir: 'directory-within-s3'
   credentials: {
@@ -167,7 +150,7 @@ target :assets_within_directory, {
     aws_access_key_id: 'xxx',
     aws_secret_access_key: 'xxx'
   }
-}
+})
 ```
 
 ## Supported Libraries
