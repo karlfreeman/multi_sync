@@ -37,7 +37,7 @@ module MultiSync
     def add_target(clazz, options = {})
       # TODO: friendly pool names?
       pool_name = Celluloid.uuid
-      self.supervisor.pool(clazz, as: pool_name, args: [options], size: MultiSync.target_pool_size)
+      supervisor.pool(clazz, as: pool_name, args: [options], size: MultiSync.target_pool_size)
       pool_name
     end
 
@@ -62,7 +62,7 @@ module MultiSync
 
       MultiSync.debug 'Scheduling jobs in the future...'
       incomplete_jobs.delete_if do | job |
-        running_jobs << { future: self.supervisor[job[:target_id]].future.send(job[:method], job[:resource]), method: job[:method] }
+        running_jobs << { future: supervisor[job[:target_id]].future.send(job[:method], job[:resource]), method: job[:method] }
       end
 
       MultiSync.debug 'Fetching jobs from the future...'
@@ -112,7 +112,7 @@ module MultiSync
 
           MultiSync.debug 'Fetching files from the target...'
 
-          target_files = self.supervisor[target_id].files
+          target_files = supervisor[target_id].files
           target_files.sort! # sort to make sure the target's indexs match the sources
 
           MultiSync.debug "#{pluralize(target_files.length, 'file')} found from the target"
@@ -167,7 +167,7 @@ module MultiSync
 
     def finish_sync
       # recurse when there are incomplete_jobs still
-      incomplete_jobs.length != 0 ? self.sync : self.finished_at = Time.now
+      incomplete_jobs.length != 0 ? sync : self.finished_at = Time.now
 
       if finished_at
         elapsed = finished_at.to_f - started_at.to_f
@@ -182,7 +182,7 @@ module MultiSync
       end
       MultiSync.debug "#{pluralize(complete_jobs.length, 'file')} were synchronised (#{pluralize(complete_deleted_jobs.length, 'deleted file')} and #{pluralize(complete_uploaded_jobs.length, 'uploaded file')}) from #{pluralize(sources.length, 'source')} to #{pluralize(supervisor_actor_names.length, 'target')}"
 
-      self.supervisor.terminate
+      supervisor.terminate
     end
 
     def complete_deleted_jobs
@@ -238,7 +238,7 @@ module MultiSync
     end
 
     def supervisor_actor_names
-      self.supervisor.actors.map(&:registered_name)
+      supervisor.actors.map(&:registered_name)
     end
   end
 end
