@@ -167,7 +167,7 @@ module MultiSync
     end
 
     def finish_sync
-      # recurse when there ar incomplete_jobs still
+      # recurse when there are incomplete_jobs still
       incomplete_jobs.length != 0 ? self.sync : self.finished_at = Time.now
     end
 
