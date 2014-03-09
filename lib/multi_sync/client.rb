@@ -227,7 +227,7 @@ module MultiSync
       end
 
       # TODO: move to a better place
-      MultiSync.debug "#{equivalent_files.length} of the files are equivalent"
+      MultiSync.debug "#{equivalent_files.length} of the files are identical"
 
       outdated_files
     end
