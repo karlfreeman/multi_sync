@@ -1,91 +1,65 @@
 require 'spec_helper'
 
 describe MultiSync::Configuration, fakefs: true do
-
-  before do
-    FileUtils.mkdir_p('/tmp/fog')
-    File.open('/tmp/fog/.fog', 'w') do |f|
-      f << "default:\n"
-      f << "  aws_access_key_id: AWS_ACCESS_KEY_ID_DEFAULT\n"
-      f << "  aws_secret_access_key: AWS_SECRET_ACCESS_KEY_DEFAULT\n"
-      f << "alt:\n"
-      f << "  aws_access_key_id: AWS_ACCESS_KEY_ID_ALT\n"
-      f << '  aws_secret_access_key: AWS_SECRET_ACCESS_KEY_ALT'
-    end
-  end
-
   let(:configuration) { MultiSync::Configuration.new }
-
-  context :target_pool_size do
-    context :defaults do
-      describe :size do
-        subject { configuration.target_pool_size }
-        it { should > 1 }
+  context :configuration do
+    describe :target_pool_size do
+      it 'should default to celluloid_cores' do
+        expect(configuration.target_pool_size).to eq Celluloid.cores
       end
-    end
-
-    context :custom do
-      before do
+      it 'should be settable' do
         configuration.target_pool_size = 3
-      end
-
-      describe :size do
-        subject { configuration.target_pool_size }
-        it { should eq 3 }
+        expect(configuration.target_pool_size).to be 3
       end
     end
-  end
-
-  context :credentials do
-    before do
-      Fog.instance_variable_set('@credential_path', nil)
-      Fog.instance_variable_set('@credentials', nil)
-      Fog.instance_variable_set('@credential', nil)
-    end
-
-    after do
-      ENV['FOG_RC'] = nil
-      ENV['FOG_CREDENTIAL'] = 'default'
-      Fog.instance_variable_set('@credential_path', nil)
-      Fog.instance_variable_set('@credentials', nil)
-      Fog.instance_variable_set('@credential', nil)
-    end
-
-    context 'with default fog credentials' do
-      before do
-        ENV['FOG_RC'] = nil
-        ENV['FOG_CREDENTIAL'] = 'default'
+    describe :credentials do
+      it 'should be settable' do
+        configuration.credentials = { foo: 'bar' }
+        expect(configuration.credentials).to eq foo: 'bar'
       end
-
-      describe :credentials do
-        subject { configuration.credentials }
-        it { should be_empty }
-      end
-    end
-
-    context 'with custom .fog path set' do
-      before do
-        ENV['FOG_RC'] = '/tmp/fog/.fog'
-        ENV['FOG_CREDENTIAL'] = 'default'
-      end
-
-      describe :credentials do
-        subject { configuration.credentials }
-        its([:aws_access_key_id]) { should eq 'AWS_ACCESS_KEY_ID_DEFAULT' }
-        its([:aws_secret_access_key]) { should eq 'AWS_SECRET_ACCESS_KEY_DEFAULT' }
-      end
-    end
-
-    context "with 'alt' credential set" do
-      before do
-        ENV['FOG_RC'] = '/tmp/fog/.fog'
-        ENV['FOG_CREDENTIAL'] = 'alt'
-      end
-
-      describe :credentials do
-        subject { configuration.credentials }
-        its([:aws_access_key_id]) { should eq 'AWS_ACCESS_KEY_ID_ALT' }
-        its([:aws_secret_access_key]) { should eq 'AWS_SECRET_ACCESS_KEY_ALT' }
+      context 'fog environment variables' do
+        before do
+          FileUtils.mkdir_p('/tmp/fog')
+          File.open('/tmp/fog/.fog', 'w') do |f|
+            f << "default:\n"
+            f << "  aws_access_key_id: AWS_ACCESS_KEY_ID_DEFAULT\n"
+            f << "  aws_secret_access_key: AWS_SECRET_ACCESS_KEY_DEFAULT\n"
+            f << "alt:\n"
+            f << "  aws_access_key_id: AWS_ACCESS_KEY_ID_ALT\n"
+            f << '  aws_secret_access_key: AWS_SECRET_ACCESS_KEY_ALT'
+          end
+          Fog.instance_variable_set('@credential_path', nil)
+          Fog.instance_variable_set('@credentials', nil)
+          Fog.instance_variable_set('@credential', nil)
+        end
+        after do
+          ENV['FOG_RC'] = nil
+          ENV['FOG_CREDENTIAL'] = 'default'
+          Fog.instance_variable_set('@credential_path', nil)
+          Fog.instance_variable_set('@credentials', nil)
+          Fog.instance_variable_set('@credential', nil)
+        end
+        it 'should default to fog credentials' do
+          ENV['FOG_RC'] = nil
+          ENV['FOG_CREDENTIAL'] = 'default'
+          expect(configuration.credentials).to eq Fog.credentials
+        end
+        it 'should use fog credentials' do
+          ENV['FOG_RC'] = '/tmp/fog/.fog'
+          ENV['FOG_CREDENTIAL'] = 'default'
+          expect(configuration.credentials).to eq(
+                                                    aws_access_key_id: 'AWS_ACCESS_KEY_ID_DEFAULT',
+                                                    aws_secret_access_key: 'AWS_SECRET_ACCESS_KEY_DEFAULT'
+          )
+        end
+        it 'should use fog \'alt\' credentials' do
+          ENV['FOG_RC'] = '/tmp/fog/.fog'
+          ENV['FOG_CREDENTIAL'] = 'alt'
+          expect(configuration.credentials).to eq(
+                                                    aws_access_key_id: 'AWS_ACCESS_KEY_ID_ALT',
+                                                    aws_secret_access_key: 'AWS_SECRET_ACCESS_KEY_ALT'
+          )
+        end
       end
     end
   end

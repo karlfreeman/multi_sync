@@ -76,6 +76,5 @@ module MultiSync
 
       manifest_hash
     end
-
   end
 end

@@ -25,8 +25,22 @@ module MultiSync
   # delegate all MultiSync::Client's attribute accessors to the configuration
   def_delegators :client, *MultiSync::Client.attribute_set.map(&:name)
 
-  # include some public methods
-  def_delegators :client, :target, :source, :synchronize
+   # include sync method
+  def_delegator :client, :sync
+
+  # create methods for each source (local_source(options), manifest_source(options))
+  MultiSync::Client::SUPPORTED_SOURCE_TYPES.each do |type, clazz|
+    define_singleton_method "#{type}_source" do |options = {}|
+      client.add_source(clazz, options)
+    end
+  end
+
+  # create methods for each target (aws_target(options))
+  MultiSync::Client::SUPPORTED_TARGET_TYPES.each do |type, clazz|
+    define_singleton_method "#{type}_target" do |options = {}|
+      client.add_target(clazz, options)
+    end
+  end
 
   # Configure
   #
@@ -40,7 +54,7 @@ module MultiSync
   #
   # @return [MultiSync]
   def self.run(&block)
-    configure(&block).synchronize
+    configure(&block).sync
   end
 
   # Prepare
@@ -62,6 +76,13 @@ module MultiSync
   # @return [MultiSync::Configuration]
   def self.configuration(options = {})
     @configuration ||= MultiSync::Configuration.new(options)
+  end
+
+  # Return the MultiSync::VERSION
+  #
+  # @return [String]
+  def self.version
+    MultiSync::VERSION
   end
 
   # Reset the MultiSync::Client

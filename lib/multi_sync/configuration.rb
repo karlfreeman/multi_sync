@@ -24,6 +24,8 @@ module MultiSync
       super
     end
 
+    private
+
     def celluloid_cores
       Celluloid.cores
     end

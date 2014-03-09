@@ -9,8 +9,10 @@ describe MultiSync::LocalResource, fakefs: true do
   describe :local do
     context :valid do
       it 'should return correct file details' do
-        # binding.pry
-        resource = MultiSync::LocalResource.new(path_with_root: Pathname.new('/tmp/local-resource/foo.txt'), path_without_root: Pathname.new('foo.txt'))
+        resource = MultiSync::LocalResource.new(
+          path_with_root: Pathname.new('/tmp/local-resource/foo.txt'),
+          path_without_root: Pathname.new('foo.txt')
+        )
         expect(resource.body).to eq 'foo'
         expect(resource.content_length).to eq 3
         expect(resource.content_type).to eq 'text/plain'

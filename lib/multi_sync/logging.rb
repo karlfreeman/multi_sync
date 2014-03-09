@@ -5,22 +5,27 @@ module MultiSync
   module Logging
     MUTEX = Mutex.new
 
+    # Retrieves the current MultiSync logger
     def logger
       @logger || initialize_logger
     end
 
+    # Sets the current MultiSync logger
     def logger=(new_logger)
       @logger = new_logger ? new_logger : Logger.new('/dev/null')
     end
 
+    # Retrieves the current MultiSync status_logger
     def status_logger
       @status_logger || initialize_status_logger
     end
 
+    # Sets the current MultiSync logger
     def status_logger=(new_status_logger)
       @status_logger = new_status_logger ? new_status_logger : nil
     end
 
+    #
     def say_status(status, message, log_status = true)
       return if status_logger.nil?
 
@@ -31,6 +36,7 @@ module MultiSync
       end
     end
 
+    #
     def log(message, level = :debug)
       # We're not in verbose mode so disable all non-info logs
       say_status :sync, message
