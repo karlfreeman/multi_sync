@@ -7,17 +7,6 @@ module MultiSync
   class ManifestSource < Source
     def files
       files = []
-      manifest_hash = {}
-
-      # ::ActionView::Base has a shortcut to the manifest file
-      # otherwise lets hunt down that manifest file!
-      if defined?(::ActionView::Base) && ::ActionView::Base.respond_to?(:assets_manifest)
-        manifest_hash = ::ActionView::Base.assets_manifest.files
-      else
-        manifest_path = locate_manifest(source_dir)
-        manifest_hash = parse_manifest(manifest_path)
-      end
-
       # create a local_resource from each file
       # making sure to skip any that do not match the include/exclude patterns
       manifest_hash.lazily.each { |key, value|
@@ -26,14 +15,22 @@ module MultiSync
         file = path_to_local_resource(path, mtime: value['mtime'], digest: value['digest'], content_length: value['size'])
         files << file
       }
-
       files
     end
 
     private
 
-    def locate_manifest(dir)
-      Dir.glob(dir + 'manifest*.{json,yaml,yml}').max { |f| File.ctime(f) }
+    def manifest_hash
+      manifest_hash = {}
+      # ::ActionView::Base has a shortcut to the manifest file
+      # otherwise lets hunt down that manifest file!
+      if defined?(::ActionView::Base) && ::ActionView::Base.respond_to?(:assets_manifest)
+        manifest_hash = ::ActionView::Base.assets_manifest.files
+      else
+        manifest_path = Dir.glob(source_dir + 'manifest*.{json,yaml,yml}').max { |f| File.ctime(f) }
+        manifest_hash = parse_manifest(manifest_path)
+      end
+      manifest_hash
     end
 
     def parse_manifest(manifest_path)
@@ -73,12 +70,12 @@ module MultiSync
           }
         }
 
-        #
         manifest_hash = modified_manifest_hash
 
       end
 
       manifest_hash
     end
+
   end
 end
