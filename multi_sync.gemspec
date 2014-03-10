@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = MultiSync::VERSION
   spec.authors       = ['Karl Freeman']
   spec.email         = ['karlfreeman@gmail.com']
-  spec.summary       = %q{A flexible synchronisation library for your assets}
-  spec.description   = %q{A flexible synchronisation library for your assets}
+  spec.summary       = %q{Flexible synchronisation for your assets}
+  spec.description   = %q{Flexible synchronisation for your assets}
   spec.homepage      = 'https://github.com/karlfreeman/multi_sync'
   spec.license       = 'MIT'
 
