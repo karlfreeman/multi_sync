@@ -12,8 +12,9 @@ module MultiSync
 
   # a list of libraries, extension file and class name
   REQUIREMENT_MAP = [
-    ['rails', 'multi_sync/extensions/rails'].freeze,
-    ['middleman-core', 'multi_sync/extensions/middleman'].freeze
+    ['rails', 'multi_sync/extensions/rails'],
+    ['middleman-core', 'multi_sync/extensions/middleman'],
+    ['jekyll', 'multi_sync/extensions/jekyll']
   ]
 
   # delegate all MultiSync::Configuration's attribute accessors to the configuration
