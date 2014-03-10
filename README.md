@@ -140,6 +140,16 @@ ___
 
 ```ruby
 # An `aws` `target` which will sync to a bucket named 's3-bucket-name'
+# using credentials sourced from Fog's credentials (.fog or FOG_RC)
+aws_target({
+  target_dir: 's3-bucket-name'
+  destination_dir: 'directory-within-s3'
+})
+```
+___
+
+```ruby
+# An `aws` `target` which will sync to a bucket named 's3-bucket-name'
 # but within a directory named 'directory-within-s3'
 # with region, access_key_id, and secret_access_key specified
 aws_target({
