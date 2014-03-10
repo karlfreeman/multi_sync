@@ -126,7 +126,7 @@ ___
 
 ```ruby
 # An `aws` `target` which will sync to the root of a bucket named 's3-bucket-name'
-# with region, access_key_id, and secret_access_key specified
+# in region 'us-east-1', with access_key_id 'xxx', and secret_access_key 'xxx'
 aws_target({
   target_dir: 's3-bucket-name'
   credentials: {
@@ -143,15 +143,14 @@ ___
 # using credentials sourced from Fog's credentials (.fog or FOG_RC)
 aws_target({
   target_dir: 's3-bucket-name'
-  destination_dir: 'directory-within-s3'
 })
 ```
 ___
 
 ```ruby
 # An `aws` `target` which will sync to a bucket named 's3-bucket-name'
-# but within a directory named 'directory-within-s3'
-# with region, access_key_id, and secret_access_key specified
+# within a directory named 'directory-within-s3'
+# in region 'us-east-1', with access_key_id 'xxx', and secret_access_key 'xxx'
 aws_target({
   target_dir: 's3-bucket-name'
   destination_dir: 'directory-within-s3'
