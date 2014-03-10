@@ -3,24 +3,24 @@ require 'spec_helper'
 describe MultiSync::Client do
   before do
     FileUtils.mkdir_p('tmp/simple')
-    File.open('tmp/simple/foo.txt', 'w') do |f| f.write('foo') end
-    File.open('tmp/simple/bar.txt', 'w') do |f| f.write('bar') end
+    File.open('tmp/simple/foo.txt', File::CREAT|File::RDWR) do |f| f.write('foo') end
+    File.open('tmp/simple/bar.txt', File::CREAT|File::RDWR) do |f| f.write('bar') end
 
     FileUtils.mkdir_p('tmp/simple/in-a-dir')
-    File.open('tmp/simple/in-a-dir/baz.html', 'w') do |f| f.write('baz') end
+    File.open('tmp/simple/in-a-dir/baz.html', File::CREAT|File::RDWR) do |f| f.write('baz') end
 
     FileUtils.cp_r('tmp/simple', 'tmp/simple-with-missing-file')
     FileUtils.rm_r('tmp/simple-with-missing-file/foo.txt')
 
     FileUtils.cp_r('tmp/simple', 'tmp/simple-with-abandoned-file')
-    File.open('tmp/simple-with-abandoned-file/baz.txt', 'w') do |f| f.write('baz') end
+    File.open('tmp/simple-with-abandoned-file/baz.txt', File::CREAT|File::RDWR) do |f| f.write('baz') end
 
     FileUtils.cp_r('tmp/simple', 'tmp/simple-with-outdated-file')
-    File.open('tmp/simple-with-outdated-file/foo.txt', 'w') do |f| f.write('not-foo') end
+    File.open('tmp/simple-with-outdated-file/foo.txt', File::CREAT|File::RDWR) do |f| f.write('not-foo') end
 
     FileUtils.mkdir_p('tmp/complex')
     50.times do
-      File.open("tmp/complex/#{SecureRandom.urlsafe_base64}.txt", 'w') do |f| f.write(SecureRandom.random_bytes) end
+      File.open("tmp/complex/#{SecureRandom.urlsafe_base64}.txt", File::CREAT|File::RDWR) do |f| f.write(SecureRandom.random_bytes) end
     end
 
     FileUtils.mkdir_p('tmp/complex-empty')

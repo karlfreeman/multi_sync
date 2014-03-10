@@ -4,11 +4,11 @@ require 'sprockets'
 describe MultiSync::ManifestSource do
   before do
     FileUtils.mkdir_p('tmp/local-manifest')
-    File.open('tmp/local-manifest/foo.txt', 'w') do |f| f.write('foo') end
-    File.open('tmp/local-manifest/bar.txt', 'w') do |f| f.write('bar') end
+    File.open('tmp/local-manifest/foo.txt', File::CREAT|File::RDWR) do |f| f.write('foo') end
+    File.open('tmp/local-manifest/bar.txt', File::CREAT|File::RDWR) do |f| f.write('bar') end
     FileUtils.mkdir_p('tmp/local-manifest/in-a-dir')
-    File.open('tmp/local-manifest/in-a-dir/baz.html', 'w') do |f| f.write('baz') end
-    File.open('tmp/local-manifest/in-a-dir/baz.txt', 'w') do |f| f.write('baz') end
+    File.open('tmp/local-manifest/in-a-dir/baz.html', File::CREAT|File::RDWR) do |f| f.write('baz') end
+    File.open('tmp/local-manifest/in-a-dir/baz.txt', File::CREAT|File::RDWR) do |f| f.write('baz') end
 
     env = Sprockets::Environment.new('.') do |e|
       e.append_path('tmp/local-manifest')

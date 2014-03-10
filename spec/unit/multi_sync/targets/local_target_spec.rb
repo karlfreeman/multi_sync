@@ -3,10 +3,10 @@ require 'spec_helper'
 describe MultiSync::LocalTarget do
   before do
     FileUtils.mkdir_p('tmp/local-target')
-    File.open('tmp/local-target/foo.txt', 'w') do |f| f.write('foo') end
-    File.open('tmp/local-target/bar.txt', 'w') do |f| f.write('bar') end
+    File.open('tmp/local-target/foo.txt', File::CREAT|File::RDWR) do |f| f.write('foo') end
+    File.open('tmp/local-target/bar.txt', File::CREAT|File::RDWR) do |f| f.write('bar') end
     FileUtils.mkdir_p('tmp/local-target/in-a-dir')
-    File.open('tmp/local-target/in-a-dir/baz.html', 'w') do |f| f.write('baz') end
+    File.open('tmp/local-target/in-a-dir/baz.html', File::CREAT|File::RDWR) do |f| f.write('baz') end
   end
 
   describe :files do
