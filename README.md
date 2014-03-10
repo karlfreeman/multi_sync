@@ -155,9 +155,9 @@ aws_target({
 
 ## Supported Libraries
 
-- [Rails](https://github.com/karlfreeman/multi_sync-rails) (WIP)
+- [Rails](https://github.com/karlfreeman/multi_sync-rails)
 - Sinatra (WIP)
-- [Middleman](https://github.com/karlfreeman/multi_sync-middleman) (WIP)
+- [Middleman](https://github.com/karlfreeman/multi_sync-middleman)
 - Jekyll (WIP)
 - Nanoc (WIP)
 
