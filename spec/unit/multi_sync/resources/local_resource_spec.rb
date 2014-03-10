@@ -16,7 +16,7 @@ describe MultiSync::LocalResource, fakefs: true do
         expect(resource.body).to eq 'foo'
         expect(resource.content_length).to eq 3
         expect(resource.content_type).to eq 'text/plain'
-        expect(resource.mtime.to_s).to eq Time.now.to_s
+        expect(resource.mtime).to be_within(1).of(Time.now)
         expect(resource.etag).to eq 'acbd18db4cc2f85cedef654fccc4a4d8'
       end
     end
