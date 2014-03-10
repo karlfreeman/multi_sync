@@ -7,7 +7,7 @@ RSpec.configure do |config|
     tmp = Pathname.new File.join(tmpdir, ex.__id__.to_s)
     pwd = Dir.pwd
     FileUtils.mkdir(tmp)
-    begin  
+    begin
       Dir.chdir(tmp)
       ex.run
       Dir.chdir(pwd)

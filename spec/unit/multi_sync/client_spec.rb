@@ -3,24 +3,24 @@ require 'spec_helper'
 describe MultiSync::Client do
   before do
     FileUtils.mkdir_p('tmp/simple')
-    File.open('tmp/simple/foo.txt', File::CREAT|File::RDWR) do |f| f.write('foo') end
-    File.open('tmp/simple/bar.txt', File::CREAT|File::RDWR) do |f| f.write('bar') end
+    File.open('tmp/simple/foo.txt', File::CREAT | File::RDWR) do |f| f.write('foo') end
+    File.open('tmp/simple/bar.txt', File::CREAT | File::RDWR) do |f| f.write('bar') end
 
     FileUtils.mkdir_p('tmp/simple/in-a-dir')
-    File.open('tmp/simple/in-a-dir/baz.html', File::CREAT|File::RDWR) do |f| f.write('baz') end
+    File.open('tmp/simple/in-a-dir/baz.html', File::CREAT | File::RDWR) do |f| f.write('baz') end
 
     FileUtils.cp_r('tmp/simple', 'tmp/simple-with-missing-file')
     FileUtils.rm_r('tmp/simple-with-missing-file/foo.txt')
 
     FileUtils.cp_r('tmp/simple', 'tmp/simple-with-abandoned-file')
-    File.open('tmp/simple-with-abandoned-file/baz.txt', File::CREAT|File::RDWR) do |f| f.write('baz') end
+    File.open('tmp/simple-with-abandoned-file/baz.txt', File::CREAT | File::RDWR) do |f| f.write('baz') end
 
     FileUtils.cp_r('tmp/simple', 'tmp/simple-with-outdated-file')
-    File.open('tmp/simple-with-outdated-file/foo.txt', File::CREAT|File::RDWR) do |f| f.write('not-foo') end
+    File.open('tmp/simple-with-outdated-file/foo.txt', File::CREAT | File::RDWR) do |f| f.write('not-foo') end
 
     FileUtils.mkdir_p('tmp/complex')
-    50.times do
-      File.open("tmp/complex/#{SecureRandom.urlsafe_base64}.txt", File::CREAT|File::RDWR) do |f| f.write(SecureRandom.random_bytes) end
+    1_000.times do |i|
+      File.open("tmp/complex/#{i.to_s.rjust(4, '0')}.txt", File::CREAT | File::RDWR) do |f| f.write('foo') end
     end
 
     FileUtils.mkdir_p('tmp/complex-empty')
@@ -99,14 +99,14 @@ describe MultiSync::Client do
           expect(complex_empty_target).to have(0).files
 
           local_source = MultiSync::LocalSource.new(local_source_options)
-          expect(local_source).to have(50).files
+          expect(local_source).to have(1_000).files
 
           MultiSync.run do
             local_source(local_source_options)
             local_target(complex_empty_target_options)
           end
 
-          expect(complex_empty_target).to have(50).files
+          expect(complex_empty_target).to have(1_000).files
         end
       end
     end
@@ -223,14 +223,14 @@ describe MultiSync::Client do
           expect(complex_empty_target).to have(0).files
 
           local_source = MultiSync::LocalSource.new(local_source_options)
-          expect(local_source).to have(50).files
+          expect(local_source).to have(1_000).files
 
           MultiSync.run do
             local_source(local_source_options)
             aws_target(complex_empty_target_options)
           end
 
-          expect(complex_empty_target).to have(50).files
+          expect(complex_empty_target).to have(1_000).files
         end
       end
 

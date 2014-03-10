@@ -11,9 +11,12 @@ module MultiSync
     include MultiSync::Helpers::Pluralize
 
     attribute :supervisor, Celluloid::SupervisionGroup
-    attribute :incomplete_jobs, Array, default: []
-    attribute :running_jobs, Array, default: []
-    attribute :complete_jobs, Array, default: []
+    attribute :running_upload_jobs, Array, default: []
+    attribute :running_delete_jobs, Array, default: []
+    attribute :complete_upload_jobs, Array, default: []
+    attribute :complete_delete_jobs, Array, default: []
+    attribute :incomplete_upload_jobs, Array, default: []
+    attribute :incomplete_delete_jobs, Array, default: []
     attribute :sources, Array, default: []
     attribute :sync_attempts, Integer, default: 0
     attribute :file_sync_attempts, Integer, default: 0
@@ -55,28 +58,35 @@ module MultiSync
     #
     def sync
       MultiSync.warn 'Preventing synchronization as there are no sources found.' && return if sync_pointless?
-      MultiSync.debug 'Starting synchronization...'
 
-      determine_sync if first_run?
-      sync_attempted
-
-      MultiSync.debug 'Scheduling jobs in the future...'
-      incomplete_jobs.delete_if do | job |
-        running_jobs << { future: supervisor[job[:target_id]].future.send(job[:method], job[:resource]), method: job[:method] }
+      if first_run?
+        MultiSync.debug 'Starting synchronization...'
+        determine_sync
+      else
+        MultiSync.debug 'Restarting synchronization...'
       end
 
-      MultiSync.debug 'Fetching jobs from the future...'
-      running_jobs.delete_if do | job |
-        completed_job = {}
+      sync_attempted
+
+      MultiSync.debug 'Fetching upload jobs from the future...'
+      (running_upload_jobs | incomplete_upload_jobs).lazily.each do | job |
         begin
-          completed_job.merge!(value: job[:future].value, method: job[:method])
+          complete_upload_jobs << job.value
         rescue => error
           self.file_sync_attempts = file_sync_attempts + 1
           MultiSync.warn error.inspect
-          false
-        else
-          complete_jobs << completed_job
-          true
+          incomplete_upload_jobs << job
+        end
+      end
+
+      MultiSync.debug 'Fetching delete jobs from the future...'
+      (running_delete_jobs | incomplete_delete_jobs).lazily.each do | job |
+        begin
+          complete_delete_jobs << job.value
+        rescue => error
+          self.file_sync_attempts = file_sync_attempts + 1
+          MultiSync.warn error.inspect
+          incomplete_delete_jobs << job
         end
       end
 
@@ -129,23 +139,25 @@ module MultiSync
           outdated_files.concat determine_outdated_files(source_files - missing_files, target_files - abandoned_files)
           MultiSync.debug "#{outdated_files.length} of the files are outdated"
 
-          # abandoned files
-          if MultiSync.delete_abandoned_files
-            abandoned_files.lazily.each do | resource |
-              incomplete_jobs << { target_id: target_id, method: :delete, resource: resource }
-            end
+          MultiSync.debug 'Scheduling jobs in the future...'
+
+          # outdated files
+          outdated_files.lazily.each do | resource |
+            running_upload_jobs << supervisor[target_id].future.upload(resource)
           end
 
           # missing files
           if MultiSync.upload_missing_files
             missing_files.lazily.each do | resource |
-              incomplete_jobs << { target_id: target_id, method: :upload, resource: resource }
+              running_upload_jobs << supervisor[target_id].future.upload(resource)
             end
           end
 
-          # outdated files
-          outdated_files.lazily.each do | resource |
-            incomplete_jobs << { target_id: target_id, method: :upload, resource: resource }
+          # abandoned files
+          if MultiSync.delete_abandoned_files
+            abandoned_files.lazily.each do | resource |
+              running_delete_jobs << supervisor[target_id].future.delete(resource)
+            end
           end
 
         end
@@ -169,7 +181,7 @@ module MultiSync
       if finished_at
         elapsed = finished_at.to_f - started_at.to_f
         minutes, seconds = elapsed.divmod 60.0
-        bytes = complete_uploaded_jobs_bytes
+        bytes = complete_upload_jobs_bytes
         kilobytes = bytes / 1024.0
         MultiSync.debug "Sync completed in #{pluralize(minutes.round, 'minute')} and #{pluralize(seconds.round, 'second')}"
         MultiSync.debug 'The combined upload weight was ' + ((bytes > 1024.0) ? pluralize(kilobytes.round, 'kilobyte') : pluralize(bytes.round, 'byte'))
@@ -177,23 +189,23 @@ module MultiSync
       else
         MultiSync.debug "Sync failed to complete with #{pluralize(incomplete_jobs.length, 'outstanding file')} to be synchronised"
       end
-      MultiSync.debug "#{pluralize(complete_jobs.length, 'file')} were synchronised (#{pluralize(complete_deleted_jobs.length, 'deleted file')} and #{pluralize(complete_uploaded_jobs.length, 'uploaded file')}) from #{pluralize(sources.length, 'source')} to #{pluralize(supervisor_actor_names.length, 'target')}"
+      MultiSync.debug "#{pluralize(complete_jobs.length, 'file')} were synchronised (#{pluralize(complete_delete_jobs.length, 'deleted file')} and #{pluralize(complete_upload_jobs.length, 'uploaded file')}) from #{pluralize(sources.length, 'source')} to #{pluralize(supervisor_actor_names.length, 'target')}"
 
       supervisor.terminate
     end
 
-    def complete_deleted_jobs
-      complete_jobs.select { |job| job[:method] == :delete }
+    def complete_jobs
+      complete_upload_jobs | complete_delete_jobs
     end
 
-    def complete_uploaded_jobs
-      complete_jobs.select { |job| job[:method] == :upload }
+    def incomplete_jobs
+      incomplete_upload_jobs | incomplete_delete_jobs
     end
 
-    def complete_uploaded_jobs_bytes
+    def complete_upload_jobs_bytes
       total_bytes = 0
-      complete_uploaded_jobs.each do | job |
-        total_bytes += job[:value].content_length || job[:value].determine_content_length || 0
+      complete_upload_jobs.each do | job |
+        total_bytes += job.content_length || job.determine_content_length || 0
       end
       total_bytes
     end
