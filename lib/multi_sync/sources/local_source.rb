@@ -9,7 +9,7 @@ module MultiSync
       # making sure to skip any that do not match the include/exclude patterns
       included_files = Dir.glob(source_dir + include)
       excluded_files = exclude.nil? ? [] : Dir.glob(source_dir + exclude)
-      (included_files - excluded_files).lazily.each { |path|
+      (included_files - excluded_files).each { |path|
         next if File.directory?(path)
         files << path_to_local_resource(path)
       }

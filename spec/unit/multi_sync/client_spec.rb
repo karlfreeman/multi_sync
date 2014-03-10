@@ -1,3 +1,4 @@
+require 'cgi'
 require 'spec_helper'
 
 describe MultiSync::Client do
@@ -18,8 +19,10 @@ describe MultiSync::Client do
     FileUtils.cp_r('tmp/simple', 'tmp/simple-with-outdated-file')
     File.open('tmp/simple-with-outdated-file/foo.txt', File::CREAT | File::RDWR) do |f| f.write('not-foo') end
 
+    FileUtils.mkdir_p('tmp/simple-empty')
+
     FileUtils.mkdir_p('tmp/complex')
-    1_000.times do |i|
+    250.times do |i|
       File.open("tmp/complex/#{i.to_s.rjust(4, '0')}.txt", File::CREAT | File::RDWR) do |f| f.write('foo') end
     end
 
@@ -99,29 +102,24 @@ describe MultiSync::Client do
           expect(complex_empty_target).to have(0).files
 
           local_source = MultiSync::LocalSource.new(local_source_options)
-          expect(local_source).to have(1_000).files
+          expect(local_source).to have(250).files
 
           MultiSync.run do
             local_source(local_source_options)
             local_target(complex_empty_target_options)
           end
 
-          expect(complex_empty_target).to have(1_000).files
+          expect(complex_empty_target).to have(250).files
         end
       end
     end
 
     context :aws, fog: true do
+      let(:credentials) { { region: 'us-east-1', aws_access_key_id: 'xxx', aws_secret_access_key: 'xxx' } }
+      let(:connection) { Fog::Storage.new(credentials.merge(provider: :aws)) }
       context 'simple' do
         before do
-          connection = Fog::Storage.new(
-            provider: :aws,
-            region: 'us-east-1',
-            aws_access_key_id: 'xxx',
-            aws_secret_access_key: 'xxx'
-          )
-
-          directory = connection.directories.create(key: 'multi_sync', public: true)
+          directory = connection.directories.create(key: 'simple', public: true)
 
           %w(simple simple-with-missing-file simple-with-abandoned-file simple-with-outdated-file).each do |fixture_name|
             Dir.glob("tmp/#{fixture_name}/**/*").reject { |path| File.directory?(path) }.each do |path|
@@ -136,33 +134,21 @@ describe MultiSync::Client do
 
         it 'should work' do
           missing_files_target_options = {
-            target_dir: 'multi_sync',
+            target_dir: 'simple',
             destination_dir: 'simple-with-missing-file',
-            credentials: {
-              region: 'us-east-1',
-              aws_access_key_id: 'xxx',
-              aws_secret_access_key: 'xxx'
-            }
+            credentials: credentials
           }
 
           abandoned_files_target_options = {
-            target_dir: 'multi_sync',
+            target_dir: 'simple',
             destination_dir: 'simple-with-abandoned-file',
-            credentials: {
-              region: 'us-east-1',
-              aws_access_key_id: 'xxx',
-              aws_secret_access_key: 'xxx'
-            }
+            credentials: credentials
           }
 
           outdated_files_target_options = {
-            target_dir: 'multi_sync',
+            target_dir: 'simple',
             destination_dir: 'simple-with-outdated-file',
-            credentials: {
-              region: 'us-east-1',
-              aws_access_key_id: 'xxx',
-              aws_secret_access_key: 'xxx'
-            }
+            credentials: credentials
           }
 
           local_source_options = { source_dir: 'tmp/simple' }
@@ -196,25 +182,14 @@ describe MultiSync::Client do
 
       context 'complex' do
         before do
-          connection = Fog::Storage.new(
-            provider: :aws,
-            region: 'us-east-1',
-            aws_access_key_id: 'xxx',
-            aws_secret_access_key: 'xxx'
-          )
-
-          connection.directories.create(key: 'multi_sync', public: true)
+          connection.directories.create(key: 'complex', public: true)
         end
 
         it 'should work' do
           complex_empty_target_options = {
-            target_dir: 'multi_sync',
-            destination_dir: 'complex-empty',
-            credentials: {
-              region: 'us-east-1',
-              aws_access_key_id: 'xxx',
-              aws_secret_access_key: 'xxx'
-            }
+            target_dir: 'complex',
+            destination_dir: 'complex',
+            credentials: credentials
           }
 
           local_source_options = { source_dir: 'tmp/complex' }
@@ -223,37 +198,26 @@ describe MultiSync::Client do
           expect(complex_empty_target).to have(0).files
 
           local_source = MultiSync::LocalSource.new(local_source_options)
-          expect(local_source).to have(1_000).files
+          expect(local_source).to have(250).files
 
           MultiSync.run do
             local_source(local_source_options)
             aws_target(complex_empty_target_options)
           end
 
-          expect(complex_empty_target).to have(1_000).files
+          expect(complex_empty_target).to have(250).files
         end
       end
 
       context 'without a destination_dir' do
         before do
-          connection = Fog::Storage.new(
-            provider: :aws,
-            region: 'us-east-1',
-            aws_access_key_id: 'xxx',
-            aws_secret_access_key: 'xxx'
-          )
-
           connection.directories.create(key: 'without_destination_dir', public: true)
         end
 
         it 'should work' do
           without_destination_dir_target_options = {
             target_dir: 'without_destination_dir',
-            credentials: {
-              region: 'us-east-1',
-              aws_access_key_id: 'xxx',
-              aws_secret_access_key: 'xxx'
-            }
+            credentials: credentials
           }
 
           local_source_options = { source_dir: 'tmp/simple' }
@@ -274,7 +238,40 @@ describe MultiSync::Client do
       end
 
       context 'with resource_options' do
-        # TODO: tests...
+        before do
+          connection.directories.create(key: 'with_resource_options', public: true)
+        end
+
+        it 'should work' do
+          with_resource_options_target_options = {
+            target_dir: 'with_resource_options',
+            credentials: credentials
+          }
+
+          local_source_options = {
+            source_dir: 'tmp/simple',
+            resource_options: {
+              cache_control: 'public, max-age=31557600',
+              expires: CGI.rfc1123_date(Time.now + 31_557_600)
+            }
+          }
+
+          with_resource_options_target = MultiSync::AwsTarget.new(with_resource_options_target_options)
+          expect(with_resource_options_target).to have(0).files
+
+          local_source = MultiSync::LocalSource.new(local_source_options)
+          expect(local_source).to have(3).files
+
+          MultiSync.run do
+            local_source(local_source_options)
+            aws_target(with_resource_options_target)
+          end
+
+          # dir = connection.directories.get('with_resource_options')
+          # pp with_resource_options_target.files[0].file.cache_control
+
+          expect(with_resource_options_target).to have(3).files
+        end
       end
     end
   end

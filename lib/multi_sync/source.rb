@@ -1,6 +1,5 @@
 require 'virtus'
 require 'pathname'
-require 'lazily'
 require 'multi_sync/attributes/pathname'
 require 'multi_sync/resources/local_resource'
 

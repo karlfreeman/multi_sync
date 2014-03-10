@@ -13,7 +13,7 @@ module MultiSync
       directory = connection.directories.get(target_dir.to_s, prefix: destination_dir.to_s)
       return files if directory.nil?
 
-      directory.files.lazily.each { |file|
+      directory.files.each { |file|
         pathname = Pathname.new(file.key)
 
         # eg directory or overreaching AWS globbing

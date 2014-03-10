@@ -9,7 +9,7 @@ module MultiSync
       files = []
       # create a local_resource from each file
       # making sure to skip any that do not match the include/exclude patterns
-      manifest_hash.lazily.each { |key, value|
+      manifest_hash.each { |key, value|
         path = source_dir + key
         next if !path.fnmatch?(include.to_s) || path.fnmatch?(exclude.to_s || '')
         file = path_to_local_resource(path, mtime: value['mtime'], digest: value['digest'], content_length: value['size'])

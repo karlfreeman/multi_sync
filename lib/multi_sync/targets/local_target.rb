@@ -13,7 +13,7 @@ module MultiSync
       directory = connection.directories.get(destination_dir.to_s)
       return files if directory.nil?
 
-      directory.files.lazily.each { |file|
+      directory.files.each { |file|
         pathname = Pathname.new(file.key)
 
         # directory

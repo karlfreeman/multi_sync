@@ -1,5 +1,4 @@
 require 'virtus'
-require 'lazily'
 require 'celluloid'
 %w(sources targets helpers).each do |dir|
   Dir.glob(File.expand_path("../#{dir}/**/*.rb", __FILE__), &method(:require))
@@ -69,7 +68,7 @@ module MultiSync
       sync_attempted
 
       MultiSync.debug 'Fetching upload jobs from the future...'
-      (running_upload_jobs | incomplete_upload_jobs).lazily.each do | job |
+      (running_upload_jobs | incomplete_upload_jobs).each do | job |
         begin
           complete_upload_jobs << job.value
         rescue => error
@@ -80,7 +79,7 @@ module MultiSync
       end
 
       MultiSync.debug 'Fetching delete jobs from the future...'
-      (running_delete_jobs | incomplete_delete_jobs).lazily.each do | job |
+      (running_delete_jobs | incomplete_delete_jobs).each do | job |
         begin
           complete_delete_jobs << job.value
         rescue => error
@@ -96,7 +95,7 @@ module MultiSync
     private
 
     def determine_sync
-      sources.lazily.each do |source|
+      sources.each do |source|
 
         source_files = []
 
@@ -109,7 +108,7 @@ module MultiSync
         # when no targets are specified, assume all targets
         source.targets = supervisor_actor_names if source.targets.empty?
 
-        source.targets.lazily.each do | target_id |
+        source.targets.each do | target_id |
 
           missing_files = []
           abandoned_files = []
@@ -142,20 +141,20 @@ module MultiSync
           MultiSync.debug 'Scheduling jobs in the future...'
 
           # outdated files
-          outdated_files.lazily.each do | resource |
+          outdated_files.each do | resource |
             running_upload_jobs << supervisor[target_id].future.upload(resource)
           end
 
           # missing files
           if MultiSync.upload_missing_files
-            missing_files.lazily.each do | resource |
+            missing_files.each do | resource |
               running_upload_jobs << supervisor[target_id].future.upload(resource)
             end
           end
 
           # abandoned files
           if MultiSync.delete_abandoned_files
-            abandoned_files.lazily.each do | resource |
+            abandoned_files.each do | resource |
               running_delete_jobs << supervisor[target_id].future.delete(resource)
             end
           end
@@ -224,7 +223,7 @@ module MultiSync
 
       # TODO: replace with celluloid pool of futures
       # check each source file against the matching target_file's etag
-      source_files.lazily.each_with_index do |file, i|
+      source_files.each_with_index do |file, i|
         if !file.matching_etag?(target_files[i]) || MultiSync.force
           outdated_files << file
         else
