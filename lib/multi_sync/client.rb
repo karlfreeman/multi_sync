@@ -96,9 +96,6 @@ module MultiSync
 
         source_files = source.files
 
-        # sort to make sure the source's indexes match the targets
-        source_files.sort!
-
         # when no targets are specified, assume all targets
         source.targets = supervisor_actor_names if source.targets.empty?
 
