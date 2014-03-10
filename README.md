@@ -2,7 +2,7 @@
 
 :heavy_exclamation_mark: **currently a functioning WIP thats not quite finished yet but its close!** :heavy_exclamation_mark:
 
-Flexible synchronisation library for your assets.
+Flexible synchronisation for your assets.
 
 `MultiSync` stands on the shoulders of giants. On one side is [Celluloid](http://celluloid.io) allowing for the synchronisation of assets to be highly parallel. On the other is [Fog::Storage](https://github.com/fog/fog) allowing `MulitSync` to support [various well known storage services](#storage-services).
 
