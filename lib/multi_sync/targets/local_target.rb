@@ -25,8 +25,7 @@ module MultiSync
         )
       }
 
-      files.sort!
-      files
+      files.sort
     end
 
     def upload(resource)

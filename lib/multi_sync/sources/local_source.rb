@@ -13,8 +13,7 @@ module MultiSync
         next if File.directory?(path)
         files << path_to_local_resource(path)
       }
-      files.sort!
-      files
+      files.sort
     end
   end
 end
