@@ -1,22 +1,22 @@
 require 'spec_helper'
 
-describe MultiSync::LocalTarget, fakefs: true do
+describe MultiSync::LocalTarget do
   before do
-    FileUtils.mkdir_p('/tmp/local-target')
-    File.open('/tmp/local-target/foo.txt', 'w') do |f| f.write('foo') end
-    File.open('/tmp/local-target/bar.txt', 'w') do |f| f.write('bar') end
-    FileUtils.mkdir_p('/tmp/local-target/in-a-dir')
-    File.open('/tmp/local-target/in-a-dir/baz.html', 'w') do |f| f.write('baz') end
+    FileUtils.mkdir_p('tmp/local-target')
+    File.open('tmp/local-target/foo.txt', 'w') do |f| f.write('foo') end
+    File.open('tmp/local-target/bar.txt', 'w') do |f| f.write('bar') end
+    FileUtils.mkdir_p('tmp/local-target/in-a-dir')
+    File.open('tmp/local-target/in-a-dir/baz.html', 'w') do |f| f.write('baz') end
   end
 
   describe :files do
     context :local do
       let(:target) {
         MultiSync::LocalTarget.new(
-          target_dir: '/tmp',
+          target_dir: 'tmp',
           destination_dir: 'local-target',
           credentials: {
-            local_root: '/tmp'
+            local_root: 'tmp'
           }
         )
       }
@@ -27,7 +27,7 @@ describe MultiSync::LocalTarget, fakefs: true do
 
       context :with_root do
         it 'should return files with the root' do
-          expect(target.files[0].path_with_root.to_s).to eq '/tmp/local-target/bar.txt'
+          expect(target.files[0].path_with_root.to_s).to eq 'tmp/local-target/bar.txt'
         end
       end
 

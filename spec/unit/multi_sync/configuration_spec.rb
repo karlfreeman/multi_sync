@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe MultiSync::Configuration, fakefs: true do
+describe MultiSync::Configuration do
   let(:configuration) { MultiSync::Configuration.new }
   context :configuration do
     describe :target_pool_size do
@@ -47,10 +47,7 @@ describe MultiSync::Configuration, fakefs: true do
         it 'should use fog credentials' do
           ENV['FOG_RC'] = '/tmp/fog/.fog'
           ENV['FOG_CREDENTIAL'] = 'default'
-          expect(configuration.credentials).to eq(
-                                                    aws_access_key_id: 'AWS_ACCESS_KEY_ID_DEFAULT',
-                                                    aws_secret_access_key: 'AWS_SECRET_ACCESS_KEY_DEFAULT'
-          )
+          expect(configuration.credentials).to eq(aws_access_key_id: 'AWS_ACCESS_KEY_ID_DEFAULT', aws_secret_access_key: 'AWS_SECRET_ACCESS_KEY_DEFAULT')
         end
         it 'should use fog \'alt\' credentials' do
           ENV['FOG_RC'] = '/tmp/fog/.fog'

@@ -1,6 +1,5 @@
 require 'fog'
 Fog::Mock.delay = 0
-
 module Fog
   module SpecHelpers
     def self.extended(example_group)

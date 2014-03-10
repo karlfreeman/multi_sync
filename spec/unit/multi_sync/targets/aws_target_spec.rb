@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe MultiSync::AwsTarget, fakefs: true, fog: true do
+describe MultiSync::AwsTarget, fog: true do
   before do
-    FileUtils.mkdir_p('/tmp/aws-target')
-    File.open('/tmp/aws-target/foo.txt', 'w') do |f| f.write('foo') end
-    File.open('/tmp/aws-target/bar.txt', 'w') do |f| f.write('bar') end
-    FileUtils.mkdir_p('/tmp/aws-target/in-a-dir')
-    File.open('/tmp/aws-target/in-a-dir/baz.html', 'w') do |f| f.write('baz') end
+    FileUtils.mkdir_p('tmp/aws-target')
+    File.open('tmp/aws-target/foo.txt', 'w') do |f| f.write('foo') end
+    File.open('tmp/aws-target/bar.txt', 'w') do |f| f.write('bar') end
+    FileUtils.mkdir_p('tmp/aws-target/in-a-dir')
+    File.open('tmp/aws-target/in-a-dir/baz.html', 'w') do |f| f.write('baz') end
 
     connection = Fog::Storage.new(
       provider: :aws,
@@ -17,9 +17,9 @@ describe MultiSync::AwsTarget, fakefs: true, fog: true do
 
     directory = connection.directories.create(key: 'multi_sync', public: true)
 
-    Dir.glob('/tmp/aws-target/**/*').reject { |path| File.directory?(path) }.each do |path|
+    Dir.glob('tmp/aws-target/**/*').reject { |path| File.directory?(path) }.each do |path|
       directory.files.create(
-        key: path.gsub('/tmp/', ''),
+        key: path.gsub('tmp/', ''),
         body: File.open(path, 'r'),
         public: true
       )

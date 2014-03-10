@@ -1,29 +1,29 @@
 require 'spec_helper'
 
-describe MultiSync::Client, fakefs: true do
-
+describe MultiSync::Client do
   before do
-    FileUtils.mkdir_p('/tmp/simple')
-    File.open('/tmp/simple/foo.txt', 'w') do |f| f.write('foo') end
-    File.open('/tmp/simple/bar.txt', 'w') do |f| f.write('bar') end
-    FileUtils.mkdir_p('/tmp/simple/in-a-dir')
-    File.open('/tmp/simple/in-a-dir/baz.html', 'w') do |f| f.write('baz') end
+    FileUtils.mkdir_p('tmp/simple')
+    File.open('tmp/simple/foo.txt', 'w') do |f| f.write('foo') end
+    File.open('tmp/simple/bar.txt', 'w') do |f| f.write('bar') end
 
-    FileUtils.cp_r('/tmp/simple', '/tmp/simple-with-missing-file')
-    FileUtils.rm_r('/tmp/simple-with-missing-file/foo.txt')
+    FileUtils.mkdir_p('tmp/simple/in-a-dir')
+    File.open('tmp/simple/in-a-dir/baz.html', 'w') do |f| f.write('baz') end
 
-    FileUtils.cp_r('/tmp/simple', '/tmp/simple-with-abandoned-file')
-    File.open('/tmp/simple-with-abandoned-file/baz.txt', 'w') do |f| f.write('baz') end
+    FileUtils.cp_r('tmp/simple', 'tmp/simple-with-missing-file')
+    FileUtils.rm_r('tmp/simple-with-missing-file/foo.txt')
 
-    FileUtils.cp_r('/tmp/simple', '/tmp/simple-with-outdated-file')
-    File.open('/tmp/simple-with-outdated-file/foo.txt', 'w') do |f| f.write('not-foo') end
+    FileUtils.cp_r('tmp/simple', 'tmp/simple-with-abandoned-file')
+    File.open('tmp/simple-with-abandoned-file/baz.txt', 'w') do |f| f.write('baz') end
 
-    FileUtils.mkdir_p('/tmp/complex')
+    FileUtils.cp_r('tmp/simple', 'tmp/simple-with-outdated-file')
+    File.open('tmp/simple-with-outdated-file/foo.txt', 'w') do |f| f.write('not-foo') end
+
+    FileUtils.mkdir_p('tmp/complex')
     50.times do
-      File.open("/tmp/complex/#{SecureRandom.urlsafe_base64}.txt", 'w') do |f| f.write(SecureRandom.random_bytes) end
+      File.open("tmp/complex/#{SecureRandom.urlsafe_base64}.txt", 'w') do |f| f.write(SecureRandom.random_bytes) end
     end
 
-    FileUtils.mkdir_p('/tmp/complex-empty')
+    FileUtils.mkdir_p('tmp/complex-empty')
   end
 
   context :sync do
@@ -31,30 +31,30 @@ describe MultiSync::Client, fakefs: true do
       context 'simple' do
         it 'should work' do
           missing_files_target_options = {
-            target_dir: '/tmp',
+            target_dir: 'tmp',
             destination_dir: 'simple-with-missing-file',
             credentials: {
-              local_root: '/tmp'
+              local_root: 'tmp'
             }
           }
 
           abandoned_files_target_options = {
-            target_dir: '/tmp',
+            target_dir: 'tmp',
             destination_dir: 'simple-with-abandoned-file',
             credentials: {
-              local_root: '/tmp'
+              local_root: 'tmp'
             }
           }
 
           outdated_files_target_options = {
-            target_dir: '/tmp',
+            target_dir: 'tmp',
             destination_dir: 'simple-with-outdated-file',
             credentials: {
-              local_root: '/tmp'
+              local_root: 'tmp'
             }
           }
 
-          local_source_options = { source_dir: '/tmp/simple' }
+          local_source_options = { source_dir: 'tmp/simple' }
 
           missing_files_target = MultiSync::LocalTarget.new(missing_files_target_options)
           abandoned_files_target = MultiSync::LocalTarget.new(abandoned_files_target_options)
@@ -86,14 +86,14 @@ describe MultiSync::Client, fakefs: true do
       context 'complex' do
         it 'should work' do
           complex_empty_target_options = {
-            target_dir: '/tmp',
+            target_dir: 'tmp',
             destination_dir: 'complex-empty',
             credentials: {
-              local_root: '/tmp'
+              local_root: 'tmp'
             }
           }
 
-          local_source_options = { source_dir: '/tmp/complex' }
+          local_source_options = { source_dir: 'tmp/complex' }
 
           complex_empty_target = MultiSync::LocalTarget.new(complex_empty_target_options)
           expect(complex_empty_target).to have(0).files
@@ -124,9 +124,9 @@ describe MultiSync::Client, fakefs: true do
           directory = connection.directories.create(key: 'multi_sync', public: true)
 
           %w(simple simple-with-missing-file simple-with-abandoned-file simple-with-outdated-file).each do |fixture_name|
-            Dir.glob("/tmp/#{fixture_name}/**/*").reject { |path| File.directory?(path) }.each do |path|
+            Dir.glob("tmp/#{fixture_name}/**/*").reject { |path| File.directory?(path) }.each do |path|
               directory.files.create(
-                key: path.gsub('/tmp/', ''),
+                key: path.gsub('tmp/', ''),
                 body: File.open(path, 'r'),
                 public: true
               )
@@ -165,7 +165,7 @@ describe MultiSync::Client, fakefs: true do
             }
           }
 
-          local_source_options = { source_dir: '/tmp/simple' }
+          local_source_options = { source_dir: 'tmp/simple' }
 
           missing_files_target = MultiSync::AwsTarget.new(missing_files_target_options)
           abandoned_files_target = MultiSync::AwsTarget.new(abandoned_files_target_options)
@@ -217,7 +217,7 @@ describe MultiSync::Client, fakefs: true do
             }
           }
 
-          local_source_options = { source_dir: '/tmp/complex' }
+          local_source_options = { source_dir: 'tmp/complex' }
 
           complex_empty_target = MultiSync::AwsTarget.new(complex_empty_target_options)
           expect(complex_empty_target).to have(0).files
@@ -256,7 +256,7 @@ describe MultiSync::Client, fakefs: true do
             }
           }
 
-          local_source_options = { source_dir: '/tmp/simple' }
+          local_source_options = { source_dir: 'tmp/simple' }
 
           without_destination_dir_target = MultiSync::AwsTarget.new(without_destination_dir_target_options)
           expect(without_destination_dir_target).to have(0).files
