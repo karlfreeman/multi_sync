@@ -15,6 +15,7 @@ module MultiSync
         file = path_to_local_resource(path, mtime: value['mtime'], digest: value['digest'], content_length: value['size'])
         files << file
       }
+      files.sort!
       files
     end
 

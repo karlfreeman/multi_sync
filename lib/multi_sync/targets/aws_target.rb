@@ -25,6 +25,7 @@ module MultiSync
         )
       }
 
+      files.sort!
       files
     end
 
