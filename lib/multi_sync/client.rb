@@ -119,7 +119,6 @@ module MultiSync
           MultiSync.debug 'Fetching files from the target...'
 
           target_files = supervisor[target_id].files
-          target_files.sort! # sort to make sure the target's indexs match the sources
 
           MultiSync.debug "#{pluralize(target_files.length, 'file')} found from the target"
 
