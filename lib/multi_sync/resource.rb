@@ -7,8 +7,8 @@ module MultiSync
     include Comparable
     include Virtus.model
 
-    attribute :path_with_root, Pathname
-    attribute :path_without_root, Pathname
+    attribute :path_with_root, MultiSync::Attributes::Pathname
+    attribute :path_without_root, MultiSync::Attributes::Pathname
 
     attribute :etag, String, default: :determine_etag, lazy: true
     attribute :mtime, Time, default: :determine_mtime, lazy: true
