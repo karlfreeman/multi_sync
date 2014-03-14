@@ -45,6 +45,12 @@ module MultiSync
       send(:attribute, attribute_hash[:name], attribute_hash[:type], def_attribute_hash)
     end
 
+    def initialize(*args)
+      super
+    rescue Virtus::CoercionError => e
+      raise ArgumentError, e.message
+    end
+
     def hash
       path_without_root.hash
     end

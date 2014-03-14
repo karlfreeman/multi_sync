@@ -5,7 +5,7 @@ require 'multi_sync/resources/local_resource'
 
 module MultiSync
   class Source
-    include Virtus.model
+    include Virtus.model(strict: true)
 
     attribute :source_dir, MultiSync::Attributes::Pathname
 
@@ -13,6 +13,12 @@ module MultiSync
     attribute :resource_options, Hash, default: {}
     attribute :include, String, default: '**/*'
     attribute :exclude, String, default: ''
+
+    def initialize(*args)
+      super
+    rescue Virtus::CoercionError => e
+      raise ArgumentError, e.message
+    end
 
     private
 
