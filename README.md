@@ -15,7 +15,7 @@ Listed below are examples of how to get setup and started.
 ## Installation
 
 ```ruby
-gem 'multi_sync', '~> 0.0.3'
+gem 'multi_sync', '~> 0.0.4'
 ```
 
 ```ruby

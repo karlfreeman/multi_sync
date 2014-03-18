@@ -1,3 +1,3 @@
 module MultiSync
-  VERSION = '0.0.3' unless defined?(MultiSync::VERSION)
+  VERSION = '0.0.4' unless defined?(MultiSync::VERSION)
 end
