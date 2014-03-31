@@ -27,7 +27,7 @@ module MultiSync
     private
 
     def celluloid_cores
-      Celluloid.cores < 2 ? 2 : Celluloid.cores 
+      Celluloid.cores < 2 ? 2 : Celluloid.cores
     end
 
     def fog_credentials
