@@ -1,13 +1,13 @@
 AllCops:
-  Includes:
+  Include:
     - Rakefile
     - Gemfile
-  Excludes:
-    - script/**
-    - vendor/**
-    - bin/**
-    - examples/**
-    - gemfiles/**
+  Exclude:
+    - script/**/*
+    - vendor/**/*
+    - bin/**/*
+    - examples/**/*
+    - gemfiles/**/*
 LineLength:
   Enabled: false
 MethodLength:
