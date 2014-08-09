@@ -22,7 +22,7 @@ describe MultiSync::LocalTarget do
       }
 
       it 'should find files' do
-        expect(target.files).to have(3).files
+        expect(target.files.size).to eq(3)
       end
 
       context :with_root do

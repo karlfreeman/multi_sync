@@ -44,7 +44,7 @@ describe MultiSync do
           config.verbose = true
           config.target_pool_size = 2
         end
-        expect(MultiSync.verbose).to be_true
+        expect(MultiSync.verbose).to be true
         expect(MultiSync.target_pool_size).to be 2
       end
     end
@@ -52,7 +52,7 @@ describe MultiSync do
       it 'should allow you to set configuration' do
         MultiSync.verbose = true
         MultiSync.target_pool_size = 2
-        expect(MultiSync.verbose).to be_true
+        expect(MultiSync.verbose).to be true
         expect(MultiSync.target_pool_size).to be 2
       end
     end

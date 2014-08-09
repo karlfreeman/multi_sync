@@ -13,22 +13,22 @@ describe MultiSync::LocalSource do
   describe :files do
     it 'should find files' do
       source = MultiSync::LocalSource.new(source_dir: 'tmp/local-source')
-      expect(source.files).to have(4).files
+      expect(source.files.size).to eq(4)
     end
 
     it 'should ignore found files' do
       source = MultiSync::LocalSource.new(source_dir: 'tmp/local-source', include: '**/*', exclude: '*/*.html')
-      expect(source.files).to have(3).files
+      expect(source.files.size).to eq(3)
     end
 
     it 'should find files (recursively)' do
       source = MultiSync::LocalSource.new(source_dir: 'tmp/local-source', include: '**/*')
-      expect(source.files).to have(4).files
+      expect(source.files.size).to eq(4)
     end
 
     it 'should find files (by type)' do
       source = MultiSync::LocalSource.new(source_dir: 'tmp/local-source', include: '**/*.txt')
-      expect(source.files).to have(3).files
+      expect(source.files.size).to eq(3)
     end
 
     context :with_root do

@@ -63,12 +63,12 @@ describe MultiSync::Client do
           abandoned_files_target = MultiSync::LocalTarget.new(abandoned_files_target_options)
           outdated_files_target = MultiSync::LocalTarget.new(outdated_files_target_options)
 
-          expect(missing_files_target).to have(2).files
-          expect(abandoned_files_target).to have(4).files
-          expect(outdated_files_target).to have(3).files
+          expect(missing_files_target.files.size).to eq(2)
+          expect(abandoned_files_target.files.size).to eq(4)
+          expect(outdated_files_target.files.size).to eq(3)
 
           local_source = MultiSync::LocalSource.new(local_source_options)
-          expect(local_source).to have(3).files
+          expect(local_source.files.size).to eq(3)
 
           expect(outdated_files_target.files[1].body).to eq 'not-foo'
 
@@ -79,9 +79,9 @@ describe MultiSync::Client do
             local_source(local_source_options)
           end
 
-          expect(missing_files_target).to have(3).files
-          expect(abandoned_files_target).to have(3).files
-          expect(outdated_files_target).to have(3).files
+          expect(missing_files_target.files.size).to eq(3)
+          expect(abandoned_files_target.files.size).to eq(3)
+          expect(outdated_files_target.files.size).to eq(3)
           expect(outdated_files_target.files[1].body).to eq 'foo'
         end
       end
@@ -99,17 +99,17 @@ describe MultiSync::Client do
           local_source_options = { source_dir: 'tmp/complex' }
 
           complex_empty_target = MultiSync::LocalTarget.new(complex_empty_target_options)
-          expect(complex_empty_target).to have(0).files
+          expect(complex_empty_target.files.size).to eq(0)
 
           local_source = MultiSync::LocalSource.new(local_source_options)
-          expect(local_source).to have(250).files
+          expect(local_source.files.size).to eq(250)
 
           MultiSync.run do
             local_source(local_source_options)
             local_target(complex_empty_target_options)
           end
 
-          expect(complex_empty_target).to have(250).files
+          expect(complex_empty_target.files.size).to eq(250)
         end
       end
     end
@@ -157,12 +157,12 @@ describe MultiSync::Client do
           abandoned_files_target = MultiSync::AwsTarget.new(abandoned_files_target_options)
           outdated_files_target = MultiSync::AwsTarget.new(outdated_files_target_options)
 
-          expect(missing_files_target).to have(2).files
-          expect(abandoned_files_target).to have(4).files
-          expect(outdated_files_target).to have(3).files
+          expect(missing_files_target.files.size).to eq(2)
+          expect(abandoned_files_target.files.size).to eq(4)
+          expect(outdated_files_target.files.size).to eq(3)
 
           local_source = MultiSync::LocalSource.new(local_source_options)
-          expect(local_source).to have(3).files
+          expect(local_source.files.size).to eq(3)
 
           expect(outdated_files_target.files[1].body).to eq 'not-foo'
 
@@ -173,9 +173,9 @@ describe MultiSync::Client do
             aws_target(outdated_files_target_options)
           end
 
-          expect(missing_files_target).to have(3).files
-          expect(abandoned_files_target).to have(3).files
-          expect(outdated_files_target).to have(3).files
+          expect(missing_files_target.files.size).to eq(3)
+          expect(abandoned_files_target.files.size).to eq(3)
+          expect(outdated_files_target.files.size).to eq(3)
           expect(outdated_files_target.files[1].body).to eq 'foo'
         end
       end
@@ -195,17 +195,17 @@ describe MultiSync::Client do
           local_source_options = { source_dir: 'tmp/complex' }
 
           complex_empty_target = MultiSync::AwsTarget.new(complex_empty_target_options)
-          expect(complex_empty_target).to have(0).files
+          expect(complex_empty_target.files.size).to eq(0)
 
           local_source = MultiSync::LocalSource.new(local_source_options)
-          expect(local_source).to have(250).files
+          expect(local_source.files.size).to eq(250)
 
           MultiSync.run do
             local_source(local_source_options)
             aws_target(complex_empty_target_options)
           end
 
-          expect(complex_empty_target).to have(250).files
+          expect(complex_empty_target.files.size).to eq(250)
         end
       end
 
@@ -223,17 +223,17 @@ describe MultiSync::Client do
           local_source_options = { source_dir: 'tmp/simple' }
 
           without_destination_dir_target = MultiSync::AwsTarget.new(without_destination_dir_target_options)
-          expect(without_destination_dir_target).to have(0).files
+          expect(without_destination_dir_target.files.size).to eq(0)
 
           local_source = MultiSync::LocalSource.new(local_source_options)
-          expect(local_source).to have(3).files
+          expect(local_source.files.size).to eq(3)
 
           MultiSync.run do
             local_source(local_source_options)
             aws_target(without_destination_dir_target_options)
           end
 
-          expect(without_destination_dir_target).to have(3).files
+          expect(without_destination_dir_target.files.size).to eq(3)
         end
       end
 
@@ -257,10 +257,10 @@ describe MultiSync::Client do
           }
 
           with_resource_options_target = MultiSync::AwsTarget.new(with_resource_options_target_options)
-          expect(with_resource_options_target).to have(0).files
+          expect(with_resource_options_target.files.size).to eq(0)
 
           local_source = MultiSync::LocalSource.new(local_source_options)
-          expect(local_source).to have(3).files
+          expect(local_source.files.size).to eq(3)
 
           MultiSync.run do
             local_source(local_source_options)
@@ -270,7 +270,7 @@ describe MultiSync::Client do
           # dir = connection.directories.get('with_resource_options')
           # pp with_resource_options_target.files[0].file.cache_control
 
-          expect(with_resource_options_target).to have(3).files
+          expect(with_resource_options_target.files.size).to eq(3)
         end
       end
     end
