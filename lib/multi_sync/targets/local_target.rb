@@ -3,7 +3,7 @@ require 'multi_sync/resources/remote_resource'
 
 module MultiSync
   class LocalTarget < Target
-    attribute :connection, Fog::Storage, lazy: true, default: lambda { |target, attribute|
+    attribute :connection, Fog::Storage, lazy: true, default: lambda { |target, _|
       Fog::Storage.new(target.credentials.merge(provider: :local))
     }
 

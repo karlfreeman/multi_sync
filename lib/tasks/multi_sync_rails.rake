@@ -2,7 +2,7 @@ require 'multi_sync'
 
 namespace :assets do
   desc 'Synchronize assets'
-  task :sync => :environment do
+  task sync: :environment do
     ActiveSupport::Notifications.instrument 'multi_sync.run' do
       MultiSync::Extensions::AssetSync.check_and_migrate
       MultiSync.run if MultiSync.run_on_build

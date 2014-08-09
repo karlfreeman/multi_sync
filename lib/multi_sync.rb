@@ -26,7 +26,7 @@ module MultiSync
   # delegate all MultiSync::Client's attribute accessors to the configuration
   def_delegators :client, *MultiSync::Client.attribute_set.map(&:name)
 
-   # include sync method
+  # include sync method
   def_delegator :client, :sync
 
   # create methods for each source (local_source(options), manifest_source(options))

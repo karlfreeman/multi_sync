@@ -55,7 +55,7 @@ module MultiSync
 
         # index.* files are special and should be ignored from sync
         # something which seems to only happen in older versions of Sprockets
-        manifest_hash.delete_if { |key, value|
+        manifest_hash.delete_if { |key, _|
           key.include?('/index.')
         }
 

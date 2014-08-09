@@ -52,10 +52,7 @@ describe MultiSync::Configuration do
         it 'should use fog \'alt\' credentials' do
           ENV['FOG_RC'] = '/tmp/fog/.fog'
           ENV['FOG_CREDENTIAL'] = 'alt'
-          expect(configuration.credentials).to eq(
-                                                    aws_access_key_id: 'AWS_ACCESS_KEY_ID_ALT',
-                                                    aws_secret_access_key: 'AWS_SECRET_ACCESS_KEY_ALT'
-          )
+          expect(configuration.credentials).to eq(aws_access_key_id: 'AWS_ACCESS_KEY_ID_ALT', aws_secret_access_key: 'AWS_SECRET_ACCESS_KEY_ALT')
         end
       end
     end

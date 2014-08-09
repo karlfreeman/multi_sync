@@ -7,12 +7,12 @@ describe MultiSync do
         expect(MultiSync).to respond_to(method_name)
       end
     end
-    MultiSync::Client::SUPPORTED_SOURCE_TYPES.each do |type, clazz|
+    MultiSync::Client::SUPPORTED_SOURCE_TYPES.each do |type, _|
       it "should respond_to #{type}_source" do
         expect(MultiSync).to respond_to("#{type}_source")
       end
     end
-    MultiSync::Client::SUPPORTED_TARGET_TYPES.each do |type, clazz|
+    MultiSync::Client::SUPPORTED_TARGET_TYPES.each do |type, _|
       it "should respond_to #{type}_target" do
         expect(MultiSync).to respond_to("#{type}_target")
       end
