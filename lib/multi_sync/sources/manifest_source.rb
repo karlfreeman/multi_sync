@@ -1,5 +1,5 @@
 require 'yaml'
-require 'multi_json'
+require 'json'
 require 'multi_sync/source'
 require 'multi_sync/resources/local_resource'
 
@@ -40,7 +40,7 @@ module MultiSync
       # manifest files can be YAML or JSON but Sprockets::Manifest isn't backwards compatible with that in mind :(
       case File.extname(manifest_path)
       when '.json'
-        manifest_hash = MultiJson.load(manifest_data)
+        manifest_hash = JSON.load(manifest_data)
       when '.yml', '.yaml'
         manifest_hash = YAML.load(manifest_data)
       else
