@@ -6,8 +6,6 @@ AllCops:
     - script/**/*
     - vendor/**/*
     - bin/**/*
-    - examples/**/*
-    - gemfiles/**/*
 LineLength:
   Enabled: false
 MethodLength:

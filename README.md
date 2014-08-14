@@ -166,8 +166,8 @@ aws_target({
 
 - [Rails](https://github.com/karlfreeman/multi_sync-rails)
 - Sinatra (WIP)
-- [Middleman](https://github.com/karlfreeman/multi_sync-middleman)
-- Jekyll (WIP)
+- [Middleman](https://github.com/karlfreeman/middleman-sync) (wip)
+- [Jekyll](https://github.com/karlfreeman/jekyll-sync) (wip)
 - Nanoc (WIP)
 
 ## Badges
